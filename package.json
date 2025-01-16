@@ -1,5 +1,5 @@
 {
-  "name": "avocado-ftonend",
+  "name": "avocado-fronend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -22,7 +22,7 @@
     "vite-plugin-vuetify": "^2.0.4",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.6.0",
+    "vuetify": "^3.7.6",
     "vuex": "^4.0.2",
     "webfontloader": "^1.6.28"
   },

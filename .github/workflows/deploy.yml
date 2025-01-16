@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-optional
+      - run: npm install
       - run: |
           touch .env
           echo VITE_APP_API_URL = "$VITE_APP_API_URL" >> .env

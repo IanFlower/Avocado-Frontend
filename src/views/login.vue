@@ -16,7 +16,7 @@ import logo from '../assets/OC_and_Career_Service_Logo.png'
                 Welcome To OC's <br>Flight Plan
             </v-card-title>
             <v-spacer></v-spacer>
-            <v-card-text style="color: white; font-size: 18px; margin-top: auto;padding-top:370px">
+            <v-card-text style="color: white; font-size: 9px; margin-top: auto;padding-top:400px">
                 "for I know the plans for you..."  <br>Jeremiah 9:11
             </v-card-text>
         </v-card>

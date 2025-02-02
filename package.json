@@ -22,7 +22,7 @@
     "vite-plugin-vuetify": "^2.0.4",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
-    "vuetify": "^3.7.6",
+    "vuetify": "^3.7.9",
     "vuex": "^4.0.2",
     "webfontloader": "^1.6.28"
   },

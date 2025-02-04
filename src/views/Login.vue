@@ -1,5 +1,6 @@
 <script setup>
 import logo from '../assets/OC_and_Career_Service_Logo.png'
+import SocialLogin from '../components/SocialLogin.vue'
 </script>
 
 <template>
@@ -23,7 +24,7 @@ import logo from '../assets/OC_and_Career_Service_Logo.png'
           </v-card-title>
 
           <v-spacer></v-spacer> 
-          <v-btn class="secondary-button">login</v-btn>
+          <SocialLogin />
           <v-spacer></v-spacer> 
 
 

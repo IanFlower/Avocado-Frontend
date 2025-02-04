@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
+import StudentHome from "./views/StudentHome.vue"
 // import HomePage from "./views/HomePage.vue";
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
@@ -15,12 +16,12 @@ const router = createRouter({
   //     name: "AdminPage", 
   //     component: AdminPage
   //   },
-  //   { 
-  //     path: "/home", 
-  //     alias: "/homePage",
-  //     name: "HomePage", 
-  //     component: HomePage
-  //   },
+    { 
+      path: "/StudentHome", 
+      alias: "/StudentHome",
+      name: "StudentHome", 
+      component: StudentHome,
+    },
     {
       path: "/",
       alias: "/login",

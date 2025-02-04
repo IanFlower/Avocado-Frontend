@@ -4,52 +4,64 @@ document.documentElement.setAttribute('data-theme', 'light');
 </script>
 <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'></link>
 <style>
+/* OC Red */
 .primary{
     color: var(--primary) !important;
     background-color: var(--primary) !important;
 }
-.primary:focus{
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
 
-.secoundary{
+/* OC Silver */
+.secondary{
     color: var(--secondary) !important;
     background-color: var(--secondary) !important;
 }
-.secoundary:focus{
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
 
+/* OC Gold */
 .accent{
     color: var(--accent) !important;
     background-color: var(--accent) !important;
 }
-.accent:focus{
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
 
+/*For main buttons on a page ex: continue*/
 .primary-button {
   background-color: var(--primary) !important;
   color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
-.primary-button:hover {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
+/*For secoundary buttons on a page ex: cancel*/
 .secondary-button {
   background-color: var(--secondary) !important;
   color: black !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
-.secondary-button:hover {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
-}
+
+/*For warning buttons on a page ex: delete*/
 .warning-button {
   background-color: red !important;
   color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
+
+
+
+/*Done use these they are automatically applied to buttons and colors  */
+.primary-button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+.secondary-button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
 .warning-button:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+.primary:focus{
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+.secondary:focus{
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+.accent:focus{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 

@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <!-- <MenuBar v-if="!isLoginPage" :key="$route.fullPath" /> -->
+    <MenuBar v-if="!isLoginPage" :key="$route.fullPath" /> 
     <v-spacer></v-spacer>
     <v-main>
       <router-view />
@@ -11,7 +11,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-// import MenuBar from "./components/MenuBar.vue";
+import MenuBar from "./components/MenuBar.vue";
 
 
 const route = useRoute();

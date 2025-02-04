@@ -15,15 +15,15 @@ import logo from '../assets/OC_and_Career_Service_Logo.png'
           outlined 
           height="100%" 
           width="100%" 
-          style="background-color: #811420; text-align: center;" 
-          class="d-flex flex-column pa-4"
+          style="text-align: center;" 
+          class="d-flex flex-column pa-4 primary"
         >
           <v-card-title style="color: white; font-size: 28px;">
             Welcome To OC's <br>Flight Plan
           </v-card-title>
 
           <v-spacer></v-spacer> 
-          <v-btn>login</v-btn>
+          <v-btn class="secondary-button">login</v-btn>
           <v-spacer></v-spacer> 
 
 

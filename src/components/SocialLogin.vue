@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import AuthServices from "../services/authServices";
 import Utils from "../config/utils.js";
 import { useRouter } from "vue-router";
+import UserServices from "../services/userServices";
 
 const router = useRouter();
 const fName = ref("");
@@ -39,13 +40,22 @@ const handleCredentialResponse = async (response) => {
       Utils.setStore("user", user.value);
       fName.value = user.value.fName;
       lName.value = user.value.lName;
-      if (user.value.isAdmin) {
-        router.push({ name: 'AdminHomePage' });
-      }
-      else {
-        router.push({ name: 'StudentHomePage' }
-        );
-      }
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+
+    
+
+    await UserServices.getUserById(user.value.id) 
+      .then((res) => {
+        if (res.data.role == "Admin" | res.data.role == "Student Worker" | res.data.role == "Professor") {
+          router.push({ name: 'AdminHome' });
+        }
+        else {
+          router.push({ name: 'StudentHome' }
+          );
+        }
     })
     .catch((error) => {
       console.log("error", error);

@@ -57,6 +57,9 @@ onMounted(() => {
             <v-toolbar-title class="title">Career Services</v-toolbar-title>
 
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
+            <v-btn>
+                <v-icon icon="mdi-bell" size="30"></v-icon>  
+            </v-btn>
 
             <!-- User Dropdown Menu -->
             <v-menu bottom min-width="200px" rounded offset-y v-if="user">

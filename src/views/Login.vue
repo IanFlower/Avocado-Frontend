@@ -16,8 +16,8 @@ import SocialLogin from '../components/SocialLogin.vue'
           outlined 
           height="100%" 
           width="100%" 
-          style="background-color: #811420; text-align: center;" 
-          class="d-flex flex-column pa-4"
+          style="text-align: center;" 
+          class="d-flex flex-column pa-4 primary"
         >
           <v-card-title style="color: white; font-size: 28px;">
             Welcome To OC's <br>Flight Plan

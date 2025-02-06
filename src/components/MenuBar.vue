@@ -28,7 +28,8 @@ const resetMenu = () => {
     }
 };
 function logout() {
-    authServices.logoutUser(user.token).then(user = null)
+    authServices.logoutUser(user.value.token)
+    .then(user.value = null, router.push({ name: 'Login' }))
 }
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {

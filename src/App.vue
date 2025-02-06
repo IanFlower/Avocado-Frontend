@@ -17,5 +17,5 @@ import '../src/assets/styles.css'
 import ThemeSwitcher from './components/ThemeSwitcher.vue';
 import MenuBar from "./components/MenuBar.vue";
 const route = useRoute();
-const isLoginPage = computed(() => route.name === 'login'); 
+const isLoginPage = computed(() => route.name === 'Login'); 
 </script>

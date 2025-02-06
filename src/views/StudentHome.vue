@@ -65,24 +65,27 @@
       </v-col>
 
       <!-- Right Column (Points, Leaderboard, Badges) -->
-      <v-col cols="3" class="d-flex flex-column align-center pa-2">
-        <v-card class="d-flex flex-column pa-5 text-center my-5 accent clickable-card" width="50%" elevation="16" @click="handlePointClick">
+      <v-col cols="3" class="d-flex flex-column align-center pa-3">
+        
+        <!--Points Card -->
+        <v-card class="d-flex flex-column pa-5 text-center my-10 accent clickable-card" width="50%" elevation="16" @click="handlePointClick">
           <v-card-title>Points:</v-card-title>
         </v-card>
 
-        <v-card class="d-flex flex-column pa-5 text-center primary" height="400px" width="75%" color="#811420" elevation="16">
+        <v-spacer></v-spacer>
+
+        <!--Leaderboard-->
+        <v-card class="d-flex flex-column pa-6 text-center primary" height="450px" width="75%" elevation="16">
           <v-card-title>Leaderboard</v-card-title>
           <v-divider></v-divider>
         </v-card>
 
         <v-spacer></v-spacer>
 
-        <v-card class="d-flex flex-column pa-5 text-center my-5 align-center" height="300px" width="300px">
-          <v-card-title>Latest Badge</v-card-title>
-          <v-img height="250px" width="250px" :src="elite" alt="Elite" class="clickable-image" @click="goToBadges"></v-img>
-        </v-card>
+        <!--Latest Badge-->
+        <h3>Latest Badge: </h3>    
+          <v-img height="100px" width="100px" :src="elite" alt="Elite" class="clickable-image" @click="goToBadges"></v-img>
       </v-col>
-
     </v-row>
   </v-container>
 </template>

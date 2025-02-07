@@ -65,7 +65,7 @@
         <h3 class="text-center">Tasks</h3>
 
         <v-spacer></v-spacer>
-        <v-spacer></v-spacer>
+    
 
         <v-row style="max-height: 350px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
@@ -80,9 +80,6 @@
 
         <!-- Experiences -->
         <h3 class="text-center mt-4">Experiences</h3>
-
-        <v-spacer></v-spacer>
-        <v-spacer></v-spacer>
 
         <v-row style="max-height: 300px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">

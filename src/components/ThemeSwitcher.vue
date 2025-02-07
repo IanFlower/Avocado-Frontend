@@ -6,19 +6,19 @@ document.documentElement.setAttribute('data-theme', 'light');
 <style>
 /* OC Red */
 .primary{
-    color: var(--primary) !important;
+    color: white !important;
     background-color: var(--primary) !important;
 }
 
 /* OC Silver */
 .secondary{
-    color: var(--secondary) !important;
+    color: black !important;
     background-color: var(--secondary) !important;
 }
 
 /* OC Gold */
 .accent{
-    color: var(--accent) !important;
+    color: black !important;
     background-color: var(--accent) !important;
 }
 

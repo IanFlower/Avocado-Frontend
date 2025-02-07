@@ -4,7 +4,10 @@ import Login from "./views/Login.vue";
  import StudentHome from "./views/StudentHome.vue";
  import Badges from "./views/Badges.vue";
 import Shop from "./views/Shop.vue";
-// import HomePage from "./views/HomePage.vue";
+import Calendar from "./views/Calendar.vue";
+import leaderBoard from "./views/leaderBoard.vue";
+
+
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
@@ -54,6 +57,18 @@ const router = createRouter({
     alias: '/shopPoints',
     name: "shop",
     component: Shop,
+  },
+  {
+    path: '/calendar',
+    alias: '/calendarPage',
+    name: "calendar",
+    component: Calendar,
+  },
+  {
+    path: '/leaderboard',
+    alias: '/leaderboardPage',
+    name: "leaderboard",
+    component: leaderBoard,
   }
   ],
 });

@@ -7,35 +7,35 @@
 
       <v-col cols="6" class="d-flex justify-center">
         <v-card class="pa-2 d-flex justify-center text-center" elevation="0">
-          <v-card-title class="text-h5 font-weight-medium">
+          <v-card-title class="text-h5 font-weight-medium d-flex align-center">
             {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
+            <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
+              <template v-slot:activator="{ props }">
+                <v-icon v-bind="props" size="24" style="cursor: pointer;">
+                  mdi-chevron-down
+                </v-icon>
+              </template>
+              <v-card elevation="6">
+                <v-list>
+                  <v-list-item v-for="year in availableYears" :key="year">
+                    <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Fall', year)">
+                      Fall {{ year }}
+                    </v-btn>
+                    <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Spring', year)">
+                      Spring {{ year }}
+                    </v-btn>
+                  </v-list-item>
+                </v-list>
+              </v-card>
+            </v-menu>
           </v-card-title>
-          <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
-            <template v-slot:activator="{ props }">
-              <v-icon v-bind="props" size="24" style="cursor: pointer;">
-                mdi-chevron-down
-              </v-icon>
-            </template>
-            <v-card elevation="6">
-              <v-list>
-                <v-list-item v-for="year in availableYears" :key="year">
-                  <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Fall', year)">
-                    Fall {{ year }}
-                  </v-btn>
-                  <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Spring', year)">
-                    Spring {{ year }}
-                  </v-btn>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
         </v-card>
       </v-col>
 
       <!-- Points -->
 
       <v-col cols="3" class="d-flex justify-center">
-        <v-card class="pa-3 text-center accent clickable-card" width="180px" elevation="12" @click="handlePointClick">
+        <v-card class="pa-3 text-center accent clickable-card" width="40%" elevation="12" @click="handlePointClick">
           <v-card-title class="text-subtitle-1">Points:</v-card-title>
         </v-card>
       </v-col>
@@ -43,15 +43,15 @@
 
     <!-- Upcoming Events -->
 
-    <v-row class="pa-1 ma-0">
+    <v-row class="pa-3 ma-0">
       <v-col cols="3" class="d-flex justify-center pa-1">
-        <v-card class="d-flex flex-column pa-2 align-center text-center" height="700px" width="100%"
+        <v-card class="d-flex flex-column pa-2  text-center" height="110%" width="60%"
           style="background-color: #D5DFE7; color: black;">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
           <v-spacer></v-spacer>
           <v-card-actions class="justify-center secondary">
-            <v-btn variant="plain" style="font-size: 10px; color: black;">
+            <v-btn variant="plain" style="font-size: 10px; color: black;" @click="goToCalendar">
               View Calendar
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
@@ -60,45 +60,61 @@
       </v-col>
 
       <!-- Tasks -->
-      
+
       <v-col cols="6" class="pa-1">
         <h3 class="text-center">Tasks</h3>
-        <v-row style="max-height: 300px; overflow-y: auto;">
+
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+
+        <v-row style="max-height: 350px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
-            <v-btn class="pa-1 mb-1 secondary-button text-left pl-3" width="85%" height="40" elevation="2" shaped
-              @click="handleTaskClick(n)">
-              Task Placeholder {{ n }}
+            <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
+              class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped @click="handleTaskClick(n)">
+              Task Placeholder 
             </v-btn>
           </v-col>
+          <v-spacer></v-spacer>
         </v-row>
+
 
         <!-- Experiences -->
         <h3 class="text-center mt-4">Experiences</h3>
-        <v-row style="max-height: 300px; overflow-y: auto;">
+
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+
+        <v-row style="max-height: 300px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
-            <v-btn class="pa-1 mb-1 secondary-button text-left pl-3" width="85%" height="40" elevation="2" shaped
+            <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
+              class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped
               @click="handleExperienceClick(n)">
-              Experience Placeholder {{ n }}
+              Experience Placeholder 
             </v-btn>
           </v-col>
         </v-row>
       </v-col>
 
       <v-col cols="3" class="d-flex flex-column align-center pa-2">
-
         <v-spacer></v-spacer>
 
         <!-- LeaderBoard -->
-        <v-card class="d-flex flex-column pa-4 text-center primary" height="400px" width="70%" elevation="12">
+        <v-card class="d-flex flex-column pa-4 text-center primary" height="45%" width="70%" elevation="12">
           <v-card-title class="text-subtitle-1">Leaderboard</v-card-title>
           <v-divider></v-divider>
+
+          <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2" @click="goToLeaderboard"
+            height="50">
+            Leaderboard Placeholder {{ n }}
+          </v-btn>
         </v-card>
 
         <v-spacer></v-spacer>
 
         <!-- Latest Badge-->
         <h4>Latest Badge: </h4>
-        <v-img height="80px" width="80px" :src="elite" alt="Elite" class="clickable-image hover-effect" @click="goToBadges"></v-img>
+        <v-img height="35%" width="35%" :src="elite" alt="Elite" class="clickable-image hover-effect"
+          @click="goToBadges"></v-img>
       </v-col>
     </v-row>
   </v-container>
@@ -110,6 +126,9 @@ import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 
 const router = useRouter();
+const clickedTask = ref({});
+const clickedExperience = ref({});
+
 
 const goToBadges = () => {
   router.push('/badges');
@@ -117,6 +136,37 @@ const goToBadges = () => {
 
 const handlePointClick = () => {
   router.push('/shop');
+};
+
+const goToCalendar = () => {
+  router.push('/calendar');
+};
+
+const goToLeaderboard = () => {
+  router.push('/leaderboard');
+};
+
+const getButtonClass = (index) => {
+  if (index === 0) {
+    return 'accent';
+  } else if (index === 1) {
+    return 'accent' + ' opacity-25';
+  } else if (index === 2) {
+    return 'accent' + ' opacity-50';
+  } else if (index === 3) {
+    return 'white';
+  } else {
+    return '';
+  }
+};
+
+
+const handleTaskClick = (taskId) => {
+  clickedTask.value[taskId] = !clickedTask.value[taskId];
+};
+
+const handleExperienceClick = (experienceId) => {
+  clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
 };
 
 const dropdownOpen = ref(false);
@@ -127,7 +177,7 @@ const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
 const selectSeason = (season, year) => {
   selectedSeason.value = season;
   selectedYear.value = year;
-  dropdownOpen.value = false;
+  dropdownOpen.value = true;
 };
 </script>
 
@@ -139,5 +189,18 @@ const selectSeason = (season, year) => {
 
 .clickable-image:hover {
   transform: scale(1.1);
+}
+
+.white {
+  background-color: white !important;
+  color: black;
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 </style>

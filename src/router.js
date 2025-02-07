@@ -29,8 +29,8 @@ const router = createRouter({
     },
     {
       path: "/",
-      alias: "/login",
-      name: "login",
+      alias: "/Login",
+      name: "Login",
       component: Login,
     },
   //   {

@@ -1,5 +1,4 @@
 <script setup>
-import userImg from "../assets/User.svg";
 </script>
 
 <template>

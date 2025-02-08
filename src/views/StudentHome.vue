@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0 ma-0 mx-2" style="min-height: 100vh;">
+  <v-container fluid class="pa-0 ma-10 mx-2" style="min-height: 100vh;">
     <v-row class="align-start justify-start" style="height: 100%;">
       <v-col cols="3"></v-col>
 
@@ -32,8 +32,9 @@
       </v-col>
 
       <!-- Points -->
-      <v-col cols="3" class="d-flex justify-center">
-        <v-card class="pa-3 text-center accent clickable-card" width="40%" elevation="12" @click="handlePointClick">
+      <v-col cols="3" class="d-flex justify-center align-center">
+        <v-card class="pa-4 justify-center text-center accent clickable-card" width="40%" elevation="12"
+          @click="handlePointClick">
           <v-card-title class="text-subtitle-1">Points:</v-card-title>
         </v-card>
       </v-col>
@@ -42,7 +43,7 @@
     <!-- Upcoming Events -->
     <v-row class="pa-3 ma-0">
       <v-col cols="3" class="d-flex justify-center pa-1">
-        <v-card class="d-flex flex-column pa-2 text-center" height="110%" width="60%" style="background-color: #D5DFE7; color: black;">
+        <v-card class="d-flex flex-column pa-2 text-center h-110 w-95 secondary">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
           <v-spacer></v-spacer>
@@ -82,6 +83,8 @@
             </v-row>
           </v-col>
         </v-row>
+
+        <!-- Tasks Section -->
         <h2 class="text-center">Tasks</h2>
 
         <v-spacer></v-spacer>
@@ -111,27 +114,27 @@
         </v-row>
       </v-col>
 
-      <v-col cols="3" class="d-flex flex-column align-center pa-2">
-        <v-spacer></v-spacer>
-
+      <v-col cols="3" class="d-flex flex-column align-center pa-4 justify-center">
         <!-- LeaderBoard -->
-        <v-card class="d-flex flex-column pa-4 text-center primary" height="45%" width="70%" elevation="12">
+        <v-card class="d-flex flex-column pa-4 text-center primary h-45 w-70 e-12 position-fixed">
           <v-card-title class="text-subtitle-1">Leaderboard</v-card-title>
           <v-divider></v-divider>
 
           <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2" @click="goToLeaderboard"
             height="50">
-            Leaderboard Placeholder {{ n }}
+            Leaderboard Placeholder
           </v-btn>
         </v-card>
 
         <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
 
         <!-- Latest Badge-->
         <h4>Latest Badge: </h4>
-        <v-img height="35%" width="35%" :src="elite" alt="Elite" class="clickable-image hover-effect"
-          @click="goToBadges"></v-img>
+        <v-img height="20" width="20" :src="elite" alt="Elite" class="clickable-image hover-effect position-fixed"
+          @click="goToBadges"></v-img> 
       </v-col>
+
     </v-row>
   </v-container>
 </template>

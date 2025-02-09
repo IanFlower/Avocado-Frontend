@@ -4,8 +4,8 @@
 <template>
     <v-container>
         <v-row class="pa-5">
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="mr-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -16,17 +16,17 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Users</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
-                                Manage Student Worker Permissions/Admins/Professors
+                                Manage User Permissions
                             </v-card-subtitle>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="ml-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -43,9 +43,9 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Student Approval</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
-                                Approve Student Documents/Requested Experiences
+                                Approve Documents/Requested Experiences
                             </v-card-subtitle>
                             </v-col>
                         </v-row>
@@ -54,8 +54,8 @@
             </v-col>
         </v-row>
         <v-row class="pa-5">
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="mr-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -63,7 +63,7 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Student Shop</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
                                 Redeem Student Points/Edit Shop Items
                             </v-card-subtitle>
@@ -72,8 +72,8 @@
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="ml-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -81,7 +81,7 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Badges</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
                                 Manage Badges
                             </v-card-subtitle>
@@ -92,8 +92,8 @@
             </v-col>
         </v-row>
         <v-row class="pa-5">
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="mr-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -101,7 +101,7 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Events</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
                                 Manage Events
                             </v-card-subtitle>
@@ -110,8 +110,8 @@
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col align="center">
-                <v-card class="secondary" width="460px" link>
+            <v-col align="center" class="ml-4">
+                <v-card class="secondary" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -119,7 +119,7 @@
                             </v-col>
                             <v-col>
                             <v-card-title>Logs</v-card-title>
-                            <v-card-subtitle>
+                            <v-card-subtitle class="overflow-x-hidden">
                                 <v-divider vertical thickness="20px"></v-divider>
                                 View Logs
                             </v-card-subtitle>

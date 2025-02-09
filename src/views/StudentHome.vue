@@ -1,6 +1,7 @@
 <template>
-  <v-container fluid class="pa-0 ma-10 mx-2" style="min-height: 100vh;">
-    <v-row class="align-start justify-start" style="height: 100%;">
+<v-container fluid class="pa-0 ma-10 mx-2" min-height="100vh">
+  <v-row class="align-start justify-start fill-height">
+
       <v-col cols="3"></v-col>
 
       <!-- Semester with Dropdown Menu -->
@@ -30,20 +31,14 @@
           </v-card-title>
         </v-card>
       </v-col>
-
-      <!-- Points -->
-      <v-col cols="3" class="d-flex justify-center align-center">
-        <v-card class="pa-4 justify-center text-center accent clickable-card" width="40%" elevation="12"
-          @click="handlePointClick">
-          <v-card-title class="text-subtitle-1">Points:</v-card-title>
-        </v-card>
-      </v-col>
     </v-row>
 
+    <v-spacer></v-spacer>
+
     <!-- Upcoming Events -->
-    <v-row class="pa-3 ma-0">
+    <v-row class="pa-3 ma-1">
       <v-col cols="3" class="d-flex justify-center pa-1">
-        <v-card class="d-flex flex-column pa-2 text-center h-110 w-95 secondary">
+        <v-card class="d-flex flex-column pa-2 text-center secondary" height="900px" width="350px">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
           <v-spacer></v-spacer>
@@ -57,39 +52,40 @@
       </v-col>
 
       <!-- Tasks -->
-      <v-col cols="6" class="pa-1">
+      <v-col cols="6" class="pa-2" width="600px">
         <!-- Progress Bar Section -->
         <v-row class="mb-2 align-center justify-center">
-          <v-col cols="6" class="pa-0 position-relative">
-            <!-- Progress Label on the Left -->
-            <v-row class="align-center" style="position: absolute; top: -20px; left: 0;">
-              <v-col class="pa-0">
-                <v-typography class="font-weight-bold" style="font-size: 14px;">
+          <v-col cols="8" class="pa-0 position-relative">
+            <!-- Progress Label and Fraction Above Progress Bar -->
+            <v-row class="d-flex align-center mb-2">
+              <v-col class="pa-0" cols="6">
+                <v-typography class="font-weight-bold" font-size="14">
                   Progress:
                 </v-typography>
               </v-col>
-            </v-row>
-
-            <!--Progress Bar-->
-            <v-progress-linear v-model="progressValue" height="20" color="primary" rounded></v-progress-linear>
-
-            <!-- Fraction of Task Completed / Total Tasks-->
-            <v-row class="align-center" style="position: absolute; top: -20px; right: 0;">
-              <v-col class="pa-0">
-                <v-typography class="font-weight-bold" style="font-size: 14px;">
+              <v-col class="pa-0 text-right" cols="6">
+                <v-typography class="font-weight-bold" font-size="14">
                   {{ tasksCompleted }} / {{ totalTasks }}
                 </v-typography>
               </v-col>
             </v-row>
+
+            <!-- Progress Bar Below the Labels -->
+            <v-progress-linear v-model="progressValue" height="20" color="primary" rounded></v-progress-linear>
           </v-col>
         </v-row>
+
+
+
+
+
 
         <!-- Tasks Section -->
         <h2 class="text-center">Tasks</h2>
 
         <v-spacer></v-spacer>
 
-        <v-row style="max-height: 350px; overflow-y: auto; margin-top: 0;">
+        <v-row style="max-height: 400px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
             <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
               class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped
@@ -103,7 +99,7 @@
         <!-- Experiences -->
         <h2 class="text-center mt-4">Experiences</h2>
 
-        <v-row style="max-height: 300px; overflow-y: auto; margin-top: 0;">
+        <v-row style="max-height: 400px; overflow-y: auto; margin-top: 0;">
           <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
             <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
               class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped
@@ -114,25 +110,43 @@
         </v-row>
       </v-col>
 
-      <v-col cols="3" class="d-flex flex-column align-center pa-4 justify-center">
-        <!-- LeaderBoard -->
-        <v-card class="d-flex flex-column pa-4 text-center primary h-45 w-70 e-12 position-fixed">
-          <v-card-title class="text-subtitle-1">Leaderboard</v-card-title>
-          <v-divider></v-divider>
+      <v-col class="d-flex flex-column align-center">
+        <!-- Points -->
+        <v-row>
+          <v-card class="pa-4 justify-center text-center accent clickable-card" height="80px" width="200px"
+            elevation="12" @click="handlePointClick">
+            <v-card-title class="text-subtitle-1">Points:</v-card-title>
+          </v-card>
+        </v-row>
 
-          <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2" @click="goToLeaderboard"
-            height="50">
-            Leaderboard Placeholder
-          </v-btn>
-        </v-card>
+        <v-spacer>
+        </v-spacer>
+
+        <!--Leaderboard-->
+        <v-row align-self="center">
+          <v-col cols="12" md="12" lg="12">
+            <v-card class="d-flex flex-column pa-4 text-center primary h-45 w-100 e-12">
+              <v-card-title class="text-subtitle-1">Leaderboard</v-card-title>
+              <v-divider></v-divider>
+
+              <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
+                @click="goToLeaderboard" height="50">
+                Leaderboard Placeholder
+              </v-btn>
+            </v-card>
+          </v-col>
+        </v-row>
 
         <v-spacer></v-spacer>
-        <v-spacer></v-spacer>
 
-        <!-- Latest Badge-->
-        <h4>Latest Badge: </h4>
-        <v-img height="20" width="20" :src="elite" alt="Elite" class="clickable-image hover-effect position-fixed"
-          @click="goToBadges"></v-img> 
+        <!-- Latest Badge -->
+        <v-row class="justify-center">
+          <v-col class="text-center justify center align-center">
+            <p class="text-h6 font-weight-bold justify-center">Latest Badge:</p>
+            <v-img :src="elite" alt="Elite Badge" max-width="130" class="cursor-pointer justify-center"
+              @click="goToBadges" />
+          </v-col>
+        </v-row>
       </v-col>
 
     </v-row>

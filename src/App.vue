@@ -3,7 +3,6 @@
     <!-- <MenuBar v-if="!isLoginPage" :key="$route.fullPath" /> -->
     <ThemeSwitcher />
     <MenuBar v-if="!isLoginPage" :key="$route.fullPath" /> 
-    <v-spacer></v-spacer>
     <v-main>
       <router-view />
     </v-main>

@@ -84,39 +84,43 @@
         </v-row>
       </v-col>
 
-      <v-col cols="3" class="d-flex flex-column align-center">
-        <!-- Points (Top) -->
-        <v-row justify="center" align="center">
-          <v-col cols="auto">
-            <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
-              @click="handlePointClick" elevation="6" size="x-large">
-              Points
-            </v-btn>
-          </v-col>
-        </v-row>
-        <!-- LeaderBoard -->
-        <v-row align="center" justify="center" class="flex-grow-1">
-          <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
-            <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
-              <v-card-title class="text-title-1">Leaderboard</v-card-title>
-              <v-divider></v-divider>
-              <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
-                @click="goToLeaderboard" style="flex-grow: 1;">
-                Leaderboard Placeholder
-              </v-btn>
-            </v-card>
-          </v-col>
-        </v-row>
-        <!-- Latest Badge (Bottom) -->
-        <v-row align="end" justify="center" class="flex-grow-0">
-          <v-col>
-            <h4>Latest Badge:</h4>
-            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
-              @click="goToBadges"></v-img>
-          </v-col>
-        </v-row>
-      </v-col>
 
+
+      <v-row justify="end" class="flex-grow-1">
+  <v-col cols="3" class="d-flex flex-column align-center ml-n4"> 
+    <!-- Points (Top) -->
+    <v-row justify="center" align="center">
+      <v-col cols="auto">
+        <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
+          @click="handlePointClick" elevation="6" size="x-large">
+          Points
+        </v-btn>
+      </v-col>
+    </v-row>
+    <!-- LeaderBoard -->
+    <v-row align="center" justify="end" class="flex-grow-1">
+      <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
+        <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
+          <v-card-title class="text-title-1">Leaderboard</v-card-title>
+          <v-divider></v-divider>
+          <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
+            @click="goToLeaderboard" style="flex-grow: 1;">
+            Leaderboard Placeholder
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Latest Badge (Bottom) -->
+    <v-row align="end" justify="center" class="flex-grow-0">
+      <v-col>
+        <h4>Latest Badge:</h4>
+        <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
+          @click="goToBadges"></v-img>
+      </v-col>
+    </v-row>
+  </v-col>
+</v-row>
 
 
 

@@ -1,49 +1,14 @@
 <template>
-<v-container fluid class="pa-0 ma-10 mx-2" min-height="100vh">
-  <v-row class="align-start justify-start fill-height">
-
-      <v-col cols="3"></v-col>
-
-      <!-- Semester with Dropdown Menu -->
-      <v-col cols="6" class="d-flex justify-center">
-        <v-card class="pa-2 d-flex justify-center text-center" elevation="0">
-          <v-card-title class="text-h5 font-weight-medium d-flex align-center">
-            {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
-            <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
-              <template v-slot:activator="{ props }">
-                <v-icon v-bind="props" size="24" style="cursor: pointer;">
-                  mdi-chevron-down
-                </v-icon>
-              </template>
-              <v-card elevation="6">
-                <v-list>
-                  <v-list-item v-for="year in availableYears" :key="year">
-                    <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Fall', year)">
-                      Fall {{ year }}
-                    </v-btn>
-                    <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Spring', year)">
-                      Spring {{ year }}
-                    </v-btn>
-                  </v-list-item>
-                </v-list>
-              </v-card>
-            </v-menu>
-          </v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-spacer></v-spacer>
-
-    <!-- Upcoming Events -->
-    <v-row class="pa-3 ma-1">
-      <v-col cols="3" class="d-flex justify-center pa-1">
-        <v-card class="d-flex flex-column pa-2 text-center secondary" height="900px" width="350px">
+  <v-container class="mt-10">
+    <v-row>
+      <!-- Upcoming Events -->
+      <v-col cols="12" sm="6" md="4" lg="3" xl="3" class="d-flex justify-start">
+        <v-card class="d-flex flex-column pa-4 text-center secondary" height="900" width="100%">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
           <v-spacer></v-spacer>
           <v-card-actions class="justify-center secondary">
-            <v-btn variant="plain" style="font-size: 10px; color: black;" @click="goToCalendar">
+            <v-btn variant="plain" class="font-weight-light text-subtitle-1" @click="goToCalendar">
               View Calendar
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
@@ -51,112 +16,121 @@
         </v-card>
       </v-col>
 
-      <!-- Tasks -->
-      <v-col cols="6" class="pa-2" width="600px">
-        <!-- Progress Bar Section -->
-        <v-row class="mb-2 align-center justify-center">
-          <v-col cols="8" class="pa-0 position-relative">
-            <!-- Progress Label and Fraction Above Progress Bar -->
-            <v-row class="d-flex align-center mb-2">
-              <v-col class="pa-0" cols="6">
-                <v-typography class="font-weight-bold" font-size="14">
-                  Progress:
-                </v-typography>
-              </v-col>
-              <v-col class="pa-0 text-right" cols="6">
-                <v-typography class="font-weight-bold" font-size="14">
-                  {{ tasksCompleted }} / {{ totalTasks }}
-                </v-typography>
+
+      <!-- Main Section -->
+      <v-col cols="6">
+        <!-- Semester Selection -->
+        <v-row class="d-flex justify-center">
+          <v-card class="d-flex justify-center text-center h-40 w-90" elevation="0">
+            <v-card-title class="text-h5 font-weight-medium d-flex align-center">
+              {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
+              <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="24" style="cursor: pointer;">
+                    mdi-chevron-down
+                  </v-icon>
+                </template>
+                <v-card elevation="6">
+                  <v-list>
+                    <v-list-item v-for="year in availableYears" :key="year">
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Fall', year)">
+                        Fall {{ year }}
+                      </v-btn>
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Spring', year)">
+                        Spring {{ year }}
+                      </v-btn>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-menu>
+            </v-card-title>
+          </v-card>
+        </v-row>
+
+        <!-- Tasks Section (Single Column) -->
+        <h2 class="text-center my-3">Tasks</h2>
+        <v-row class="d-flex flex-column align-center" no-gutters>
+          <v-col cols="12" class="d-flex justify-center my-2">
+            <v-row class="overflow-y-auto" style="max-height: 350px;">
+              <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
+                <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }" size="large"
+                  class="w-100 py-4 text-h6 justify-start" elevation="2" shaped @click="handleTaskClick(n)">
+                  Task Placeholder
+                </v-btn>
               </v-col>
             </v-row>
-
-            <!-- Progress Bar Below the Labels -->
-            <v-progress-linear v-model="progressValue" height="20" color="primary" rounded></v-progress-linear>
           </v-col>
         </v-row>
 
-
-
-
-
-
-        <!-- Tasks Section -->
-        <h2 class="text-center">Tasks</h2>
-
-        <v-spacer></v-spacer>
-
-        <v-row style="max-height: 400px; overflow-y: auto; margin-top: 0;">
-          <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
-            <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
-              class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped
-              @click="handleTaskClick(n)">
-              Task Placeholder
-            </v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
+        <v-row>
+          <v-col cols="12" class="my-4"></v-col>
         </v-row>
 
-        <!-- Experiences -->
-        <h2 class="text-center mt-4">Experiences</h2>
-
-        <v-row style="max-height: 400px; overflow-y: auto; margin-top: 0;">
-          <v-col cols="12" v-for="n in 10" :key="n" class="d-flex justify-center">
-            <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
-              class="pa-1 mb-1 text-left pl-3" width="85%" height="130%" elevation="2" shaped
-              @click="handleExperienceClick(n)">
-              Experience Placeholder
-            </v-btn>
+        <!-- Experiences Section (Single Column) -->
+        <h2 class="text-center mt-4 mb-3">Experiences</h2>
+        <v-row class="d-flex flex-column align-center" no-gutters>
+          <v-col cols="12" class="d-flex justify-center my-2">
+            <v-row class="overflow-y-auto" style="max-height: 350px;">
+              <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
+                <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
+                  size="large" class="w-100 py-4 text-h6 justify-start" elevation="2" shaped
+                  @click="handleExperienceClick(n)">
+                  Experience Placeholder
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-col>
 
-      <v-col class="d-flex flex-column align-center">
-        <!-- Points -->
-        <v-row>
-          <v-card class="pa-4 justify-center text-center accent clickable-card" height="80px" width="200px"
-            elevation="12" @click="handlePointClick">
-            <v-card-title class="text-subtitle-1">Points:</v-card-title>
-          </v-card>
-        </v-row>
+      <v-col cols="3" class="d-flex flex-column align-center">
+        <!-- Points (Top) -->
+        <v-row justify="center" align="center">
+  <v-col cols="auto">
+    <v-btn
+      class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
+      @click="handlePointClick"
+      elevation="6"
+      size="x-large"
+    >
+      Points
+    </v-btn>
+  </v-col>
+</v-row>
 
-        <v-spacer>
-        </v-spacer>
 
-        <!--Leaderboard-->
-        <v-row align-self="center">
-          <v-col cols="12" md="12" lg="12">
-            <v-card class="d-flex flex-column pa-4 text-center primary h-45 w-100 e-12">
-              <v-card-title class="text-subtitle-1">Leaderboard</v-card-title>
+
+
+        <!-- LeaderBoard (Center, with increased height) -->
+        <v-row align="center" justify="center" class="flex-grow-1">
+          <v-col>
+            <v-card class="d-flex flex-column text-center pa-4 primary w-85 ma-4" height="400px">
+              <v-card-title class="text-title-1">Leaderboard</v-card-title>
               <v-divider></v-divider>
-
               <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
-                @click="goToLeaderboard" height="50">
+                @click="goToLeaderboard" style="flex-grow: 1;">
                 Leaderboard Placeholder
               </v-btn>
             </v-card>
           </v-col>
         </v-row>
 
-        <v-spacer></v-spacer>
-
-        <!-- Latest Badge -->
-        <v-row class="justify-center">
-          <v-col class="text-center justify center align-center">
-            <p class="text-h6 font-weight-bold justify-center">Latest Badge:</p>
-            <v-img :src="elite" alt="Elite Badge" max-width="130" class="cursor-pointer justify-center"
-              @click="goToBadges" />
+        <!-- Latest Badge (Bottom) -->
+        <v-row align="end" justify="center" class="flex-grow-0">
+          <v-col>
+            <h4>Latest Badge:</h4>
+            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
+              @click="goToBadges"></v-img>
           </v-col>
         </v-row>
       </v-col>
 
+
+
+
     </v-row>
   </v-container>
 </template>
-
-
-
-
-
 
 <script setup>
 import { ref } from 'vue';
@@ -179,10 +153,6 @@ const handleTaskClick = (taskIndex) => {
 
 const goToBadges = () => {
   router.push('/badges');
-};
-
-const handlePointClick = () => {
-  router.push('/shop');
 };
 
 const goToCalendar = () => {

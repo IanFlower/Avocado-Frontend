@@ -47,14 +47,15 @@
           </v-card>
         </v-row>
 
-        <!-- Tasks Section (Single Column) -->
+        <!-- Tasks Section-->
         <h2 class="text-center my-3">Tasks</h2>
         <v-row class="d-flex flex-column align-center" no-gutters>
           <v-col cols="12" class="d-flex justify-center my-2">
             <v-row class="overflow-y-auto" style="max-height: 350px;">
               <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
                 <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }" size="large"
-                  class="w-100 py-4 text-h6 justify-start" elevation="2" shaped @click="handleTaskClick(n)">
+                  class="w-100 py-4 text-h6 d-flex justify-start align-center" elevation="2" shaped
+                  @click="handleTaskClick(n)">
                   Task Placeholder
                 </v-btn>
               </v-col>
@@ -66,14 +67,14 @@
           <v-col cols="12" class="my-4"></v-col>
         </v-row>
 
-        <!-- Experiences Section (Single Column) -->
+        <!-- Experiences Section -->
         <h2 class="text-center mt-4 mb-3">Experiences</h2>
         <v-row class="d-flex flex-column align-center" no-gutters>
           <v-col cols="12" class="d-flex justify-center my-2">
             <v-row class="overflow-y-auto" style="max-height: 350px;">
               <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
                 <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
-                  size="large" class="w-100 py-4 text-h6 justify-start" elevation="2" shaped
+                  size="large" class="w-100 py-4 text-h6 d-flex justify-start align-center" elevation="2" shaped
                   @click="handleExperienceClick(n)">
                   Experience Placeholder
                 </v-btn>
@@ -86,25 +87,17 @@
       <v-col cols="3" class="d-flex flex-column align-center">
         <!-- Points (Top) -->
         <v-row justify="center" align="center">
-  <v-col cols="auto">
-    <v-btn
-      class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
-      @click="handlePointClick"
-      elevation="6"
-      size="x-large"
-    >
-      Points
-    </v-btn>
-  </v-col>
-</v-row>
-
-
-
-
-        <!-- LeaderBoard (Center, with increased height) -->
+          <v-col cols="auto">
+            <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
+              @click="handlePointClick" elevation="6" size="x-large">
+              Points
+            </v-btn>
+          </v-col>
+        </v-row>
+        <!-- LeaderBoard -->
         <v-row align="center" justify="center" class="flex-grow-1">
-          <v-col>
-            <v-card class="d-flex flex-column text-center pa-4 primary w-85 ma-4" height="400px">
+          <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
+            <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
               <v-card-title class="text-title-1">Leaderboard</v-card-title>
               <v-divider></v-divider>
               <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
@@ -114,7 +107,6 @@
             </v-card>
           </v-col>
         </v-row>
-
         <!-- Latest Badge (Bottom) -->
         <v-row align="end" justify="center" class="flex-grow-0">
           <v-col>

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
-import StudentHome from "./views/StudentHome.vue"
+import StudentHome from "./views/StudentHome.vue";
+import AdminHome from "./views/AdminHome.vue";
+import AdminManageEvents from "./views/AdminManageEvents.vue";
 // import HomePage from "./views/HomePage.vue";
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
@@ -10,12 +12,18 @@ import StudentHome from "./views/StudentHome.vue"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-  //   { 
-  //     path: "/Admin", 
-  //     alias: "/AdminPage",
-  //     name: "AdminPage", 
-  //     component: AdminPage
-  //   },
+    { 
+      path: "/AdminHome", 
+      alias: "/AdminHome",
+      name: "AdminHome", 
+      component: AdminHome
+    },
+    { 
+      path: "/AdminManageEvents", 
+      alias: "/AdminManageEvents",
+      name: "AdminManageEvents", 
+      component: AdminManageEvents
+    },
     { 
       path: "/StudentHome", 
       alias: "/StudentHome",

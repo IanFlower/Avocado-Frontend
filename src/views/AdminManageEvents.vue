@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue"; // Importing Vue's reactivity and lifecycl
 import EventService from "../services/eventServices";
 
 const events = ref();
+const search = ref();
 
 const eventHeaders = [
     { title: "Event Name", key: "name" },
@@ -54,22 +55,28 @@ const createEvent = () => {
 </script>
 
 <template>
-    <v-data-table
-        :headers="eventHeaders"
-        :items="events"
-        item-value="name"
-    >
-    <template v-slot:top>
-      <v-toolbar flat>
-        <v-toolbar-title>Events</v-toolbar-title>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon color="#004761" class="me-2" size="small" @click="editItem(item)">
-        mdi-pencil
-      </v-icon>
-      <v-icon color="#A30D11" size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template>
-  </v-data-table>
-
+    <div>
+        <v-text-field
+            v-model="search"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+            class="ma-2"
+        ></v-text-field>
+        <v-data-table
+            :headers="eventHeaders"
+            :items="events"
+            :search="search"
+            item-value="name"
+            >
+            <template v-slot:item.actions="{ item }">
+                <v-icon color="#004761" class="me-2" size="small" @click="editItem(item)">
+                    mdi-pencil
+                </v-icon>
+                <v-icon color="#A30D11" size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
+            </template>
+        </v-data-table>
+    </div>
 </template>

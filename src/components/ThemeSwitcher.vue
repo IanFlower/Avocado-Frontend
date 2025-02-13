@@ -22,6 +22,10 @@ document.documentElement.setAttribute('data-theme', 'light');
     background-color: var(--accent) !important;
 }
 
+.v-data-table thead {
+    background-color: #D5DFE7;
+}
+
 /*For main buttons on a page ex: continue*/
 .primary-button {
   background-color: var(--primary) !important;

@@ -49,13 +49,10 @@ const handleCredentialResponse = async (response) => {
 
     await UserServices.getUserById(user.value.id) 
       .then((res) => {
-        if (res.data.role == "Admin" | res.data.role == "Student Worker" | res.data.role == "Professor") {
-          router.push({ name: 'AdminHome' });
-        }
-        else {
+
           router.push({ name: 'StudentHome' }
           );
-        }
+        
     })
     .catch((error) => {
       console.log("error", error);

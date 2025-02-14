@@ -123,7 +123,7 @@ onMounted(() => {
                     <v-btn variant="text">Dash Board</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Manage Users</v-btn>
+                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Comments</v-btn>

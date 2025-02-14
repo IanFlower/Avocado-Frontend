@@ -90,7 +90,7 @@
 
 
 
-      <v-col cols="3" class="d-flex flex-column align-center pl-16">
+      <v-col cols="3" class="d-flex flex-column align-center pl-16 ml-0">
         <v-row justify="center" align="center">
           <v-col cols="auto">
             <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"

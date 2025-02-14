@@ -94,7 +94,7 @@
         <v-row justify="center" align="center">
           <v-col cols="auto">
             <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
-              @click="handlePointClick" elevation="6" size="x-large">
+              @click="goToShop" elevation="6" size="x-large">
               Points
             </v-btn>
           </v-col>
@@ -149,6 +149,10 @@ const handleTaskClick = (taskIndex) => {
   clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
   tasksCompleted.value = clickedTask.value.filter(v => v).length;
   progressValue.value = (tasksCompleted.value / totalTasks) * 100;
+};
+
+const goToShop = () => {
+  router.push('/shop');
 };
 
 const goToBadges = () => {

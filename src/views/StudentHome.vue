@@ -3,7 +3,7 @@
     <v-row>
       <!-- Upcoming Events -->
       <v-col cols="12" sm="6" md="4" lg="3" xl="3" class="d-flex justify-start">
-        <v-card class="d-flex flex-column pa-4 text-center secondary" height="900" width="100%">
+        <v-card class="d-flex flex-column pa-4 text-center secondary" height="1000" width="100%">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
           <v-spacer></v-spacer>
@@ -21,8 +21,8 @@
       <v-col cols="6">
         <!-- Semester Selection -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-40 w-90" elevation="0">
-            <v-card-title class="text-h5 font-weight-medium d-flex align-center">
+          <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0">
+            <h1 class="text-h3 font-weight-medium d-flex align-center">
               {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
               <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
                 <template v-slot:activator="{ props }">
@@ -43,8 +43,12 @@
                   </v-list>
                 </v-card>
               </v-menu>
-            </v-card-title>
+            </h1>
           </v-card>
+        </v-row>
+
+        <v-row>
+          <v-col cols="6" class="my-4"></v-col>
         </v-row>
 
         <!-- Tasks Section-->
@@ -86,41 +90,41 @@
 
 
 
-      <v-row justify="end" class="flex-grow-1">
-  <v-col cols="3" class="d-flex flex-column align-center ml-n4"> 
-    <!-- Points (Top) -->
-    <v-row justify="center" align="center">
-      <v-col cols="auto">
-        <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
-          @click="handlePointClick" elevation="6" size="x-large">
-          Points
-        </v-btn>
-      </v-col>
-    </v-row>
-    <!-- LeaderBoard -->
-    <v-row align="center" justify="end" class="flex-grow-1">
-      <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
-        <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
-          <v-card-title class="text-title-1">Leaderboard</v-card-title>
-          <v-divider></v-divider>
-          <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
-            @click="goToLeaderboard" style="flex-grow: 1;">
-            Leaderboard Placeholder
-          </v-btn>
-        </v-card>
-      </v-col>
-    </v-row>
+      <v-col cols="3" class="d-flex flex-column align-center pl-2">
+        <v-row justify="center" align="center">
+          <v-col cols="auto">
+            <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
+              @click="handlePointClick" elevation="6" size="x-large">
+              Points
+            </v-btn>
+          </v-col>
+        </v-row>
 
-    <!-- Latest Badge (Bottom) -->
-    <v-row align="end" justify="center" class="flex-grow-0">
-      <v-col>
-        <h4>Latest Badge:</h4>
-        <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
-          @click="goToBadges"></v-img>
+        <!-- LeaderBoard -->
+        <v-row align="center" justify="end" class="flex-grow-1">
+          <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
+            <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
+              <v-card-title class="text-title-1">Leaderboard</v-card-title>
+              <v-divider></v-divider>
+              <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
+                @click="goToLeaderboard" style="flex-grow: 1;">
+                Leaderboard Placeholder
+              </v-btn>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Latest Badge (Bottom) -->
+        <v-row align="end" justify="center" class="flex-grow-0">
+          <v-col>
+            <h4>Latest Badge:</h4>
+            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
+              @click="goToBadges"></v-img>
+          </v-col>
+        </v-row>
       </v-col>
-    </v-row>
-  </v-col>
-</v-row>
+
+
 
 
 

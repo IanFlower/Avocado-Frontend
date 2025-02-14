@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
 import StudentHome from "./views/StudentHome.vue"
+import ManageExperiences from "./views/ManageExperiences.vue"
 // import HomePage from "./views/HomePage.vue";
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
@@ -27,6 +28,12 @@ const router = createRouter({
       alias: "/Login",
       name: "Login",
       component: Login,
+    },
+    {
+      path: "/ManageExperiences",
+      alias: "/ManageExperiences",
+      name: "ManageExperiences",
+      component: ManageExperiences,
     },
   //   {
   //     path: "/Create",

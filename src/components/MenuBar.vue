@@ -29,7 +29,7 @@ const resetMenu = () => {
 };
 function logout() {
     authServices.logoutUser(user.value.token)
-    .then(user.value = null, router.push({ name: 'Login' }))
+        .then(user.value = null, router.push({ name: 'Login' }))
 }
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
@@ -40,7 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <v-app>
+    <div>
         <!-- App Bar -->
         <v-app-bar app class="primary">
             <!-- Hamburger Menu Button -->
@@ -59,7 +59,7 @@ onMounted(() => {
 
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
             <v-btn>
-                <v-icon icon="mdi-bell" size="30"></v-icon>  
+                <v-icon icon="mdi-bell" size="30"></v-icon>
             </v-btn>
 
             <!-- User Dropdown Menu -->
@@ -140,5 +140,5 @@ onMounted(() => {
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
-    </v-app>
+    </div>
 </template>

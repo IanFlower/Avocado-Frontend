@@ -46,7 +46,7 @@ const handleCredentialResponse = async (response) => {
     });
 
     
-
+    console.log(user.value.id);
     await UserServices.getUserById(user.value.id) 
       .then((res) => {
         if (res.data.role == "Admin" | res.data.role == "Student Worker" | res.data.role == "Professor") {

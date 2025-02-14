@@ -6,8 +6,8 @@ import Login from "./views/Login.vue";
 import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
 import leaderBoard from "./views/leaderBoard.vue";
-
-
+import AdminHome from "./views/AdminHome.vue";
+// import HomePage from "./views/HomePage.vue";
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
@@ -15,12 +15,12 @@ import leaderBoard from "./views/leaderBoard.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-  //   { 
-  //     path: "/Admin", 
-  //     alias: "/AdminPage",
-  //     name: "AdminPage", 
-  //     component: AdminPage
-  //   },
+    { 
+      path: "/AdminHome", 
+      alias: "/AdminHome",
+      name: "AdminHome", 
+      component: AdminHome
+    },
     { 
       path: "/home", 
       alias: "/studentHome",

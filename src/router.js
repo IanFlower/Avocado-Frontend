@@ -1,7 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
-import StudentHome from "./views/StudentHome.vue";
+ import StudentHome from "./views/StudentHome.vue";
+ import Badges from "./views/Badges.vue";
+import Shop from "./views/Shop.vue";
+import Calendar from "./views/Calendar.vue";
+import leaderBoard from "./views/leaderBoard.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 // import HomePage from "./views/HomePage.vue";
@@ -25,10 +29,10 @@ const router = createRouter({
       component: AdminManageEvents
     },
     { 
-      path: "/StudentHome", 
-      alias: "/StudentHome",
+      path: "/home", 
+      alias: "/studentHome",
       name: "StudentHome", 
-      component: StudentHome,
+      component: StudentHome
     },
     {
       path: "/",
@@ -49,6 +53,30 @@ const router = createRouter({
   //     component: AdminView,
   //     props: route => ({ resumeId: route.query.resumeId })
   //   }
+  {
+    path: '/badges',
+    alias: '/BadgePage',
+    name: "badge",
+    component: Badges,
+  },
+  {
+    path: '/shop',
+    alias: '/shopPoints',
+    name: "shop",
+    component: Shop,
+  },
+  {
+    path: '/calendar',
+    alias: '/calendarPage',
+    name: "calendar",
+    component: Calendar,
+  },
+  {
+    path: '/leaderboard',
+    alias: '/leaderboardPage',
+    name: "leaderboard",
+    component: leaderBoard,
+  }
   ],
 });
 export default router;

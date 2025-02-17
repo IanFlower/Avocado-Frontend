@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import roleUser from '../services/roleUserServices';
-import editUser from '../components/editUser.vue';
+import Utils from '../config/utils';
+import EditUserDialog from '../components/EditUserDialog.vue';
 
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -16,6 +17,7 @@ const headers = ref([
 const students = ref([]); // List of students
 const selectedStudent = ref(null); // Currently selected student
 const editDialog = ref(false); // Controls edit dialog visibility
+
 const roles = ref([
   { id: 1, name: 'Student' },
   { id: 2, name: 'Student Worker' },
@@ -69,6 +71,9 @@ const showSnackbar = (message, color) => {
   snackbarMessage.value = message;
   snackbarColor.value = color === 'success' ? 'green' : 'red';
   snackbar.value = true;
+  setTimeout(() => {
+    snackbar.value = false;
+  }, 3000); 
 };
 
 const updateStudent = (item) => {
@@ -81,117 +86,108 @@ const editItem = (item) => {
   showSnackbar(`Viewing: ${item.fullName}`, 'success');
 };
 
-const deleteItem = (item) => {
-  // TODO: Implement function to delete student data via API
-};
-
 const goBack = () => {
   selectedStudent.value = null;
 };
 
 const saveUser = (user) => {
-  // TODO: Implement function to save updated user data via API
   showSnackbar('User updated successfully', 'success');
 };
 
 onMounted(() => {
   initialize();
 });
+
+const dialogModel = computed({
+  get: () => editDialog.value,
+  set: (value) => editDialog.value = value
+});
+
+const closeDialog = () => {
+  editDialog.value = false;
+};
+
+const saveDialog = (updatedPermission) => {
+  saveUser(selectedStudent.value);
+  closeDialog();
+};
 </script>
 
 <template>
-  <main>
-    <!-- v-btn Section ------------------ -->
-    <v-spacer></v-spacer>
-    <div class="pa-12" style="padding-top:12px">
-      <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 1 }" @click="toggleActive('Students')">
-        Students
-      </v-btn>
-      <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 4 }" @click="toggleActive('Professors')">
-        Professors
-      </v-btn>
-      <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 2 }" @click="toggleActive('Student Workers')">
-        Student Workers
-      </v-btn>
-      <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 3 }" @click="toggleActive('Admins')">
-        Admins
-      </v-btn>
-      <v-divider></v-divider>
-      <v-spacer></v-spacer>
+  <p class="pa-12" style="font-size: 50px;">Manage User Permissions</p>
+  <!-- v-btn Section -------------------------------------------- -->
+  <v-spacer></v-spacer>
+  <div>
+    <div class="pa-12">
+      <v-row>
+        <v-col cols="6">
+          <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 1 }" @click="toggleActive('Students')">
+            Students
+          </v-btn>
+          <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 4 }" @click="toggleActive('Professors')">
+            Professors
+          </v-btn>
+          <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 2 }" @click="toggleActive('Student Workers')">
+            Student Workers
+          </v-btn>
+          <v-btn class="secondary" size="x-large" :class="{ 'active-button': selectedButton === 3 }" @click="toggleActive('Admins')">
+            Admins
+          </v-btn>
+        </v-col>
+        <v-col cols="6">
+          <v-text-field 
+            v-model="search"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+            class="ma-2"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-data-table
+        :headers="headers"
+        :items="students"
+        :search="search"
+        item-value="fullName"
+      >
+        <template v-slot:item.actions="{ item }">
+          <v-icon color="#004761" size="large" class="pa-6" @click="editItem(item)">mdi-shield</v-icon> 
+          <v-icon color="#004761" size="large" @click="deleteItem(item)">mdi-pencil-box-outline</v-icon>  
+        </template>
+      </v-data-table>
+
+      <!-- Edit User Dialog -->
+      <EditUserDialog
+        :dialog="dialogModel"
+        :selectedStudent="selectedStudent"
+        @update:dialog="editDialog = $event" 
+        @save="saveDialog"
+      />
     </div>
-    <!-- table Section ------------------ -->
-
-    <v-container fluid class="no-padding">
-      <v-row class="pa-4">
-        <!-- Toolbar Section ------------------ -->
-        <v-col cols="12" class="pa-4">
-          <v-toolbar flat color="#F7F6FE">
-            <v-toolbar-title style="margin-left: 20px;"><b>Students List</b></v-toolbar-title>
-            <v-divider class="mx-4" inset vertical></v-divider>
-
-            <div style="width:30%">
-              <!-- Search bar to filter students -->
-              <v-text-field
-                v-model="search"
-                label="Search"
-                prepend-inner-icon="mdi-magnify"
-                variant="outlined"
-                hide-details
-                single-line
-              ></v-text-field>
-            </div>
-            <v-divider class="mx-4" inset vertical></v-divider>
-          </v-toolbar>
-        </v-col>
-      </v-row>
-
-      <v-row class="no-padding">
-        <v-col cols="12" class="pa-4"> <!-- Added padding -->
-          <v-card class="pa-4"> <!-- Added padding around the table -->
-            <v-data-table
-              :headers="headers"
-              :items="students"
-              :search="search"
-              :sort-by="[{ key: 'fullName', order: 'asc' }]"
-            >
-              <!-- Actions Column with View and Delete -->
-              <template v-slot:item.actions="{ item }">
-                <v-icon icon="mdi-eye" color="#624DE3" class="me-2" size="small" @click="editItem(item)">
-                  mdi-pencil
-                </v-icon>
-                <v-icon size="small" color="#A30D11" @click="deleteItem(item)">
-                  mdi-delete
-                </v-icon>
-              </template>
-            </v-data-table>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-
-    <!-- Edit User Dialog -->
-    <editUser
-      :dialog="editDialog"
-      :user="selectedStudent"
-      :roles="roles"
-      @update:dialog="editDialog = $event"
-      @save="saveUser"
-    ></editUser>
-
-    <!-- Snackbar for user notifications -->
-    <v-snackbar v-model="snackbar" :color="snackbarColor" top right timeout="3000">
-      {{ snackbarMessage }}
-    </v-snackbar>
-  </main>
+  </div>
 </template>
 
 <style scoped>
-.v-btn {
-  border-radius: 40px 40px 0 0;
-}
 .active-button {
-  background-color: #1976d2 !important;
+  background-color: #004761 !important;
   color: white !important;
 }
-</style>
 
+.table-container {
+  padding: 0 16px; 
+}
+.headline {
+  font-weight: bold;
+}
+.custom-checkbox {
+  margin-bottom: 4px; 
+}
+.full-height {
+  height: 100%;
+}
+.v-divider.full-height {
+  height: 100%;
+}
+</style>

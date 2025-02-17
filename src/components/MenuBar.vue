@@ -99,8 +99,8 @@ onMounted(() => {
                     <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title>
                     <v-divider></v-divider>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text">Dash Board</v-btn>
+                <v-list-item to="StudentHome">
+                    <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Profile</v-btn>
@@ -120,8 +120,8 @@ onMounted(() => {
                 <v-divider></v-divider>
             </v-list-item>
             <v-list>
-                <v-list-item>
-                    <v-btn variant="text">Dash Board</v-btn>
+                <v-list-item to="AdminHome">
+                    <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Manage Users</v-btn>
@@ -132,8 +132,8 @@ onMounted(() => {
                 <v-list-item>
                     <v-btn variant="text">Student Approval</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text">Manage Flight Plans</v-btn>
+                <v-list-item to="AdminManageEvents">
+                    <v-btn variant="text">Manage Events</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>

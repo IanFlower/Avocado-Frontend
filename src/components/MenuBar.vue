@@ -38,7 +38,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
+
         <!-- App Bar -->
         <v-app-bar app class="primary">
             <!-- Hamburger Menu Button -->
@@ -122,7 +122,7 @@ onMounted(() => {
                     <v-btn variant="text" to="/adminHome">Dash Board</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Manage Users</v-btn>
+                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Comments</v-btn>
@@ -138,5 +138,9 @@ onMounted(() => {
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
+<<<<<<< HEAD
     </div> 
+=======
+
+>>>>>>> a744209143ce86f9e5bc5330b9659a58085ba4ee
 </template>

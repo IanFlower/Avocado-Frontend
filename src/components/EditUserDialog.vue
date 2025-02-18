@@ -2,7 +2,7 @@
     <v-dialog v-model="dialogModel" height="800px" max-width="1000px">
         <v-card class="d-flex flex-column">
             <v-card-title class="bg-secondary text-center sticky-title">
-                <span>Edit permission - {{ selectedStudent?.fullName }}</span>
+                <span>Edit permission - {{ selectedUser?.fullName }}</span>
             </v-card-title>
             <v-card-text class="flex-grow-1 d-flex">
                 <v-container class="pa-0">
@@ -14,7 +14,7 @@
                             <v-checkbox v-model="localPermission.readStudentInfo" label="Student Info"
                                 class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.readStrengths" label="Strength"
-                                class="mb-1"></v-checkbox>
+                                class="mb-1"></v-checkbox> 
                             <v-checkbox v-model="localPermission.readLogs" label="Logs" class="mb-1"></v-checkbox>
                             <p class="font-weight-bold" align="center">Add Only Permissions</p>
                             <v-checkbox v-model="localPermission.addExperience" label="Experience"
@@ -56,7 +56,7 @@ import permissionServices from '../services/permissionServices';
 // Define props for the component
 const props = defineProps({
     dialog: Boolean,
-    selectedStudent: Object,
+    selectedUser: Object,
 });
 
 // Define emits for the component
@@ -90,12 +90,12 @@ const localPermission = ref({
 
 // Function to initialize the component state
 const initialize = () => {
-    if (props.selectedStudent) {
-        localPermission.value.userId = props.selectedStudent.id;
-        permissionServices.findByUser(props.selectedStudent.id)
+    if (props.selectedUser) {
+        localPermission.value.userId = props.selectedUser.id;
+        permissionServices.findByUser(props.selectedUser.id)
             .then(response => {
                 if (response.data === null) {
-                    localPermission.value.userId = props.selectedStudent.id;
+                    localPermission.value.userId = props.selectedUser.id;
                 }
                 else {
                     localPermission.value = response.data;
@@ -107,9 +107,9 @@ const initialize = () => {
     }
 };
 
-// Watch for changes in the selected student and re-initialize
-watch(() => props.selectedStudent, (newStudent) => {
-    if (newStudent) {
+// Watch for changes in the selected user and re-initialize
+watch(() => props.selectedUser, (newUser) => {
+    if (newUser) {
         initialize();
     }
 });
@@ -126,7 +126,7 @@ const closeDialog = () => {
 
 // Function to save the permissions
 const saveDialog = () => {
-    localPermission.value.userId = props.selectedStudent.id;
+    localPermission.value.userId = props.selectedUser.id;
     permissionServices.updateByUserId(localPermission.value.userId, localPermission.value)
         .then(response => {
             console.log(response.data);

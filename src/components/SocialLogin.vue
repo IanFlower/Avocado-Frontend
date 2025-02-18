@@ -51,7 +51,7 @@ const handleCredentialResponse = async (response) => {
       .then((res) => {
 
           router.push({ name: 'StudentHome' }
-          );
+          ); 
         
     })
     .catch((error) => {

@@ -138,9 +138,4 @@ onMounted(() => {
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
-<<<<<<< HEAD
-    </div> 
-=======
-
->>>>>>> a744209143ce86f9e5bc5330b9659a58085ba4ee
-</template>
+</template> 

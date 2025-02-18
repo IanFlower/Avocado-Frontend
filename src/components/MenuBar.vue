@@ -13,7 +13,7 @@ const name = ref(""); // Reactive variable to store the user's full name
 const logoURL = ref(""); // Reactive variable for the logo URL
 const router = useRouter(); // Vue Router instance for navigation
 const admin = ref(null); // Reactive variable to store admin-related user data
-const drawer = ref(null); // Reactive variable to store admin-related user data
+const drawer = ref(false); // Reactive variable to store admin-related user data
 
 
 // Function to retrieve user data from local storage and fetch additional user info

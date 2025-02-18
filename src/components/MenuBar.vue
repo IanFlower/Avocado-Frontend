@@ -40,6 +40,7 @@ onMounted(() => {
 </script>
 
 <template>
+
         <!-- App Bar -->
         <v-app-bar app class="primary">
             <!-- Hamburger Menu Button -->
@@ -139,4 +140,5 @@ onMounted(() => {
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
+
 </template>

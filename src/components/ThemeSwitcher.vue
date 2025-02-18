@@ -69,5 +69,7 @@ html *
 {
     font-family: 'Inter' !important;
 }
-
+.v-data-table thead {
+    background-color: #D5DFE7;
+}
 </style>

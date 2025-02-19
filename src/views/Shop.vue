@@ -29,8 +29,8 @@
       </v-col>
     </v-row>
 
-    <!-- Top Row witih the images for Suit, Shirt, Pants and Skirt -->
-    <v-row>
+      <!-- Top Row with the images for Suit, Shirt, Pants, and Skirt -->
+      <v-row>
       <v-col v-for="(item, index) in filteredItems.slice(0, 4)" :key="item.name" cols="12" sm="6" md="3" class="d-flex justify-center">
         <v-img :src="item.image" max-width="200px" aspect-ratio="1"></v-img>
       </v-col>
@@ -48,7 +48,7 @@
       </v-col>
     </v-row>
 
-    <!-- Bottom row with the Images for Dress, Shoes, Belt and Tie -->
+    <!-- Bottom row with the Images for Dress, Shoes, Belt, and Tie -->
     <v-row>
       <v-col v-for="(item, index) in filteredItems.slice(4, 8)" :key="item.name" cols="12" sm="6" md="3" class="d-flex justify-center">
         <v-img :src="item.image" max-width="200px" aspect-ratio="1"></v-img>
@@ -72,43 +72,44 @@
 
 <script setup>
 
-//All import statements
-import suit from '../assets/suit.png';
-import shirt from '../assets/shirt.png';
-import pants from '../assets/pants.png';
-import skirt from '../assets/skirt.png';
-import dress from '../assets/dress.png';
-import shoes from '../assets/shoes.png';
-import belt from '../assets/belt.png';
-import tie from '../assets/tie.png';
-
-import { computed, ref } from 'vue';
-
+import { computed, ref, onMounted } from 'vue';
+import rewardServices from "../services/rewardServices";
 import { useRouter } from 'vue-router'; 
-  
-  const router = useRouter();
-  
+import Utils from "../config/utils";
 
-  //takes you back to the home page
-  const goHome = () => {
+const router = useRouter();
+
+//takes you back to the home page
+const goHome = () => {
     router.push('/home'); 
-  };
+};
 
-const search = ref(''); //search
-const filters = ref(['All']); //the filter... we can change this later.
+const search = ref(''); //search bar stuff
+const filters = ref(['All']); //the filter stuff
+const items = ref([]);
 
-//List of each one with name, points and the image corresponding to the item
-const items = ref([
-  { name: 'Suit', points: 100, image: suit },
-  { name: 'Shirt', points: 50, image: shirt },
-  { name: 'Pants', points: 50, image: pants },
-  { name: 'Skirt', points: 50, image: skirt },
-  { name: 'Dress', points: 75, image: dress },
-  { name: 'Shoes', points: 25, image: shoes },
-  { name: 'Belt', points: 25, image: belt },
-  { name: 'Tie', points: 25, image: tie }
-]);
+const initialize = () => {
+    const store = Utils.getStore();
+    rewardServices.getAllrewards({
+        store,
+        attributes: ['id', 'rewardName', 'purchasePoints', 'image']
+    })
+    .then(response => {
+        items.value = response.map(reward => ({
+            name: reward.rewardName,
+            points: reward.purchasePoints,
+            image: reward.image
+        }));
+    })
+    .catch(error => {
+        console.error("Error fetching rewards:", error);
+        items.value = [];
+    });
+};
 
+onMounted(() => {
+    initialize();
+});
 
 //how to filter the items... for now
 const filteredItems = computed(() =>
@@ -117,7 +118,6 @@ const filteredItems = computed(() =>
   )
 );
 </script>
-
 
 <style scoped>
 .v-card {

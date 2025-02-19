@@ -13,9 +13,8 @@ const name = ref(""); // Reactive variable to store the user's full name
 const logoURL = ref(""); // Reactive variable for the logo URL
 const router = useRouter(); // Vue Router instance for navigation
 const admin = ref(null); // Reactive variable to store admin-related user data
-const drawer = ref(null); // Reactive variable to store admin-related user data
-
-
+const drawer = ref(false); // Set drawer to false to keep it closed by default
+  
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
     const storedUser = Utils.getStore("user"); // Retrieve user from local storage
@@ -23,20 +22,19 @@ const resetMenu = () => {
         user.value = storedUser;
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
         name.value = storedUser.fName + " " + storedUser.lName; // Concatenate full name
-
-
     }
 };
+
 function logout() {
     authServices.logoutUser(user.value.token)
     .then(user.value = null, router.push({ name: 'Login' }))
 }
+
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
     logoURL.value = ocLogo; // Set logo URL
     resetMenu(); // Initialize user data
 });
-
 </script>
 
 <template>
@@ -91,7 +89,7 @@ onMounted(() => {
                 </v-card>
             </v-menu>
         </v-app-bar>
-
+ 
         <!-- Navigation Drawer (Dropdown on the left) -->
         <v-navigation-drawer v-model="drawer" class="primary opacity-1">
             <v-list>
@@ -124,7 +122,7 @@ onMounted(() => {
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Manage Users</v-btn>
+                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Comments</v-btn>
@@ -141,4 +139,4 @@ onMounted(() => {
             </v-list>
         </v-navigation-drawer>
     </div>
-</template>
+</template> 

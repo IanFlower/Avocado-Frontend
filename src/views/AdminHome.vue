@@ -5,7 +5,7 @@
     <v-container>
         <v-row class="pa-5">
             <v-col align="center" class="mr-4">
-                <v-card class="secondary" link>
+                <v-card class="secondary" link to="/manageUsers"> 
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">

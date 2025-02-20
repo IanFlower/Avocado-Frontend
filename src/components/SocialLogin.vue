@@ -67,25 +67,33 @@ const handleCredentialResponse = async (response) => {
     });
 
   await UserServices.getUserById(user.value.id)
-    .then((res) => {
-      // Create RoleUser with userId and roleId=1 
-      RoleUserServices.getRoleByUserId(user.value.id)
-        .then((res) => {
+  .then(async (res) => {
+    try {
+      // Create RoleUser with userId and roleId=1 if not found
+      const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
+      
+      if ([4, 2, 3].includes(roleRes.data.roleId)) { 
+        router.push({ name: 'AdminHome' });
+      } else {
+        router.push({ name: 'StudentHome' }); 
+      }
+    } catch (error) {
+      // If the role does not exist, create it and redirect to StudentHome
+      RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 })
+        .then(() => {
           router.push({ name: 'StudentHome' });
-        })  
-        .catch((res) =>{
-            RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 }) 
-              .then(() => {
-                console.log("RoleUser created"); 
-                router.push({ name: 'StudentHome' });  
+        })
+        .catch((error) => {
+          console.error("Error creating RoleUser", error);
+        });
+    }
+  })
+  .catch((error) => {
+    console.error("Error fetching user", error);
+  });
+    
 
-              })
-              .catch((error) => {
-                console.log("error creating RoleUser", error);
-              });
-          });      
-
-    })
+    
       
 };
 

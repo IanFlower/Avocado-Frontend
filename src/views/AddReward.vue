@@ -26,7 +26,7 @@
                 </v-col>
               </v-row>
             </v-card-title>
-            
+  
             <v-data-table
               :headers="headers"
               :items="filteredUsers"
@@ -99,12 +99,9 @@
   };
   
   const editRewards = () => {
-    console.log("Edit Rewards Clicked");
+    router.push({ name: "addReward" });
   };
   
   onMounted(initialize);
   </script>
-  
-  <style scoped>
-  </style>
   

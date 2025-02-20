@@ -21,12 +21,12 @@
   
                 <v-col cols="2" sm="4" class="text-right">
                   <v-btn color="#004761" dark @click="editRewards" class="w-auto">
-                    <v-icon left>mdi-plus</v-icon> Edit Rewards
+                    <v-icon left>mdi-plus</v-icon> Add Reward
                   </v-btn>
                 </v-col>
               </v-row>
             </v-card-title>
-            
+  
             <v-data-table
               :headers="headers"
               :items="filteredUsers"
@@ -99,12 +99,9 @@
   };
   
   const editRewards = () => {
-    console.log("Edit Rewards Clicked");
+    router.push({ name: "AddReward" });
   };
   
   onMounted(initialize);
   </script>
-  
-  <style scoped>
-  </style>
   

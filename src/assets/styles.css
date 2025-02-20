@@ -2,6 +2,7 @@
     --background-color: #ffffff;
     --primary: #811420;
     --secondary: #D5DFE7;
+    --tertiary: #004761;
     --accent: #F9C634;
 }
 [data-theme="dark"] {

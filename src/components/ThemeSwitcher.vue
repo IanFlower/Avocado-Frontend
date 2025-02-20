@@ -16,6 +16,12 @@ document.documentElement.setAttribute('data-theme', 'light');
     background-color: var(--secondary) !important;
 }
 
+/* OC Blue */
+.secondary{
+    color: black !important;
+    background-color: var(--secondary) !important;
+}
+
 /* OC Gold */
 .accent{
     color: black !important;
@@ -32,10 +38,18 @@ document.documentElement.setAttribute('data-theme', 'light');
   color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
-/*For secoundary buttons on a page ex: cancel*/
+
+/*For secondary buttons on a page ex: cancel*/
 .secondary-button {
   background-color: var(--secondary) !important;
   color: black !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/*For tertiary buttons on a page ex: add*/
+.tertiary-button {
+  background-color: var(--tertiary) !important;
+  color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 

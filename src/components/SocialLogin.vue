@@ -14,7 +14,6 @@ const user = ref({});
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
   const client = import.meta.env.VITE_APP_CLIENT_ID;
-  console.log(client);
   window.google.accounts.id.initialize({
     client_id: client,
     cancel_on_tap_outside: false,
@@ -46,7 +45,6 @@ const handleCredentialResponse = async (response) => {
     });
 
     
-    console.log(user.value.id);
     await UserServices.getUserById(user.value.id) 
       .then((res) => {
         if (res.data.role == "Admin" | res.data.role == "Student Worker" | res.data.role == "Professor") {

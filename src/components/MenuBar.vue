@@ -133,7 +133,7 @@ onMounted(() => {
                     <v-btn variant="text">Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Manage Flight Plans</v-btn>
+                    <v-btn variant="text" @click="router.push({ name: 'ManageExperiencesTasks' })">Manage Flight Plans</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>

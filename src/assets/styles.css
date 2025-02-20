@@ -3,6 +3,7 @@
     --primary: #811420;
     --secondary: #D5DFE7;
     --accent: #F9C634;
+    --alt: #004761;
 }
 [data-theme="dark"] {
     --background-color: #292929;

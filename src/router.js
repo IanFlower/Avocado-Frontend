@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
 import StudentHome from "./views/StudentHome.vue"
-import ManageExperiences from "./views/ManageExperiences.vue"
+import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
 // import HomePage from "./views/HomePage.vue";
 // import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
@@ -30,10 +30,10 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/ManageExperiences",
-      alias: "/ManageExperiences",
-      name: "ManageExperiences",
-      component: ManageExperiences,
+      path: "/ManageExperiencesTasks",
+      alias: "/ManageExperiencesTasks",
+      name: "ManageExperiencesTasks",
+      component: ManageExperiencesTasks,
     },
   //   {
   //     path: "/Create",

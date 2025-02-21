@@ -12,12 +12,7 @@ const role = {
     },
     // Get all roles
     getRoles() {
-        return apiClient.get('/roles')
-            .then(response => response.data)
-            .catch(error => {
-                console.error("Error fetching roles:", error); 
-                throw error;
-            });
+        return apiClient.get('/roles') ;
     },
 };
 

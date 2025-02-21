@@ -9,7 +9,7 @@ import leaderBoard from "./views/leaderBoard.vue";
 import AdminHome from "./views/AdminHome.vue";
 import RedeemPoints from "./views/AdminRedeem.vue";
 import AdminShop from "./views/AdminShop.vue";
-import AddReward from "./views/AddReward.vue";
+import AddReward from "./components/AddReward.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
@@ -90,7 +90,6 @@ const router = createRouter({
       name: "AdminShop",
       component: AdminShop,
     },
-
     {
       path: '/AddReward',
       alias: '/AddReward',

@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref,  onMounted } from "vue";
 import { useRouter } from "vue-router";
 import userServices from "../services/userServices.js";
 
@@ -53,10 +53,10 @@ const initialize = () => {
         points: user.points
       }));
     })
-    .catch(error => {
-      users.value = [];
+    .catch(() => {
     });
 };
+
 
 const goToRedeemPoints = (userId) => {
   router.push({ name: "redeemPoints", params: { id: userId } });
@@ -64,18 +64,10 @@ const goToRedeemPoints = (userId) => {
 
 const editRewards = () => {
   router.push({ name: "AddReward" });
+  console.log("Edit Rewards Clicked");
+
 };
 
 onMounted(initialize);
 </script>
 
-<style scoped>
-.custom-btn {
-  background-color: #004761;
-  color: white;
-}
-
-.custom-btn:hover {
-  background-color: #003b4e;
-}
-</style>

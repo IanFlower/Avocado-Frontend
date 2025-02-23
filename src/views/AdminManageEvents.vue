@@ -3,12 +3,16 @@
 import { ref, onMounted, computed } from "vue"; // Importing Vue's reactivity and lifecycle hooks
 import EventService from "../services/eventServices";
 import AddEventDialog from "../components/AddEventDialog.vue";
+import DeleteDialog from "../components/DeleteDialog.vue";
 
 
 const eventDialog = ref(false); // Controls new edit dialog visibility
+const deleteDialog = ref(false); // Controls new edit dialog visibility
 const newSelectedUser = ref(null); 
 const selectedUser = ref(null); // Currently selected user
 const editDialog = ref(false); // Controls edit dialog visibility
+const category = "event"; // must be lowercase
+const currentItem = ref();
 
 const events = ref();
 const search = ref();
@@ -53,6 +57,11 @@ const dialogModel = computed({
   get: () => editDialog.value,
   set: (value) => editDialog.value = value
 });
+
+const deleteItem = (item) => {
+    deleteDialog.value = true; 
+    currentItem.value = item;
+}
 
 // const closeDialog = () => {
 //   editDialog.value = false;
@@ -117,8 +126,16 @@ const dialogModel = computed({
 
             <AddEventDialog
             :dialog="eventDialog"
-            @update:dialog="eventDialog = $event" 
-            @save="saveDialog"
+            @add="getAllEvents()"
+            @update:dialog="eventDialog = $event"
+            />
+
+            <DeleteDialog 
+            :dialog="deleteDialog"
+            :item="currentItem" 
+            :category="category"
+            @update:dialog="deleteDialog = $event"
+            @delete="getAllEvents()"
             />
         </div>
     </div>

@@ -6,14 +6,13 @@
     <div class="pa-12">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="search" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
+          <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
             single-line class="ma-2"></v-text-field>
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
           <!-- Use the custom class for color -->
           <v-btn class="custom-btn" @click="editRewards">
-            <v-icon left>mdi-plus</v-icon>
-            Add Reward
+            Edit Rewards
           </v-btn>
         </v-col>
       </v-row>
@@ -28,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref,  onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import userServices from "../services/userServices.js";
 
@@ -43,31 +42,39 @@ const headers = ref([
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
 
-const initialize = () => {
-  userServices.getAllUsers()
-    .then(response => {
-      users.value = response.data.map(user => ({
-        ...user,
-        fullName: `${user.fName} ${user.lName}`,
-        id: user.id,
-        points: user.points
-      }));
-    })
-    .catch(() => {
-    });
+const initialize = async () => {
+  try {
+    const response = await userServices.getAllUsers();
+    users.value = response.data.map(user => ({
+      fullName: `${user.fName} ${user.lName}`,
+      id: user.id,
+      points: user.points
+    }));
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
 };
 
-
-const goToRedeemPoints = (userId) => {
-  router.push({ name: "redeemPoints", params: { id: userId } });
+const goToRedeemPoints = () => {
+  //router.push({ name: "redeemPoints", params: { id: userId } });
+  console.log("redeem points works! with " )
 };
 
 const editRewards = () => {
-  router.push({ name: "AddReward" });
+  router.push({ name: "ViewRewards" });
   console.log("Edit Rewards Clicked");
-
 };
 
 onMounted(initialize);
 </script>
 
+<style scoped>
+.custom-btn {
+  background-color: #004761;
+  color: white;
+}
+
+.custom-btn:hover {
+  background-color: #003b4e;
+}
+</style>

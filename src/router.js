@@ -7,9 +7,10 @@ import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
 import leaderBoard from "./views/leaderBoard.vue";
 import AdminHome from "./views/AdminHome.vue";
-import RedeemPoints from "./views/AdminRedeem.vue";
+//import RedeemPoints from "./views/AdminRedeem.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
+import AdminViewRewards from "./views/AdminViewRewards.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
@@ -77,18 +78,25 @@ const router = createRouter({
       component: leaderBoard,
     },
 
-    {
-      path: '/adminRedeem',
-      alias: '/admindRedeemPoints',
-      name: 'redeemPoints',
-      component: RedeemPoints,
-    },
+    //{
+    //  path: '/adminRedeem',
+     // alias: '/admindRedeemPoints',
+     // name: 'redeemPoints',
+     // component: RedeemPoints,
+    //},
   
     {
       path: '/AdminShop',
       alias: '/adminShop',
       name: "AdminShop",
       component: AdminShop,
+    },
+
+    {
+      path: '/ViewRewards',
+      alias: '/AdminViewRewards',
+      name: 'ViewRewards',
+      component: AdminViewRewards,
     },
     {
       path: '/AddReward',

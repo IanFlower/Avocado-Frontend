@@ -6,15 +6,8 @@
     <div class="pa-12">
       <v-row>
         <v-col cols="6">
-          <v-text-field 
-            v-model="searchQuery" 
-            label="Search" 
-            prepend-inner-icon="mdi-magnify" 
-            variant="outlined" 
-            hide-details 
-            single-line 
-            class="ma-2"
-          />
+          <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
+            hide-details single-line class="ma-2" />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
           <v-btn class="custom-btn" @click="showAddRewardDialog = true">
@@ -23,30 +16,31 @@
         </v-col>
       </v-row>
 
-      <v-data-table 
-        :headers="headers" 
-        :items="rewards" 
-        :search="searchQuery" 
-        item-value="name"
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="rewards" :search="searchQuery" item-value="name" class="elevation-1">
         <template v-slot:item.name="{ item }">
           <span>{{ item.name }}</span>
         </template>
-        
+
         <template v-slot:item.desc="{ item }">
           <span>{{ item.desc }}</span>
         </template>
-        
+
         <template v-slot:item.purchaseCount="{ item }">
           <span>{{ item.purchaseCount }}</span>
         </template>
-        
+
         <template v-slot:item.actions="{ item }">
-          <v-btn icon class="transparent no-padding" @click="goToRedeemPoints(item.id)">
-            <v-icon color="#004761" size="large">mdi-cart</v-icon>
+          <!-- Edit Button -->
+          <v-btn icon class="transparent no-padding" @click="openEditRewardDialog(item)">
+            <v-icon color="#004761" size="large">mdi-pencil</v-icon>
+          </v-btn>
+
+          <!-- Delete Button -->
+          <v-btn icon class="transparent no-padding" @click="openDeleteRewardDialog(item)">
+            <v-icon color="#A30D11" size="large">mdi-delete</v-icon>
           </v-btn>
         </template>
+
       </v-data-table>
     </div>
   </div>
@@ -58,12 +52,48 @@
         Add Reward
       </v-card-title>
       <v-card-text>
-        <!-- AddReward Component with event listener to close modal on success -->
         <AddReward @rewardAdded="closeAddRewardDialog" />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="red" text @click="showAddRewardDialog = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+<!-- Edit Reward Dialog -->
+<v-dialog v-model="editRewardDialogBox" max-width="500px">
+  <v-card>
+    <v-card-title>Edit Reward</v-card-title>
+    <v-card-text>
+
+      <!-- Use v-show or make sure selectedReward is populated correctly -->
+      <EditReward 
+        v-if="selectedReward && selectedReward.value.id" 
+        :rewardId="selectedReward.value.id" 
+        @rewardUpdated="initialize"
+      />
+      <div v-else>
+        <p>Loading reward...</p>
+      </div>
+    </v-card-text>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="red" text @click="editRewardDialogBox = false">Cancel</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+
+  <!-- Delete Reward Dialog -->
+  <v-dialog v-model="deleteRewardDialogBox" max-width="400px">
+    <v-card>
+      <v-card-title>Delete Reward</v-card-title>
+      <v-card-text>
+        <DeleteReward :reward="selectedReward" @rewardDeleted="initialize" />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="deleteRewardDialogBox = false">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -73,6 +103,12 @@
 import { ref, onMounted } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import AddReward from "../components/AddReward.vue";
+import EditReward from "../components/EditReward.vue";
+import DeleteReward from "../components/DeleteReward.vue";
+
+const editRewardDialogBox = ref(false);
+const deleteRewardDialogBox = ref(false);
+const selectedReward = ref(null);
 
 // Rewards data and search
 const rewards = ref([]);
@@ -103,10 +139,24 @@ const initialize = () => {
     });
 };
 
-// Close the modal after saving the reward
 const closeAddRewardDialog = () => {
   showAddRewardDialog.value = false;
+  initialize();
+};
+
+// Open Edit Reward Dialog
+const openEditRewardDialog = (reward) => {
+  console.log('Selected Reward:', selectedReward.value);  // Corrected logging
+  selectedReward.value = reward; // Corrected assignment
+  editRewardDialogBox.value = true; 
+};
+
+// Open Delete Reward Dialog
+const openDeleteRewardDialog = (reward) => {
+  selectedReward.value = reward;
+  deleteRewardDialogBox.value = true;
 };
 
 onMounted(initialize);
 </script>
+

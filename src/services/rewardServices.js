@@ -8,13 +8,24 @@ const rewardService = {
   },
 
   // Get a specific reward by ID
-  getrewardById(rewardId) {
+  getrRewardById(rewardId) {
     return apiClient.get(`/reward/${rewardId}`);
   },
 
-  AddReward(reward)
+  //creates a new reward
+  addReward(reward)
   {
     return apiClient.post(`/reward/`, reward);
+  },
+
+  updateReward(rewardId)
+  {
+    return apiClient.put(`/reward/${rewardId}`);
+  },
+
+  DeleteReward(rewardId)
+  {
+    return apiClient.delete(`/reward/${rewardId}`);
   }
 };
 

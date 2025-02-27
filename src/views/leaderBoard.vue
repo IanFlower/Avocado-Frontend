@@ -1,38 +1,51 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row>
-      <v-col cols="12" style="height: 100%" md="1">
-        <!-- Sidebar content goes here -->
-        <v-card style="height: 100%" class = "primary">
-          <v-card-title>Leaderboard</v-card-title>
-          <v-tabs v-model="tab" direction="vertical"> 
-            <v-tab>Top 8</v-tab>
-            <v-tab>Recent</v-tab>
-            <v-tab>All Time</v-tab>
-          </v-tabs>
-        </v-card>
-      </v-col>
-      <v-col>
-        <!-- Main content goes here -->
-        <v-card height="100%">
-          <v-card-text>
-            <!-- Add your main content here -->
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+  <v-container>
+      <v-card-title class="text-h1 text-center">
+        Top Point Leaders
+      </v-card-title>
+      <v-card-text>
+        <v-divider></v-divider>
+        <v-row>
+          <v-col cols="5" md="5" class="pa-6 ma-6">
+            <v-card outlined class="bg-secondary">
+              <v-row>
+                <v-col cols="2">
+                  <v-card class="bg-primary fill-height pa-4 text-center">
+                    <span class="text-h2">1</span>
+                  </v-card>
+                </v-col>
+
+                <v-col cols="2">
+                  <v-avatar size="150">
+                    Profile Picture
+                  </v-avatar>
+                </v-col>
+                <v-col>
+                  <v-card-title class="text-h3 font-weight-bold">Ian Fowler</v-card-title>
+                  <v-card-text>
+                    Major
+                    <v-spacer></v-spacer>
+                    <p>points</p>
+                  </v-card-text>
+                </v-col>
+              </v-row>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-card-text>
   </v-container>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from "vue";
 
-const tab = ref(0)
+const user = ref(null);
+
+
+const getStudents = () => {
+  
+};
 </script>
 
 <style scoped>
-.v-card {
-  height: 100%;
-}
 </style>
-

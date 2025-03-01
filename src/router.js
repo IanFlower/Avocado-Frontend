@@ -1,34 +1,48 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
-import StudentHome from "./views/StudentHome.vue"
+ import StudentHome from "./views/StudentHome.vue";
+ import Badges from "./views/Badges.vue";
+import Shop from "./views/Shop.vue";
+import Calendar from "./views/Calendar.vue";
+import leaderBoard from "./views/leaderBoard.vue";
+import AdminHome from "./views/AdminHome.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
 // import HomePage from "./views/HomePage.vue";
-// import CreateResume from "./views/CreateResume.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
+import ManageUsers from "./views/ManageUsers.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-  //   { 
-  //     path: "/Admin", 
-  //     alias: "/AdminPage",
-  //     name: "AdminPage", 
-  //     component: AdminPage
-  //   },
     { 
-      path: "/StudentHome", 
-      alias: "/StudentHome",
-      name: "StudentHome", 
-      component: StudentHome,
+      path: "/AdminHome", 
+      alias: "/AdminHome",
+      name: "AdminHome", 
+      component: AdminHome
     },
+    { 
+      path: "/home", 
+      alias: "/studentHome",
+      name: "StudentHome", 
+      component: StudentHome
+    },
+    { 
+      path: "/ManageUsers", 
+      alias: "/ManageUsers",
+      name: "ManageUsers", 
+      component: ManageUsers,
+    },
+
+
     {
       path: "/",
       alias: "/Login",
       name: "Login",
       component: Login,
     },
+
     {
       path: "/ManageExperiencesTasks",
       alias: "/ManageExperiencesTasks",
@@ -48,6 +62,30 @@ const router = createRouter({
   //     component: AdminView,
   //     props: route => ({ resumeId: route.query.resumeId })
   //   }
+  {
+    path: '/badges',
+    alias: '/BadgePage',
+    name: "badge",
+    component: Badges,
+  },
+  {
+    path: '/shop',
+    alias: '/shopPoints',
+    name: "shop",
+    component: Shop,
+  },
+  {
+    path: '/calendar',
+    alias: '/calendarPage',
+    name: "calendar",
+    component: Calendar,
+  },
+  {
+    path: '/leaderboard',
+    alias: '/leaderboardPage',
+    name: "leaderboard",
+    component: leaderBoard,
+  }
   ],
 });
 export default router;

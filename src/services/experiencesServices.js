@@ -3,27 +3,27 @@ import apiClient from './services';
 
 const experienceService = {
   // Get all experiences for a specific user
-  getAllExperiences() {
+  getAll() {
     return apiClient.get(`/experience`);
   },
   
   // Get a specific experience by ID
-  getExperienceById(id) {
+  getById(id) {
     return apiClient.get(`/experience/${id}`);
   },
   
   // Create a new experience
-  createExperience(experienceData) {
+  create(experienceData) {
     return apiClient.post('/experience', experienceData);
   },
   
   // Update a specific experience
-  updateExperience(id, experienceData) {
+  update(id, experienceData) {
     return apiClient.put(`/experience/${id}`, experienceData);
   },
 
   // Delete a specific experience
-  deleteExperience(id) {
+  delete(id) {
     return apiClient.delete(`/experience/${id}`);
   },
 };

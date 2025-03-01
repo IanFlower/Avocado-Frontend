@@ -3,27 +3,27 @@ import apiClient from './services';
 
 const taskService = {
   // Get all tasks for a specific user
-  getAllTasks() {
+  getAll() {
     return apiClient.get(`/task`);
   },
   
   // Get a specific task by ID
-  getTaskById(id) {
+  getById(id) {
     return apiClient.get(`/task/${id}`);
   },
   
   // Create a new task
-  createTask(taskData) {    
+  create(taskData) {    
     return apiClient.post('/task', taskData);
   },
   
   // Update a specific task
-  updateTask(id, taskData) {
+  update(id, taskData) {
     return apiClient.put(`/task/${id}`, taskData);
   },
 
   // Delete a specific task
-  deleteTask(id) {
+  delete(id) {
     return apiClient.delete(`/task/${id}`);
   },
 };

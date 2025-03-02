@@ -134,7 +134,7 @@ onMounted(() => {
                     <v-btn variant="text">Manage Events</v-btn>
                 </v-list-item>
                 <v-list-item to="ManageExperiencesTasks">
-                    <v-btn variant="text">Manage Events</v-btn>
+                    <v-btn variant="text">Tasks/Experiences</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>

@@ -20,6 +20,10 @@ const typeService = {
   // Edit a specific Type by ID and include new typeData
   editType(typeId, typeData) {
     return apiClient.put(`/type/${typeId}`, typeData)
+  },
+
+  deleteType(typeId) {
+    return apiClient.delete(`/type/${typeId}`);
   }
 };
 

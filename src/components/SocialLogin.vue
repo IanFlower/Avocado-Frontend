@@ -73,7 +73,6 @@ const handleCredentialResponse = async (response) => {
       const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
       
       if ([4, 2, 3].includes(roleRes.data.roleId)) { 
-        createStudentInfoIfNotExist();
 
         router.push({ name: 'AdminHome' });
 
@@ -84,10 +83,8 @@ const handleCredentialResponse = async (response) => {
       // If the role does not exist, create it and redirect to StudentHome
       RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 })
         .then(() => {
-          createStudentInfoIfNotExist();
 
           router.push({ name: 'StudentHome' });
-
         })
         .catch((error) => {
           console.error("Error creating RoleUser", error);
@@ -104,7 +101,7 @@ const handleCredentialResponse = async (response) => {
 };
 
 onMounted(async () => {
-  createRolesIfNotExist();  
+  createRolesIfNotExist();
 
   loginWithGoogle();
 
@@ -114,7 +111,7 @@ onMounted(async () => {
 <template>
   <div class="signup-buttons">
     <v-row justify="center">
-      <div display="flex" id="parent_id"></div>
+      <div display="flex" id="parent_id"></div> 
     </v-row>
   </div>
 </template>

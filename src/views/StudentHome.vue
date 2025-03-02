@@ -163,8 +163,8 @@ const createStudentInfoIfNotExist = async () => {
       spentPoints: 0,
       graduationSemester: 'hi', 
       semestersTillGraduation: 8, 
-      studentId: '0',
-      startingSemester: 'hi'
+      studentId: '0000', 
+      startingSemester: 'freshman 1',
     };
     await studentInfoServices.createStudentInfo(studentInfo);
     console.log("Student info created successfully");

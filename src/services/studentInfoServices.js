@@ -2,8 +2,8 @@
 import apiClient from '../services/services';
 
 const studentInfoServices = {
-  createStudentInfo() {
-    return apiClient.post ('/studentInfo');   
+  createStudentInfo(data) {
+    return apiClient.post ('/studentInfo', data);   
   },
 
    getStudentInfoById(userId) {  

@@ -223,10 +223,10 @@ onMounted(async () => {
     <v-container>
         <!-- Table with actions -->
         <v-row align="center" justify="center">
-            <v-col cols="11" class="mt-6">
+            <v-col cols="11" class="my-6">
                 <h1>Manage Experiences and Tasks</h1>
             </v-col>
-            <v-col cols="11" class="mt-6">
+            <v-col cols="11" >
                 <v-data-table :headers="headers" :items="tableData" :search="tableOverLayRefs.search">
                     <template v-slot:top>
                         <v-toolbar color="white" v-if="tableOverLayRefs">

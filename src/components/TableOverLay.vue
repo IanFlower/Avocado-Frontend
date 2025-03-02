@@ -3,34 +3,42 @@ import { defineModel } from 'vue'
 const tableOverLayRefs = defineModel()
 const emptyItem = {
     dataType: "Task",
-    data: {id: 0, name: '', desc: '', points: 0, type: '', reflectionRequired: false, subtext: '', priority: 0, semestersFromGraduation: 0, documentRequired: false},
+    data: { id: 0, name: '', desc: '', points: 0, type: '', reflectionRequired: false, subtext: '', priority: 0, semestersFromGraduation: 0, documentRequired: false },
     experienceEventType: [],
     majors: [],
     cliftonStrengths: []
 }
 </script>
 <template>
-        <v-row>
-            <v-col cols="2">
-                <v-text-field prepend-inner-icon="mdi-magnify" v-model="tableOverLayRefs.search" label="Search" clearable single-line
-                    hide-details variant="outlined" rounded="lg" density="compact"></v-text-field>
-            </v-col>
-            <v-col cols="8">
-                <v-row align="center" justify="center">
-                    <v-btn variant="text" rounded="lg" class="mx-1"
-                        @click="tableOverLayRefs.selectedSemester > 0 ? tableOverLayRefs.selectedSemester-- : tableOverLayRefs.selectedSemester = 0">Previous</v-btn>
-                    <v-btn-toggle v-model="tableOverLayRefs.selectedSemester" mandatory>
-                        <v-btn variant="tonal" class=" secondary-button mx-1" v-for="numbers in 8" :key="numbers">{{ numbers }}</v-btn>
-                    </v-btn-toggle>
-                    <v-btn variant="text" rounded="lg" class="mx-1"
-                        @click="tableOverLayRefs.selectedSemester == 7 ? tableOverLayRefs.selectedSemester = 7 : tableOverLayRefs.selectedSemester++">Next</v-btn>
-                </v-row>
-            </v-col>
-            <v-col cols="2">
-                <v-btn variant="tonal" rounded="lg" class="ml-auto alt-button" @click="tableOverLayRefs.item = JSON.parse(JSON.stringify(emptyItem)), tableOverLayRefs.dialogAdd = true">
-                    Add Task/Experience</v-btn>
-            </v-col>
-        </v-row>
+    <v-row>
+        <v-col cols="2">
+            <v-text-field prepend-inner-icon="mdi-magnify" v-model="tableOverLayRefs.search" label="Search" clearable
+                single-line hide-details variant="outlined" rounded="lg" density="compact"></v-text-field>
+        </v-col>
+        <v-col cols="8">
+            <v-row align="center" justify="center">
+                <v-col cols="auto">
+                <v-btn variant="text" rounded="lg" class="mx-1" 
+                    @click="tableOverLayRefs.selectedSemester > 0 ? tableOverLayRefs.selectedSemester-- : tableOverLayRefs.selectedSemester = 0">Previous</v-btn>
+                </v-col>
+                <v-col cols="auto">
+                <v-btn-toggle v-model="tableOverLayRefs.selectedSemester" mandatory>
+                    <v-btn variant="tonal" class=" secondary-button mx-1" v-for="numbers in 8" :key="numbers">{{ numbers
+                        }}</v-btn>
+                </v-btn-toggle>
+                </v-col>
+                <v-col cols="auto">
+                <v-btn variant="text" rounded="lg" class="mx-1"
+                    @click="tableOverLayRefs.selectedSemester == 7 ? tableOverLayRefs.selectedSemester = 7 : tableOverLayRefs.selectedSemester++">Next</v-btn>
+                </v-col>
+            </v-row>
+        </v-col>
+        <v-col cols="2">
+            <v-btn variant="tonal" rounded="lg" class="ml-auto alt-button"
+                @click="tableOverLayRefs.item = JSON.parse(JSON.stringify(emptyItem)), tableOverLayRefs.dialogAdd = true" text="Add Task/Experience">
+                </v-btn>
+        </v-col>
+    </v-row>
 </template>
 
 
@@ -38,5 +46,9 @@ const emptyItem = {
 .v-btn--active {
     background-color: #004761 !important;
     color: white !important;
+}
+.v-btn {
+    flex: 1 1 auto !important; /* Buttons shrink/grow evenly */
+    font-size: clamp(10px, 2vmin, 16px) !important; /* Responsive text */
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogModel" height="800px" max-width="1000px">
+     <v-dialog v-model="dialogModel" height="800px" max-width="1000px">
         <v-card class="d-flex flex-column">
             <v-card-title class="bg-secondary text-center sticky-title">
                 <span>Edit permission - {{ selectedUser?.fullName }}</span>

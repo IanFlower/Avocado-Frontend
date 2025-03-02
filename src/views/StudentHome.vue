@@ -133,9 +133,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
+import studentInfoServices from "../services/studentInfoServices.js";   
+import Utils from "../config/utils.js";
+import UserServices from "../services/userServices";
 
 const router = useRouter();
 const clickedExperience = ref({});
@@ -144,6 +147,31 @@ const totalTasks = 10;
 const tasksCompleted = ref(0);
 const progressValue = ref(0);
 const clickedTask = ref(Array(totalTasks).fill(false));
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
+const createStudentInfoIfNotExist = async () => { 
+  if (!userId) {
+    console.error("User ID is not set");
+    return;
+  }
+  try {
+    const studentInfo = {
+      userId: userId,
+      earnedPoints: 0,
+      spentPoints: 0,
+      graduationSemester: 'hi', 
+      semestersTillGraduation: 8, 
+      studentId: '0',
+      startingSemester: 'hi'
+    };
+    await studentInfoServices.createStudentInfo(studentInfo);
+    console.log("Student info created successfully");
+  } catch (error) {
+    console.error("Error creating student info:", error); 
+  }
+};
 
 const handleTaskClick = (taskIndex) => {
   clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
@@ -195,6 +223,11 @@ const selectSeason = (season, year) => {
   selectedYear.value = year;
   dropdownOpen.value = true;
 };
+
+onMounted(() => {
+  console.log("User ID:", userId);
+  createStudentInfoIfNotExist();
+});
 </script>
 
 <style scoped>

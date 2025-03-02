@@ -4,10 +4,9 @@ import AuthServices from "../services/authServices";
 import Utils from "../config/utils.js";
 import { useRouter } from "vue-router";
 import UserServices from "../services/userServices";
-import RoleUserServices from "../services/roleUserServices"; // Import the RoleUser service
-import RoleServices from "../services/roleServices"; // Import the Role service
-import roleUserServices from "../services/roleUserServices";
-
+import RoleUserServices from "../services/roleUserServices"; 
+import RoleServices from "../services/roleServices"; 
+import studentInfoServices from "../services/studentInfoServices.js";   
 const router = useRouter();
 const fName = ref("");
 const lName = ref("");
@@ -15,7 +14,7 @@ const user = ref({});
 
 const roles = [
   { id: 1, name: 'student' },
-  { id: 2, name: 'student worker' },
+  { id: 2, name: 'student worker' }, 
   { id: 3, name: 'admin' },
   { id: 4, name: 'professor' }
 ];
@@ -25,18 +24,16 @@ const createRolesIfNotExist = async () => {
     await RoleServices.getRoleById(role.id)
       .catch(async () => {
         await RoleServices.createRole(role)
-          .catch((error) => {
-            console.log(`Error creating role ${role.name}`, error);
-          });
       });
   }
 };
+
 
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
   const client = import.meta.env.VITE_APP_CLIENT_ID;
   console.log(client);
-  window.google.accounts.id.initialize({
+  window.google.accounts.id.initialize({ 
     client_id: client,
     cancel_on_tap_outside: false,
     auto_select: true,
@@ -56,24 +53,30 @@ const handleCredentialResponse = async (response) => {
     credential: response.credential,
   };
   await AuthServices.loginUser(token)
-    .then((response) => {
+  .then((response) => {
       user.value = response.data;
       Utils.setStore("user", user.value);
       fName.value = user.value.fName;
       lName.value = user.value.lName;
-    })
-    .catch((error) => {
-      console.log("error", error);
-    });
+  })
+  .catch((error) => {
+    console.log("error", error);
+  });
+
 
   await UserServices.getUserById(user.value.id)
   .then(async (res) => {
+
+ 
     try {
       // Create RoleUser with userId and roleId=1 if not found
       const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
       
       if ([4, 2, 3].includes(roleRes.data.roleId)) { 
+        createStudentInfoIfNotExist();
+
         router.push({ name: 'AdminHome' });
+
       } else {
         router.push({ name: 'StudentHome' }); 
       }
@@ -81,7 +84,10 @@ const handleCredentialResponse = async (response) => {
       // If the role does not exist, create it and redirect to StudentHome
       RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 })
         .then(() => {
+          createStudentInfoIfNotExist();
+
           router.push({ name: 'StudentHome' });
+
         })
         .catch((error) => {
           console.error("Error creating RoleUser", error);
@@ -90,8 +96,8 @@ const handleCredentialResponse = async (response) => {
   })
   .catch((error) => {
     console.error("Error fetching user", error);
-  });
-    
+  }); 
+
 
     
       
@@ -99,7 +105,9 @@ const handleCredentialResponse = async (response) => {
 
 onMounted(async () => {
   createRolesIfNotExist();  
+
   loginWithGoogle();
+
 });
 </script>
 

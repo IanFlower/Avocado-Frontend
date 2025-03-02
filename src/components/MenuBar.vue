@@ -27,7 +27,7 @@ const resetMenu = () => {
 
 function logout() {
     authServices.logoutUser(user.value.token)
-    .then(user.value = null, router.push({ name: 'Login' }))
+        .then(user.value = null, router.push({ name: 'Login' }))
 }
 
 // Lifecycle hook: Runs when the component is mounted
@@ -57,7 +57,7 @@ onMounted(() => {
 
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
             <v-btn>
-                <v-icon icon="mdi-bell" size="30"></v-icon>  
+                <v-icon icon="mdi-bell" size="30"></v-icon>
             </v-btn>
 
             <!-- User Dropdown Menu -->
@@ -131,6 +131,9 @@ onMounted(() => {
                     <v-btn variant="text">Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item to="AdminManageEvents">
+                    <v-btn variant="text">Manage Events</v-btn>
+                </v-list-item>
+                <v-list-item to="ManageExperiencesTasks">
                     <v-btn variant="text">Manage Events</v-btn>
                 </v-list-item>
                 <v-list-item>

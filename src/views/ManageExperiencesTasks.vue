@@ -5,7 +5,7 @@ import taskService from '../services/tasksServices';
 import categoryService from '../services/categoryServices';
 import cliftonStrengthService from '../services/cliftonStrengthServices';
 import experienceEventTypeService from '../services/experienceEventTypeService';
-import eventTypeService from '../services/eventTypesService';
+import TypeService from '../services/typeServices';
 import majorService from '../services/majors.Services';
 import TableOverLay from '../components/TableOverLay.vue';
 import experienceMajorService from '../services/experienceMajorServices';
@@ -35,7 +35,7 @@ const categories = ref([])
 const cliftonStrengths = ref([])
 const majors = ref([])
 
-const eventTypes = ref([])
+const types = ref([])
 // Data
 const experiencesTasksData = ref([]);
 const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester + 1));
@@ -77,7 +77,7 @@ async function editSaveItem() {
         await experienceEventTypeService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log(`An error occurred deleting experience event type: ${error}`);
         })
-        // Create new bridge table records for experienceId and eventTypes
+        // Create new bridge table records for experienceId and types
         tableOverLayRefs.value.item.experienceEventType.forEach((item) => {
             experienceEventTypeService.create({ experienceId: tableOverLayRefs.value.item.data.id, eventTypeId: item }).catch((error) => {
                 console.log(`An error occurred creating experience event type: ${error}`);
@@ -153,8 +153,8 @@ onMounted(async () => {
     majorService.getAllMajors().then((data) => {
         majors.value = data.data
     }).catch((error) => { console.log(error) })
-    eventTypeService.getAll().then((data) => {
-        eventTypes.value = data.data
+    TypeService.getAllTypes().then((data) => {
+        types.value = data.data
     }).catch((error) => { console.log(error) })
     // Load experiences and tasks
     await experienceService.getAll().then((data) => {
@@ -284,7 +284,7 @@ onMounted(async () => {
                             item-value="id" item-title="name" clearable chips></v-select>
                         <!--  Majors-->
                         <v-select v-if="tableOverLayRefs.item.dataType == 'Experience'" label="Event Type"
-                            v-model="tableOverLayRefs.item.experienceEventType" :items="eventTypes" item-title="type"
+                            v-model="tableOverLayRefs.item.experienceEventType" :items="types" item-title="name"
                             item-value="id" clearable multiple chips></v-select>
                     </v-form>
                 </v-card-text>

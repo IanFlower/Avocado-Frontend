@@ -27,7 +27,7 @@ const emptyItem = {
                 </v-row>
             </v-col>
             <v-col cols="2">
-                <v-btn variant="tonal" rounded="lg" class="ml-auto alt-button" @click="tableOverLayRefs.item = Object.assign({}, emptyItem); tableOverLayRefs.dialogAdd = true">
+                <v-btn variant="tonal" rounded="lg" class="ml-auto alt-button" @click="tableOverLayRefs.item = JSON.parse(JSON.stringify(emptyItem)), tableOverLayRefs.dialogAdd = true">
                     Add Task/Experience</v-btn>
             </v-col>
         </v-row>

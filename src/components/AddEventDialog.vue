@@ -63,12 +63,25 @@ watch(() => props.isEdit, (edit) => {
 
 // Function to close the dialog
 const closeDialog = () => {
+    clearFields()
     emit("update:dialog", false);
 };
 
 
 
-
+const clearFields = () => {
+    name.value = null;
+    description.value = null;
+    attendanceType.value = [];
+    location.value = null;
+    unparsedStartTime.value = null;
+    unparsedEndTime.value = null;
+    startDate.value = null;
+    endDate.value = null;
+    type.value = []
+    completionType.value = "Automatic"
+    registrationType.value = "In-App"
+}
 
 const convertFromMilitary = (time) => {
     let match = null
@@ -266,17 +279,7 @@ const initialize = async () => {
         getEventTypes()
     } else {
         dialogTitle.value = "Add Event"
-        name.value = null;
-        description.value = null;
-        attendanceType.value = [];
-        location.value = null;
-        unparsedStartTime.value = null;
-        unparsedEndTime.value = null;
-        startDate.value = null;
-        endDate.value = null;
-        type.value = []
-        completionType.value = "Automatic"
-        registrationType.value = "In-App"
+        clearFields()
     }
     
 }

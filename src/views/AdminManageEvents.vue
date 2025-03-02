@@ -2,15 +2,15 @@
 
 import { ref, onMounted, computed } from "vue"; // Importing Vue's reactivity and lifecycle hooks
 import EventService from "../services/eventServices";
+import EventTypeService from "../services/eventTypeServices";
+import TypeService from "../services/typeServices";
 import AddEventDialog from "../components/AddEventDialog.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
 
 
 const eventDialog = ref(false); // Controls new edit dialog visibility
 const deleteDialog = ref(false); // Controls new edit dialog visibility
-const newSelectedUser = ref(null); 
-const selectedUser = ref(null); // Currently selected user
-const editDialog = ref(false); // Controls edit dialog visibility
+const isEdit = ref(false); // Controls edit dialog visibility
 const category = "event"; // must be lowercase
 const currentItem = ref();
 
@@ -20,7 +20,7 @@ const search = ref();
 const eventHeaders = [
     { title: "Event Name", key: "name" },
     { title: "Type", key: "type" },
-    { title: "Date", key: "startDateTime" },
+    { title: "Date", key: "formattedStartDateTime" },
     { title: "Actions", key: "actions", sortable: false }
 ]
 
@@ -30,26 +30,50 @@ async function getAllEvents() {
         events.value = res.data 
         events.value.forEach((currEvent) => { 
             console.log(currEvent.startDateTime) 
-            currEvent.startDateTime = new Date(currEvent.startDateTime).toDateString();
+            currEvent.formattedStartDateTime = new Date(currEvent.startDateTime).toDateString();
             console.log(currEvent.startDateTime) 
         })  
     })
     .catch((error) => {
         console.log(error)
     })
-    
+    await TypeService.getAllTypes()
+    .then ((typeRes) => {
+        EventTypeService.getAllEventTypes()
+        .then((eventTypeRes) => {
+            events.value.forEach((currEvent) => {
+                let newTypes = ""
+                eventTypeRes.data.forEach((currEventType) => {
+                    if (currEvent.id == currEventType.eventId) {      
+                        let newType = typeRes.data.find((t) => {return t.id === currEventType.typeId})
+                        if (newTypes == "") {newTypes += newType.name}
+                        else {newTypes += `, ${newType.name}`}
+                    }
+                })
+                
+                currEvent.type = newTypes
+            })
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+
+    })
+    .catch ((error) => {console.log(error)})
 };
 
 onMounted(() => {
     getAllEvents();
 });
 
-// const editItem = (item) => {
-//   selectedUser.value = item;
-//   editDialog.value = true;
-// };
-
 const newEventDialog = async () => {
+    isEdit.value = false;
+    eventDialog.value = true;
+};
+
+const editEventDialog = async (item) => {
+    isEdit.value = true;
+    currentItem.value = item;
     eventDialog.value = true;
 };
 
@@ -62,33 +86,6 @@ const deleteItem = (item) => {
     deleteDialog.value = true; 
     currentItem.value = item;
 }
-
-// const closeDialog = () => {
-//   editDialog.value = false;
-// };
-
-// const closeNewDialog = () => {
-//   newEditDialog.value = false;
-// };
-
-// const saveDialog = (updatedPermission) => {
-//   saveUser(selectedUser.value);
-//   closeDialog();
-// };
-
-// const saveNewDialog = async () => {
-  
-//     const roleId = roles.value.find(role => role.name === newSelectedUser.value.role)?.id;
-//     if (roleId !== undefined) {
-//       await roleUser.updateUserRole(newSelectedUser.value.id, roleId); 
-//       showSnackbar('User updated successfully', 'success');
-//       closeNewDialog();
-//     } else {
-//       showSnackbar('Invalid role selected', 'error');
-//     }
-  
-// };
-
 </script>
 
 <template>
@@ -117,7 +114,7 @@ const deleteItem = (item) => {
                 item-value="name"
                 >
                 <template v-slot:item.actions="{ item }">
-                    <v-icon color="#004761" class="me-2" size="small" @click="editItem(item)">
+                    <v-icon color="#004761" class="me-2" size="small" @click="editEventDialog(item)">
                         mdi-pencil
                     </v-icon>
                     <v-icon color="#A30D11" size="small" @click="deleteItem(item)"> mdi-delete </v-icon>
@@ -126,6 +123,8 @@ const deleteItem = (item) => {
 
             <AddEventDialog
             :dialog="eventDialog"
+            :isEdit="isEdit"
+            :item="currentItem"
             @add="getAllEvents()"
             @update:dialog="eventDialog = $event"
             />

@@ -12,10 +12,15 @@ const eventService = {
     return apiClient.get(`/event/${eventId}`);
   },
 
-  // Get a specific event by ID
+  // Create new Event
   createEvent(eventData) {
     return apiClient.post(`/event/`, eventData);
-  }  
+  },
+  
+  // Edit a specific Event by ID and include new eventData
+  editEvent(eventId, eventData) {
+    return apiClient.put(`/event/${eventId}`, eventData)
+  }
 };
 
 export default eventService;

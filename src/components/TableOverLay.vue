@@ -48,7 +48,9 @@ const emptyItem = {
     color: white !important;
 }
 .v-btn {
-    flex: 1 1 auto !important; /* Buttons shrink/grow evenly */
-    font-size: clamp(10px, 2vmin, 16px) !important; /* Responsive text */
+    font-size: 0.8em !important; 
+}
+:deep(.v-btn__content) {
+    white-space: pre-wrap;
 }
 </style>

@@ -104,7 +104,7 @@ async function editSaveItem() {
             })
         })
     }
-    else if(tableOverLayRefs.value.item.dataType == "Task"){
+    else if (tableOverLayRefs.value.item.dataType == "Task") {
         // Delete existing bridge table records for experienceId
         await taskMajorService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log(`An error occurred deleting task major: ${error}`);
@@ -223,23 +223,25 @@ onMounted(async () => {
     <v-container>
         <!-- Table with actions -->
         <v-row align="center" justify="center">
-            <v-col cols="11" class="my-6">
+            <v-col cols="11" class="my-12">
                 <h1>Manage Experiences and Tasks</h1>
             </v-col>
-            <v-col cols="11" >
-                <v-data-table :headers="headers" :items="tableData" :search="tableOverLayRefs.search">
-                    <template v-slot:top>
-                        <v-toolbar color="white" v-if="tableOverLayRefs">
-                            <TableOverLay v-model="tableOverLayRefs" />
-                        </v-toolbar>
-                    </template>
-                    <template v-slot:[`item.action`]="{ item }">
-                        <v-icon icon="mdi-pencil-box-outline" class="me-2" size="large"
-                            @click="tableOverLayRefs.dialogAdd = true, tableOverLayRefs.item = JSON.parse(JSON.stringify(item));"></v-icon>
-                        <v-icon icon="mdi-trash-can-outline" color="red" size="large"
-                            @click="tableOverLayRefs.dialogDelete = true, tableOverLayRefs.item = item"></v-icon>
-                    </template>
-                </v-data-table>
+        </v-row>
+        <v-row align="center" justify="center">
+            <v-col cols="11">
+                <v-row no-gutters>
+                    <TableOverLay v-model="tableOverLayRefs" />
+                </v-row>
+                <v-row>
+                    <v-data-table :headers="headers" :items="tableData" :search="tableOverLayRefs.search">
+                        <template v-slot:[`item.action`]="{ item }">
+                            <v-icon icon="mdi-pencil-box-outline" class="me-2" size="large"
+                                @click="tableOverLayRefs.dialogAdd = true, tableOverLayRefs.item = JSON.parse(JSON.stringify(item));"></v-icon>
+                            <v-icon icon="mdi-trash-can-outline" color="red" size="large"
+                                @click="tableOverLayRefs.dialogDelete = true, tableOverLayRefs.item = item"></v-icon>
+                        </template>
+                    </v-data-table>
+                </v-row>
             </v-col>
         </v-row>
         <!-- Modal for adding/editing new experience -->
@@ -256,19 +258,18 @@ onMounted(async () => {
                             <v-radio label="Experience" value="Experience"></v-radio>
                         </v-radio-group> <!-- Scheduling Type-->
                         <v-text-field label="Name*" :rules="[required('Name')]"
-                            v-model="tableOverLayRefs.item.data.name" ></v-text-field> <!--  Name-->
+                            v-model="tableOverLayRefs.item.data.name"></v-text-field> <!--  Name-->
                         <v-textarea label="Description*" :rules="[required('Description')]"
-                            v-model="tableOverLayRefs.item.data.desc" ></v-textarea> <!--  Description-->
+                            v-model="tableOverLayRefs.item.data.desc"></v-textarea> <!--  Description-->
                         <v-text-field label="Points*" :rules="[required('Points')]"
-                            v-model="tableOverLayRefs.item.data.points" ></v-text-field> <!--  Points-->
+                            v-model="tableOverLayRefs.item.data.points"></v-text-field> <!--  Points-->
                         <v-text-field label="Type" :rules="[required('Type')]"
                             v-model="tableOverLayRefs.item.data.type"></v-text-field> <!--  Type -->
                         <!-- <v-select label="Category" :items="categories" item-title="name" :rules="[required('Category')]"
                             v-model="tableOverLayRefs.item.data.category" clearable></v-select>
                          Category -->
                         <v-select label="Semesters Till Graduation*" :rules="[required('Semesters Till Graduation')]"
-                            v-model="tableOverLayRefs.item.data.semestersFromGraduation" :items="semesters"
-                            ></v-select>
+                            v-model="tableOverLayRefs.item.data.semestersFromGraduation" :items="semesters"></v-select>
                         <!--  Semester Till graduation out of 8 -->
                         <v-checkbox label="Reflection Required"
                             v-model="tableOverLayRefs.item.data.reflectionRequired"></v-checkbox>

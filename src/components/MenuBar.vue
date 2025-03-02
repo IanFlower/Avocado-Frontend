@@ -27,7 +27,7 @@ const resetMenu = () => {
 
 function logout() {
     authServices.logoutUser(user.value.token)
-    .then(user.value = null, router.push({ name: 'Login' }))
+        .then(user.value = null, router.push({ name: 'Login' }))
 }
 
 // Lifecycle hook: Runs when the component is mounted
@@ -38,7 +38,6 @@ onMounted(() => {
 </script>
 
 <template>
-
         <!-- App Bar -->
         <v-app-bar app class="primary">
             <!-- Hamburger Menu Button -->
@@ -57,7 +56,7 @@ onMounted(() => {
 
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
             <v-btn>
-                <v-icon icon="mdi-bell" size="30"></v-icon>  
+                <v-icon icon="mdi-bell" size="30"></v-icon>
             </v-btn>
 
             <!-- User Dropdown Menu -->
@@ -131,11 +130,11 @@ onMounted(() => {
                     <v-btn variant="text">Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Manage Flight Plans</v-btn>
+                    <v-btn variant="text" @click="router.push({ name: 'ManageExperiencesTasks' })">Manage Flight Plans</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
-</template> 
+</template>

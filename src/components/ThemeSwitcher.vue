@@ -43,7 +43,10 @@ document.documentElement.setAttribute('data-theme', 'light');
 }
 
 
-
+.alt-button {
+    background-color: var(--alt) !important;
+    color: white !important;
+}
 /*Done use these they are automatically applied to buttons and colors  */
 .primary-button:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
@@ -64,6 +67,13 @@ document.documentElement.setAttribute('data-theme', 'light');
 .accent:focus{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
+/* tbody tr:nth-of-type(even) {
+    background-color: var(--secondary) !important;
+}
+
+tbody tr:nth-of-type(odd) {
+    background-color: white !important;
+} */
 
 html *
 {

@@ -134,8 +134,8 @@ const parseTime = (timeToParse) => {
 }
 
 
-const addNewEventType = (eventId) => {
-    EventTypeService.deleteEventTypeByEventId(eventId)
+const addNewEventType = async (eventId) => {
+    await EventTypeService.deleteEventTypeByEventId(eventId)
     .then(() => {
         // Check if current type are different from type in database
         type.value.forEach((selectedType) => {
@@ -210,6 +210,9 @@ const save = async () => {
  
     await addNewTypes()
 
+    
+    let currEventId = null
+
     if (!props.isEdit) {
         EventService.createEvent({
             "name": name.value,
@@ -224,14 +227,15 @@ const save = async () => {
             "badgeId": null
         })
         .then((res) => {
-            addNewEventType(res.data.id) // Check
-            emit("add")
-            closeDialog();
+            currEventId = res.data.id
         })
         .catch((res) => {
             console.log(`Error: ${res.data}`)
         })
+
+
     } else {
+        currEventId = props.item.id
         EventService.editEvent(props.item.id, {
             "name": name.value,
             "desc": description.value,
@@ -245,13 +249,17 @@ const save = async () => {
             "badgeId": null
         })
         .then((res) => {
-            addNewEventType(props.item.id) // Check
-            emit("add")
-            closeDialog();
         })
         .catch((res) => {
             console.log(`Error: ${res.data}`)
         })
+    }
+
+    
+    if (currEventId != null) {
+            await addNewEventType(currEventId) // Check
+            emit("add")
+            closeDialog();
     }
 };
 

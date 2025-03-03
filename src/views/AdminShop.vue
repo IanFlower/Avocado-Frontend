@@ -55,9 +55,8 @@ const initialize = async () => {
   }
 };
 
-const goToRedeemPoints = () => {
-  //router.push({ name: "redeemPoints", params: { id: userId } });
-  console.log("redeem points works! with " )
+const goToRedeemPoints = (id) => {
+  router.push({ name: "purchaseRewards", params: { id } });
 };
 
 const editRewards = () => {

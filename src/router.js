@@ -13,6 +13,7 @@ import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
+import PurchaseRewards from "./views/PurchaseRewards.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
@@ -84,6 +85,7 @@ const router = createRouter({
       name: "shop",
       component: Shop,
     },
+
     {
       path: '/calendar',
       alias: '/calendarPage',
@@ -96,6 +98,13 @@ const router = createRouter({
       alias: '/LeaderBoardPage',
       name: "leaderboard",
       component: leaderBoard,
+    },
+
+    {
+      path: '/Purchase',
+      alias: '/PurchaseRewards',
+      name: 'purchaseRewards',
+      component: PurchaseRewards,
     },
 
     //{

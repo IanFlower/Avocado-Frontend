@@ -42,9 +42,9 @@
             <v-icon color="#004761" size="large">mdi-pencil</v-icon>
           </v-btn>
 
-          <v-btn icon class="transparent no-padding" @click="openDeleteRewardDialog(item)">
-            <v-icon color="#A30D11" size="large">mdi-delete</v-icon>
-          </v-btn>
+          <!-- <v-btn icon class="transparent no-padding" @click="openDeleteRewardDialog(item)"> -->
+            <v-icon  @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
+          <!-- </v-btn> -->
         </template>
       </v-data-table>
     </div>
@@ -88,13 +88,20 @@
   <v-card>
     <v-card-title>Delete Reward</v-card-title>
     <v-card-text>
-      <deleteReward 
+      <!-- <deleteReward 
         v-if="selectedReward" 
         :reward="selectedReward" 
         :dialogVisible="deleteRewardDialogBox"
         @rewardDeleted="refreshDeleteRewards"
         @update:dialogVisible="deleteRewardDialogBox = $event"
-      />
+      /> -->
+      <DeleteDialog 
+            :dialog="deleteDialog"
+            :item="currentItem" 
+            :category="category"
+            @update:dialog="deleteDialog = $event"
+            @delete="refreshDeleteRewards()"
+            />
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -110,11 +117,15 @@ import { ref, onMounted } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import AddReward from "../components/AddReward.vue";
 import EditReward from "../components/EditReward.vue";
-import deleteReward from "../components/deleteReward.vue";
+import DeleteDialog from "../components/DeleteDialog.vue";
 
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
 const selectedReward = ref(null);
+
+const deleteDialog = ref(false);
+const currentItem = ref();
+const category = "reward";
 
 const rewards = ref([]);
 const searchQuery = ref("");
@@ -128,6 +139,8 @@ const headers = ref([
   { title: "Image", key: "image", align: "center", sortable: false },
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
+
+
 
 const initialize = async () => {
   try {
@@ -151,6 +164,14 @@ const initialize = async () => {
 
 
 // Open and Close functions for dialogs
+
+
+const deleteItem = (item) => {
+  console.log(category, currentItem, item)
+    deleteDialog.value = true; 
+    currentItem.value = item;
+}
+
 
 const openAddRewardDialog = () => {
   showAddRewardDialog.value = true;

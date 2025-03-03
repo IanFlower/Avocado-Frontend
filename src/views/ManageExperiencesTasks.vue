@@ -18,13 +18,14 @@ const required = (label) => (value) => !!value || `The ${label} field is require
 // Service const used for dynamic saving
 const saveExperienceTaskService = { Task: taskService, Experience: experienceService }
 // Helper refs
+const experienceTaskFilter = ref("Task")
 const addItemForm = ref(null)
 const tableOverLayRefs = ref([{
     selectedSemester: 0,
     search: '',
     dialogAdd: false,
     dialogDelete: false,
-    type: 'Experience',
+    type: 'Task',
     item: { dataType: null, data: null, experienceEventType: [], majors: [], cliftonStrengths: [] }
 }])
 // Constants
@@ -38,7 +39,7 @@ const majors = ref([])
 const eventTypes = ref([])
 // Data
 const experiencesTasksData = ref([]);
-const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester + 1));
+const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester + 1 && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
 const headers = [
     { title: 'Scheduling Type', align: 'left', key: 'dataType' },
     { title: 'Name', align: 'left', key: 'data.name' },

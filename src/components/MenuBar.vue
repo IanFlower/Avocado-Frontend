@@ -38,6 +38,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <div>
         <!-- App Bar -->
         <v-app-bar app class="primary">
             <!-- Hamburger Menu Button -->
@@ -96,8 +97,8 @@ onMounted(() => {
                     <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title>
                     <v-divider></v-divider>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="studentHome">Dash Board</v-btn>
+                <v-list-item to="StudentHome">
+                    <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Profile</v-btn>
@@ -117,8 +118,8 @@ onMounted(() => {
                 <v-divider></v-divider>
             </v-list-item>
             <v-list>
-                <v-list-item>
-                    <v-btn variant="text" to="/adminHome">Dash Board</v-btn>
+                <v-list-item to="AdminHome">
+                    <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
@@ -129,12 +130,16 @@ onMounted(() => {
                 <v-list-item>
                     <v-btn variant="text">Student Approval</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" @click="router.push({ name: 'ManageExperiencesTasks' })">Manage Flight Plans</v-btn>
+                <v-list-item to="AdminManageEvents">
+                    <v-btn variant="text">Manage Events</v-btn>
+                </v-list-item>
+                <v-list-item to="ManageExperiencesTasks">
+                    <v-btn variant="text">Tasks/Experiences</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
-</template>
+    </div>
+</template> 

@@ -1,15 +1,14 @@
 <template>
   <v-container>
-    <v-form @submit.prevent="addReward" ref="form">
-      <v-text-field v-model="reward.name" label="Reward Name" required />
+    <v-form ref="rewardForm">
+      <v-text-field v-model="reward.name" label="Name" required></v-text-field>
+      <v-textarea v-model="reward.desc" label="Description" required></v-textarea>
+      <v-text-field v-model.number="reward.requiredPoints" label="Required Points" type="number"
+        required></v-text-field>
 
-      <v-textarea v-model="reward.desc" label="Description" required />
+      <v-file-input label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-input>
 
-      <v-text-field v-model="reward.points" label="Points" type="number" required />
-
-      <v-file-input label="Image Upload" accept="image/*" required @change="handleImageUpload" />
-
-      <v-btn type="submit" color="primary">Save</v-btn>
+      <v-btn @click="AddReward" color="primary">Save</v-btn>
     </v-form>
   </v-container>
 </template>
@@ -21,31 +20,33 @@ import rewardServices from '../services/rewardServices.js';
 const reward = ref({
   name: '',
   desc: '',
-  requiredPoints: '',
-  image: null,
+  requiredPoints: null,
+  image: ''
 });
+
+const rewardForm = ref(null);
+
+const handleImageUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      reward.value.image = reader.result;
+    };
+  }
+};
 
 const emit = defineEmits(['rewardAdded']);
 
-const handleImageUpload = (event) => {
-  const file = event?.target?.files?.[0] || null;
-  reward.value.image = file;
+const AddReward = async () => {
+  console.log('Submitting reward:', reward.value);
+  await rewardServices.addReward({
+    name: reward.value.name,
+    desc: reward.value.desc,
+    requiredPoints: reward.value.requiredPoints
+  });
+
+  emit('rewardAdded');
 };
-
-const addReward = async () => {
-  rewardServices.addReward({
-  "name": reward.value.name,
-  "desc": reward.value.desc,
-  "requiredPoints": reward.value.requiredPoints
-})
-
-  .then(() => {
-    console.log("complete")
-    emit("rewardAdded")
-  })
-  .catch((res)=> {
-    console.log(`Error: ${res}`)
-  })
-
-}
 </script>

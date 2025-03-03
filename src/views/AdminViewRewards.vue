@@ -10,7 +10,7 @@
             hide-details single-line class="ma-2" />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="custom-btn" @click="showAddRewardDialog = true">
+          <v-btn class="custom-btn" @click="openAddRewardDialog">
             Add Reward
           </v-btn>
         </v-col>
@@ -29,18 +29,23 @@
           <span>{{ item.purchaseCount }}</span>
         </template>
 
+        <template v-slot:item.requiredPoints="{ item }">
+          <span>{{ item.requiredPoints }}</span>
+        </template>
+
+        <template v-slot:item.image="{ }">
+          <span>Not Available</span>
+        </template>
+
         <template v-slot:item.actions="{ item }">
-          <!-- Edit Button -->
           <v-btn icon class="transparent no-padding" @click="openEditRewardDialog(item)">
             <v-icon color="#004761" size="large">mdi-pencil</v-icon>
           </v-btn>
 
-          <!-- Delete Button -->
           <v-btn icon class="transparent no-padding" @click="openDeleteRewardDialog(item)">
             <v-icon color="#A30D11" size="large">mdi-delete</v-icon>
           </v-btn>
         </template>
-
       </v-data-table>
     </div>
   </div>
@@ -48,55 +53,56 @@
   <!-- Add Reward Dialog -->
   <v-dialog v-model="showAddRewardDialog" max-width="500px">
     <v-card>
-      <v-card-title>
-        Add Reward
-      </v-card-title>
+      <v-card-title>Add Reward</v-card-title>
       <v-card-text>
         <AddReward @rewardAdded="closeAddRewardDialog" />
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red" text @click="showAddRewardDialog = false">Cancel</v-btn>
+        <v-btn color="red" text @click="closeAddRewardDialog">Cancel</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
-<!-- Edit Reward Dialog -->
-<v-dialog v-model="editRewardDialogBox" max-width="500px">
-  <v-card>
-    <v-card-title>Edit Reward</v-card-title>
-    <v-card-text>
+  <!-- Edit Reward Dialog -->
+  <v-dialog v-model="editRewardDialogBox" max-width="500px">
+    <v-card>
+      <v-card-title>Edit Reward</v-card-title>
+      <v-card-text>
+        <EditReward v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
+          @close="closeEditRewardDialog" />
 
-      <!-- Use v-show or make sure selectedReward is populated correctly -->
-      <EditReward 
-        v-if="selectedReward && selectedReward.value.id" 
-        :rewardId="selectedReward.value.id" 
-        @rewardUpdated="initialize"
+        <div v-else>
+          <p>Loading reward...</p>
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="closeEditRewardDialog">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Delete Reward Dialog -->
+  <v-dialog v-model="deleteRewardDialogBox" max-width="400px">
+  <v-card>
+    <v-card-title>Delete Reward</v-card-title>
+    <v-card-text>
+      <deleteReward 
+        v-if="selectedReward" 
+        :reward="selectedReward" 
+        :dialogVisible="deleteRewardDialogBox"
+        @rewardDeleted="refreshDeleteRewards"
+        @update:dialogVisible="deleteRewardDialogBox = $event"
       />
-      <div v-else>
-        <p>Loading reward...</p>
-      </div>
     </v-card-text>
     <v-card-actions>
       <v-spacer></v-spacer>
-      <v-btn color="red" text @click="editRewardDialogBox = false">Cancel</v-btn>
+      <v-btn color="red" text @click="closeDeleteRewardDialog">Cancel</v-btn>
     </v-card-actions>
   </v-card>
 </v-dialog>
 
-  <!-- Delete Reward Dialog -->
-  <v-dialog v-model="deleteRewardDialogBox" max-width="400px">
-    <v-card>
-      <v-card-title>Delete Reward</v-card-title>
-      <v-card-text>
-        <DeleteReward :reward="selectedReward" @rewardDeleted="initialize" />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="deleteRewardDialogBox = false">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
 </template>
 
 <script setup>
@@ -104,39 +110,50 @@ import { ref, onMounted } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import AddReward from "../components/AddReward.vue";
 import EditReward from "../components/EditReward.vue";
-import DeleteReward from "../components/DeleteReward.vue";
+import deleteReward from "../components/deleteReward.vue";
 
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
 const selectedReward = ref(null);
 
-// Rewards data and search
 const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
 
-// Table headers
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
-  { title: "Description", key: "desc", align: "center", sortable: true },
+  { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
+  { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
+  { title: "Image", key: "image", align: "center", sortable: false },
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
 
-// Fetch rewards from the database
-const initialize = () => {
-  rewardServices.getAllrewards()
-    .then(response => {
-      rewards.value = response.data.map(reward => ({
-        name: reward.name,
-        desc: reward.desc,
-        purchaseCount: reward.purchaseCount,
-        image: reward.image
-      }));
-    })
-    .catch(() => {
-      rewards.value = [];
-    });
+const initialize = async () => {
+  try {
+    const response = await rewardServices.getAllRewards();
+    console.log("Fetched rewards:", response.data); 
+
+    rewards.value = [...response.data.map(reward => ({
+      id: reward.id,
+      name: reward.name,
+      desc: reward.desc,
+      purchaseCount: reward.purchaseCount,
+      requiredPoints: reward.requiredPoints
+    }))];
+
+  } catch (error) {
+    console.error("Error fetching rewards:", error);
+    rewards.value = [];
+  }
+};
+
+
+
+// Open and Close functions for dialogs
+
+const openAddRewardDialog = () => {
+  showAddRewardDialog.value = true;
 };
 
 const closeAddRewardDialog = () => {
@@ -144,19 +161,37 @@ const closeAddRewardDialog = () => {
   initialize();
 };
 
-// Open Edit Reward Dialog
 const openEditRewardDialog = (reward) => {
-  console.log('Selected Reward:', selectedReward.value);  // Corrected logging
-  selectedReward.value = reward; // Corrected assignment
-  editRewardDialogBox.value = true; 
+  selectedReward.value = reward;
+  editRewardDialogBox.value = true;
 };
 
-// Open Delete Reward Dialog
+const refreshRewards = async () => {
+  console.log("Refreshing rewards...");
+  await initialize();
+  closeEditRewardDialog();
+};
+
+const refreshDeleteRewards = async () => {
+  console.log("Refreshing rewards...");
+  await initialize();
+  closeDeleteRewardDialog();
+};
+
+const closeEditRewardDialog = () => {
+  editRewardDialogBox.value = false;
+  selectedReward.value = null;
+};
+
 const openDeleteRewardDialog = (reward) => {
   selectedReward.value = reward;
   deleteRewardDialogBox.value = true;
 };
 
+const closeDeleteRewardDialog = () => {
+  deleteRewardDialogBox.value = false;
+  selectedReward.value = null;
+};
+
 onMounted(initialize);
 </script>
-

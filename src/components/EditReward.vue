@@ -1,63 +1,72 @@
-<template>
-  <v-container>
-    <v-form @submit.prevent="updateReward" ref="form">
-      <v-text-field v-model="reward.name" label="Reward Name" required />
-
-      <v-textarea v-model="reward.desc" label="Description" required />
-
-      <v-text-field v-model="reward.points" label="Points" type="number" required />
-
-      <v-file-input label="Image Upload" accept="image/*" @change="handleImageUpload" />
-
-      <v-btn type="submit" color="primary">Update</v-btn>
-    </v-form>
-  </v-container>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
-import rewardServices from '../services/rewardServices.js';
+import { ref, defineProps, defineEmits, onMounted } from 'vue';
+import rewardServices from '../services/rewardServices';
+
 
 const props = defineProps({
-  rewardId: {
-    type: Number,
-    required: true,
-  },
+  rewardId: Number,
 });
 
-const reward = ref({
-  id: null,
-  name: '',
-  desc: '',
-  points: '',
-  image: null,
-});
+const emit = defineEmits(['rewardUpdated', 'close']);
 
-const emit = defineEmits(['rewardUpdated']);
+const name = ref('');
+const desc = ref('');
+const requiredPoints = ref(0);
 
-const handleImageUpload = (event) => {
-  const file = event?.target?.files?.[0] || null;
-  reward.value.image = file;
+// Fetch Reward from API
+const fetchReward = async () => {
+  if (props.rewardId) {
+    try {
+      const response = await rewardServices.getRewardById(props.rewardId);
+      const reward = response.data;
+      name.value = reward.name;
+      desc.value = reward.desc;
+      requiredPoints.value = reward.requiredPoints;
+    } catch (error) {
+      console.error('Error fetching reward:', error);
+    }
+  }
 };
 
-// Fetch the existing reward data when the component is mounted
-onMounted(async () => {
-  try {
-    const fetchedReward = await rewardServices.getRewardById(props.rewardId);
-    reward.value = fetchedReward;
-  } catch (error) {
-    console.log(`Error fetching reward: ${error}`);
-  }
-});
+onMounted(fetchReward);
 
-// Update the reward data
+
 const updateReward = async () => {
+  console.log('Update button clicked');
+  
+  const reward = {
+    id: props.rewardId, 
+    name: name.value,
+    desc: desc.value,
+    requiredPoints: requiredPoints.value,
+  };
+
+  console.log("Updating reward with:", reward);
+
   try {
-    await rewardServices.updateReward(reward.id);
-    console.log('Reward updated successfully');
+    const response = await rewardServices.updateReward(reward); 
+    console.log("API Response after update:", response.data);
+
     emit('rewardUpdated');
+    emit('close'); 
   } catch (error) {
-    console.log(`Error updating reward: ${error}`);
+    console.error('Error updating reward:', error);
   }
 };
+
 </script>
+
+<template>
+  <v-container>
+    <v-card>
+      <v-card-text>
+        <v-form @submit.prevent="updateReward">
+          <v-text-field v-model="name" label="Name" required></v-text-field>
+          <v-textarea v-model="desc" label="Description" required></v-textarea>
+          <v-text-field v-model.number="requiredPoints" label="Points" type="number" required></v-text-field>
+          <v-btn type="button" color="primary" class="mt-3" @click="updateReward">Save</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
+</template>

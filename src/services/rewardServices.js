@@ -3,12 +3,12 @@ import apiClient from '../services/services';
 
 const rewardService = {
   // Get all rewards
-  getAllrewards() {
+  getAllRewards() {
     return apiClient.get('/reward');
   },
 
   // Get a specific reward by ID
-  getrRewardById(rewardId) {
+  getRewardById(rewardId) {
     return apiClient.get(`/reward/${rewardId}`);
   },
 
@@ -18,10 +18,10 @@ const rewardService = {
     return apiClient.post(`/reward/`, reward);
   },
 
-  updateReward(rewardId)
-  {
-    return apiClient.put(`/reward/${rewardId}`);
+  updateReward(reward) {
+    return apiClient.put(`/reward/${reward.id}`, reward); 
   },
+  
 
   DeleteReward(rewardId)
   {

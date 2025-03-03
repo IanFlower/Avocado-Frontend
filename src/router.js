@@ -7,6 +7,8 @@ import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
 import leaderBoard from "./views/leaderBoard.vue";
 import AdminHome from "./views/AdminHome.vue";
+import AdminManageEvents from "./views/AdminManageEvents.vue";
+import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
 //import RedeemPoints from "./views/AdminRedeem.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
@@ -24,8 +26,14 @@ const router = createRouter({
       name: "AdminHome",
       component: AdminHome
     },
-    {
-      path: "/home",
+    { 
+      path: "/AdminManageEvents", 
+      alias: "/AdminManageEvents",
+      name: "AdminManageEvents", 
+      component: AdminManageEvents
+    },
+    { 
+      path: "/home", 
       alias: "/studentHome",
       name: "StudentHome",
       component: StudentHome
@@ -45,6 +53,18 @@ const router = createRouter({
       component: Login,
     },
 
+    {
+      path: "/ManageExperiencesTasks",
+      alias: "/ManageExperiencesTasks",
+      name: "ManageExperiencesTasks",
+      component: ManageExperiencesTasks,
+    },
+  //   {
+  //     path: "/Create",
+  //     alias: "/CreateResume",
+  //     name: "CreateResume",
+  //     component: CreateResume,
+  //   },
 
     //   {
     //     path: '/admin-view', 

@@ -1,5 +1,5 @@
 // userService.js
-import apiClient from '../services/services';
+import apiClient from './services.js';
 
 const userService = {
   // Get all users

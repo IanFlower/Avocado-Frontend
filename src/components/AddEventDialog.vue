@@ -214,7 +214,7 @@ const save = async () => {
     let currEventId = null
 
     if (!props.isEdit) {
-        EventService.createEvent({
+        await EventService.createEvent({
             "name": name.value,
             "desc": description.value,
             "startDateTime": startDateTime,

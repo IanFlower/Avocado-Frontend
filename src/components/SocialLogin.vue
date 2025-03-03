@@ -30,6 +30,8 @@ const createRolesIfNotExist = async () => {
 
 
 const loginWithGoogle = () => {
+  createRolesIfNotExist();
+
   window.handleCredentialResponse = handleCredentialResponse;
   const client = import.meta.env.VITE_APP_CLIENT_ID;
   console.log(client);
@@ -49,6 +51,8 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
+  console.log("Google response:", response); // Log the response from Google
+
   let token = {
     credential: response.credential,
   };
@@ -56,26 +60,23 @@ const handleCredentialResponse = async (response) => {
   .then((response) => {
       user.value = response.data;
       Utils.setStore("user", user.value);
+      user.value.profilePicture = profilePicture; 
       fName.value = user.value.fName;
       lName.value = user.value.lName;
   })
   .catch((error) => {
     console.log("error", error);
   });
-
+  console.log("user", user.value); 
 
   await UserServices.getUserById(user.value.id)
   .then(async (res) => {
-
- 
     try {
       // Create RoleUser with userId and roleId=1 if not found
       const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
       
       if ([4, 2, 3].includes(roleRes.data.roleId)) { 
-
         router.push({ name: 'AdminHome' });
-
       } else {
         router.push({ name: 'StudentHome' }); 
       }
@@ -83,7 +84,6 @@ const handleCredentialResponse = async (response) => {
       // If the role does not exist, create it and redirect to StudentHome
       RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 })
         .then(() => {
-
           router.push({ name: 'StudentHome' });
         })
         .catch((error) => {
@@ -94,10 +94,6 @@ const handleCredentialResponse = async (response) => {
   .catch((error) => {
     console.error("Error fetching user", error);
   }); 
-
-
-    
-      
 };
 
 onMounted(async () => {

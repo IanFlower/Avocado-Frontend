@@ -7,7 +7,7 @@ const studentInfoServices = {
   },
 
    getStudentInfoById(userId) {  
-    return apiClient.get(`/user/${userId}`);
+    return apiClient.get(`/studentInfo/user/${userId}`);
   }
 };
 

@@ -1,5 +1,5 @@
 <template>
-    <p class="pa-12 text-h3 font-weight-bold">Purchase Reward</p>
+    <p class="pa-12 text-h3">Purchase Reward</p>
   
     <v-container>
       <v-row>
@@ -37,10 +37,6 @@
   
         <template v-slot:item.requiredPoints="{ item }">
           <span>{{ item.requiredPoints }}</span>
-        </template>
-  
-        <template v-slot:item.image="{ }">
-          <span>Not Available</span>
         </template>
   
         <template v-slot:item.actions="{ item }">
@@ -85,7 +81,6 @@
     { title: "Description", key: "desc", align: "center", sortable: false },
     { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
     { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
-    { title: "Image", key: "image", align: "center", sortable: false },
     { title: "Actions", key: "actions", align: "center", sortable: false }
   ]);
   

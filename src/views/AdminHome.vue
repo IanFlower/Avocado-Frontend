@@ -99,7 +99,7 @@
             </v-col>
 
             <v-col align="center" class="ml-4">
-                <v-card class="secondary" link>
+                <v-card class="secondary" link to="AdminBadge">
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">

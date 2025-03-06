@@ -17,7 +17,7 @@ const drawer = ref(false); // Set drawer to false to keep it closed by default
   
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
-    const storedUser = Utils.getStore("user"); // Retrieve user from local storage
+    const storedUser = Utils.getStore("user"); 
     if (storedUser) {
         user.value = storedUser;
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <!-- Title Section -->
-    <v-card-title class="text-h1 text-center">
+    <v-card-title class="text-h4 text-center font-weight-bold">
       Top Point Leaders
     </v-card-title>
 
@@ -10,31 +10,29 @@
       <v-divider></v-divider>
 
       <!-- Students List Section -->
-      <v-row>
-        <v-col cols="5" md="5" class="pa-6 ma-6" v-for="(student, index) in students" :key="student.id">
-          <v-card outlined class="bg-secondary">
-            <v-row>
-              <!-- Rank Section -->
-              <v-col cols="2">
-                <v-card class="bg-primary fill-height pa-4 text-center">
-                  <span class="text-h2">{{ index + 1 }}</span>
-                </v-card>
-              </v-col>
-
-              <!-- Avatar Section -->
-              <v-col cols="2">
-                <v-avatar size="150">
-                  <img :src="student.profilePicture" alt="Profile Picture">
+      <v-row class="d-flex justify-center align-center" no-gutters>
+        <v-col cols="12" md="6" v-for="(student, index) in students" :key="student.id">
+          <v-card :class="{'highlight-user': student.id === loggedInUserId}" outlined class="leaderboard-card">
+            <v-row align="center" no-gutters>
+              
+              <!-- Rank Section with Colored Backgrounds -->
+              <v-col cols="2" class="text-center">
+                <v-avatar :class="getRankClass(index)" class="rank-badge">
+                  <span class="text-h6 white--text">{{ index + 1 }}</span>
                 </v-avatar>
               </v-col>
 
               <!-- Student Info Section -->
               <v-col>
-                <v-card-text class="pt-8 d-flex justify-center align-center">
-                  <p class="text-h3 font-weight-bold mt-4">{{ student.name }}</p>
-                  <v-spacer></v-spacer>
-                  <p style="color: #99AD00;" class="text-h4">{{ student.earnedPoints }} points</p> 
+                <v-card-text class="pt-2">
+                  <p class="text-h6 font-weight-bold">{{ student.name }}</p>
+                  <p class="text-subtitle-2">{{ student.major }}</p>
                 </v-card-text>
+              </v-col>
+
+              <!-- Points Section -->
+              <v-col cols="3" class="text-right">
+                <p class="text-h6 font-weight-bold points-text">{{ student.earnedPoints }} points</p>
               </v-col>
             </v-row>
           </v-card>
@@ -48,46 +46,115 @@
 import { ref, onMounted } from "vue";
 import roleUserServices from "../services/RoleUserServices";
 import studentInfoServices from "../services/studentInfoServices";
+import Utils from "../config/utils";
 
+// State for students data
 const students = ref([]);
-const error = ref(null);
+const storedUser = Utils.getStore("user"); // Retrieve user from local storage
+const loggedInUserId = ref(storedUser.id); 
 
+// Fetch users based on role
+const fetchUsers = () => {
+  return roleUserServices.getUsersByRoleId(1)
+    .then(response => response.data)
+    .catch(error => {
+      console.error("Error fetching users:", error);
+      throw error;
+    });
+};
+
+// Fetch student info based on ID
+const fetchStudentInfo = (user) => {
+  return studentInfoServices.getStudentInfoById(user.id)
+    .then(infoResponse => {
+      const studentInfo = infoResponse.data[0];
+      return {
+        id: user.id,
+        name: `${user.fName} ${user.lName}`,
+        major: studentInfo.major || "Unknown Major",
+        earnedPoints: studentInfo.earnedPoints,
+        initials: `${user.fName[0]}${user.lName[0]}`,
+      };
+    })
+    .catch(error => {
+      console.error(`Error fetching info for user ${user.id}:`, error);
+      throw error;
+    });
+};
+
+// Sort and fetch all students
 const getStudents = () => {
-  // Fetch users with role ID 1 (students) from the roleUserServices
-  roleUserServices.getUsersByRoleId(1)
-    .then(response => {
-      const users = response.data;
-      console.log('Users:', users); 
-      const studentPromises = users.map(user => 
-        studentInfoServices.getStudentInfoById(user.id)
-          .then(infoResponse => {
-            const studentInfo = infoResponse.data[0];  
-            return {
-              id: user.id,
-              name: `${user.fName} ${user.lName}`,
-              earnedPoints: studentInfo.earnedPoints,
-              profilePicture: user.profilePicture, 
-            }; 
-          })
-      );
+  fetchUsers()
+    .then(users => {
+      const studentPromises = users.map(user => fetchStudentInfo(user));
       return Promise.all(studentPromises);
     })
     .then(studentData => {
-      // Sort students by earned points in descending order 
-      students.value = studentData.sort((a, b) => b.earnedPoints - a.earnedPoints); 
+      students.value = studentData.sort((a, b) => b.earnedPoints - a.earnedPoints);
     })
     .catch(error => {
       students.value = [];
-      console.error(error);
+      console.error("Error processing students:", error);
     });
+};
+
+// Assign rank color classes
+const getRankClass = (rank) => {
+  if (rank === 0) return "gold-rank";
+  if (rank === 1) return "silver-rank";
+  if (rank === 2) return "bronze-rank";
+  return "default-rank";
 };
 
 // Fetch students when the component is mounted
 onMounted(() => {
   getStudents();
-  console.log("students:", students); 
-}); 
+});
 </script>
 
 <style scoped>
+.leaderboard-card {
+  background-color: #f4f4f4;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+.rank-badge {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gold-rank {
+  background-color: #FFD700; 
+  color: white;
+}
+
+.silver-rank {
+  background-color: #C0C0C0; 
+  color: white;
+}
+
+.bronze-rank {
+  background-color: #CD7F32; 
+  color: white;
+}
+
+.default-rank {
+  background-color: #b71c1c;
+  color: white;
+}
+
+.points-text {
+  color: #76b900;
+  font-weight: bold;
+}
+
+.highlight-user {
+  background-color: #D5DFE7 !important; /* Highlight color */
+}
 </style>

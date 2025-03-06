@@ -16,10 +16,20 @@ document.documentElement.setAttribute('data-theme', 'light');
     background-color: var(--secondary) !important;
 }
 
+/* OC Blue */
+.secondary{
+    color: black !important;
+    background-color: var(--secondary) !important;
+}
+
 /* OC Gold */
 .accent{
     color: black !important;
     background-color: var(--accent) !important;
+}
+
+.v-data-table thead {
+    background-color: #D5DFE7;
 }
 
 /*For main buttons on a page ex: continue*/
@@ -28,10 +38,18 @@ document.documentElement.setAttribute('data-theme', 'light');
   color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
-/*For secoundary buttons on a page ex: cancel*/
+
+/*For secondary buttons on a page ex: cancel*/
 .secondary-button {
   background-color: var(--secondary) !important;
   color: black !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/*For tertiary buttons on a page ex: add*/
+.tertiary-button {
+  background-color: var(--tertiary) !important;
+  color: white !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 
@@ -43,7 +61,10 @@ document.documentElement.setAttribute('data-theme', 'light');
 }
 
 
-
+.alt-button {
+    background-color: var(--alt) !important;
+    color: white !important;
+}
 /*Done use these they are automatically applied to buttons and colors  */
 .primary-button:hover {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
@@ -64,6 +85,13 @@ document.documentElement.setAttribute('data-theme', 'light');
 .accent:focus{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
+/* tbody tr:nth-of-type(even) {
+    background-color: var(--secondary) !important;
+}
+
+tbody tr:nth-of-type(odd) {
+    background-color: white !important;
+} */
 
 html *
 {

@@ -14,8 +14,12 @@ const user = ref({});
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
   const client = import.meta.env.VITE_APP_CLIENT_ID;
+<<<<<<< HEAD
   console.log(client);
   window.google.accounts.id.initialize({ 
+=======
+  window.google.accounts.id.initialize({
+>>>>>>> 957ff64c0f80a47916a881283a09d797730fe126
     client_id: client,
     cancel_on_tap_outside: false,
     auto_select: true,

@@ -93,7 +93,7 @@
         </v-row>
         <v-row class="pa-5">
             <v-col align="center" class="mr-4">
-                <v-card class="secondary" link>
+                <v-card class="secondary" to="AdminManageEvents" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">
@@ -128,6 +128,43 @@
                     </v-container>
                 </v-card>
             </v-col>
+        </v-row><v-row class="pa-5">
+            <v-col align="center" class="mr-4">
+                <v-card class="secondary" to="ManageExperiencesTasks" link>
+                    <v-container align="left">
+                        <v-row>
+                            <v-col cols="1">
+                                <svg class="mt-2" width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M11 6L21 6.00072M11 12L21 12.0007M11 18L21 18.0007M3 11.9444L4.53846 13.5L8 10M3 5.94444L4.53846 7.5L8 4M4.5 18H4.51M5 18C5 18.2761 4.77614 18.5 4.5 18.5C4.22386 18.5 4 18.2761 4 18C4 17.7239 4.22386 17.5 4.5 17.5C4.77614 17.5 5 17.7239 5 18Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                            </v-col>
+                            <v-col>
+                            <v-card-title>Tasks/Experiences</v-card-title>
+                            <v-card-subtitle class="overflow-x-hidden">
+                                <v-divider vertical thickness="20px"></v-divider>
+                                Manage Tasks/Experiences
+                            </v-card-subtitle>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card>
+            </v-col>
+            <!-- <v-col align="center" class="ml-4">
+                <v-card class="secondary" link>
+                    <v-container align="left">
+                        <v-row>
+                            <v-col cols="1">
+                                <svg class="mt-2" width="50px" height="50px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M21 11V15.8C21 16.9201 21 17.4802 20.782 17.908C20.5903 18.2843 20.2843 18.5903 19.908 18.782C19.4802 19 18.9201 19 17.8 19H6.2C5.0799 19 4.51984 19 4.09202 18.782C3.71569 18.5903 3.40973 18.2843 3.21799 17.908C3 17.4802 3 16.9201 3 15.8V8.2C3 7.0799 3 6.51984 3.21799 6.09202C3.40973 5.71569 3.71569 5.40973 4.09202 5.21799C4.51984 5 5.0799 5 6.2 5H15M21 11L15 5M21 11H16.6C16.0399 11 15.7599 11 15.546 10.891C15.3578 10.7951 15.2049 10.6422 15.109 10.454C15 10.2401 15 9.96005 15 9.4V5" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                            </v-col>
+                            <v-col>
+                            <v-card-title>Logs</v-card-title>
+                            <v-card-subtitle class="overflow-x-hidden">
+                                <v-divider vertical thickness="20px"></v-divider>
+                                View Logs
+                            </v-card-subtitle>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card>
+            </v-col> -->
         </v-row>
     </v-container>
 </template>

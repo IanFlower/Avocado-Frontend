@@ -33,6 +33,8 @@
                                 @change="toggleFullPermission('changeStudentInfo', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addReward" label="Reward" class="mb-1"
                                 @change="toggleFullPermission('addReward', $event)"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addEvent" label="Event" class="mb-1"
+                                @change="toggleFullPermission('addEvent', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.changePermissions" label="Alter User Permissions"
                                 class="mb-1"></v-checkbox>
                         </v-col>
@@ -85,6 +87,9 @@ const localPermission = ref({
     removeReward: false,
     redeemReward: false,
     readStrengths: false,
+    addEvent: false,
+    changeEvent: false,
+    removeEvent: false,
     userId: null,
 });
 
@@ -161,6 +166,10 @@ const toggleFullPermission = (permissionKey, event) => {
     } else if (permissionKey === 'addReward') {
         localPermission.value.removeReward = value;
         localPermission.value.redeemReward = value;
+    } else if (permissionKey === 'addEvent') {
+        localPermission.value.addEvent = value;
+        localPermission.value.changeEvent = value;
+        localPermission.value.removeEvent = value;
     }
 };
 </script>

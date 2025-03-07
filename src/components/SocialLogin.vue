@@ -31,7 +31,6 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
-  console.log("Google response:", response); // Log the response from Google
 
   let token = {
     credential: response.credential,
@@ -40,7 +39,7 @@ const handleCredentialResponse = async (response) => {
   .then((response) => {
       user.value = response.data;
       Utils.setStore("user", user.value);
-      user.value.profilePicture = profilePicture; 
+      user.value.profilePicture = response.data.profilePicture; 
       fName.value = user.value.fName;
       lName.value = user.value.lName;
   })

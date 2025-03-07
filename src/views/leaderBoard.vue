@@ -18,14 +18,15 @@
               <!-- Rank Section with Colored Backgrounds -->
               <v-col cols="2" class="text-center">
                 <v-avatar :class="getRankClass(index)" class="rank-badge">
-                  <span class="text-h6 white--text">{{ index + 1 }}</span>
+                  <span class="text-h6 white--text">{{ index + 1 }}</span> 
                 </v-avatar>
               </v-col>
+
 
               <!-- Student Info Section -->
               <v-col>
                 <v-card-text class="pt-2">
-                  <p class="text-h6 font-weight-bold">{{ student.name }}</p>
+                  <p class="text-h4 font-weight-bold">{{ student.name }}</p>
                   <p class="text-subtitle-2">{{ student.major }}</p>
                 </v-card-text>
               </v-col>
@@ -74,6 +75,7 @@ const fetchStudentInfo = (user) => {
         major: studentInfo.major || "Unknown Major",
         earnedPoints: studentInfo.earnedPoints,
         initials: `${user.fName[0]}${user.lName[0]}`,
+        profilePicture: user.profilePicture || null
       };
     })
     .catch(error => {

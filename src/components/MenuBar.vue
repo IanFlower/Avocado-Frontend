@@ -65,7 +65,8 @@ onMounted(() => {
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" icon x-large>
                         <v-avatar v-if="user" color="white">
-                            <span class="accent--text font-weight-bold">{{ initials }}</span>
+                            <v-img :src="user.profilePicture" alt="Profile Picture" v-if="user.profilePicture"></v-img>
+                            <v-icon v-else>{{ initials }}</v-icon>
                         </v-avatar>
                     </v-btn>
                 </template>

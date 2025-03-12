@@ -133,9 +133,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
+import studentInfoServices from "../services/studentInfoServices.js";   
+import Utils from "../config/utils.js";
+import UserServices from "../services/userServices";
 
 const router = useRouter();
 const clickedExperience = ref({});
@@ -144,6 +147,11 @@ const totalTasks = 10;
 const tasksCompleted = ref(0);
 const progressValue = ref(0);
 const clickedTask = ref(Array(totalTasks).fill(false));
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
+
 
 const handleTaskClick = (taskIndex) => {
   clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
@@ -195,6 +203,10 @@ const selectSeason = (season, year) => {
   selectedYear.value = year;
   dropdownOpen.value = true;
 };
+
+onMounted(() => {
+
+});
 </script>
 
 <style scoped>

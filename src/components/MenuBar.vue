@@ -17,7 +17,7 @@ const drawer = ref(false); // Set drawer to false to keep it closed by default
   
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
-    const storedUser = Utils.getStore("user"); // Retrieve user from local storage
+    const storedUser = Utils.getStore("user"); 
     if (storedUser) {
         user.value = storedUser;
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
@@ -65,7 +65,8 @@ onMounted(() => {
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" icon x-large>
                         <v-avatar v-if="user" color="white">
-                            <span class="accent--text font-weight-bold">{{ initials }}</span>
+                            <v-img :src="user.profilePicture" alt="Profile Picture" v-if="user.profilePicture"></v-img>
+                            <v-icon v-else>{{ initials }}</v-icon>
                         </v-avatar>
                     </v-btn>
                 </template>
@@ -107,7 +108,7 @@ onMounted(() => {
                     <v-btn variant="text">Rewards</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Leaderboard</v-btn>
+                    <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>

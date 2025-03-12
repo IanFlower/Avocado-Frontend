@@ -54,10 +54,7 @@ const students = ref([]);
 const storedUser = Utils.getStore("user");
 const loggedInUserId = ref(storedUser.id);
 
-// Sort and fetch all students
-const getUserById = (id) => {
-  return students.value.find(student => student.id === id);
-};
+
 const getStudents = () => {
   leaderboardService.getAll().then((response) => {
     students.value = response.data.map(student => ({
@@ -72,7 +69,6 @@ const getStudents = () => {
   });
 };
 
-// Assign rank color classes
 const getRankClass = (rank) => {
   if (rank === 0) return "gold-rank";
   if (rank === 1) return "silver-rank";
@@ -80,7 +76,6 @@ const getRankClass = (rank) => {
   return "default-rank";
 };
 
-// Fetch students when the component is mounted
 onMounted(() => {
   getStudents();
 });

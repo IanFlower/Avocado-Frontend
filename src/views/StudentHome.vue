@@ -151,31 +151,7 @@ const clickedTask = ref(Array(totalTasks).fill(false));
 const user = Utils.getStore("user");
 let userId = user ? user.id : null;
 
-const createStudentInfoIfNotExist = async () => { 
-  if (!userId) {
-    console.error("User ID is not set");
-    return;
-  }
-  try {
-    const studentInfo = {
-      userId: userId,
-      earnedPoints: 0,
-      spentPoints: 0,
-      graduationSemester: 'hi', 
-      semestersTillGraduation: 8, 
-      studentId: '0000', 
-      startingSemester: 'freshman 1',
-    };
-    const studentInfo = await studentInfoServices.getStudentInfo(userId);
-    if (!studentInfo) {
-      await createStudentInfo(userId,studentInfo); 
-    }
 
-    await studentInfoServices.createStudentInfo(studentInfo);
-  } catch (error) {
-    console.error("Error creating student info:", error); 
-  }
-};
 
 const handleTaskClick = (taskIndex) => {
   clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
@@ -229,8 +205,7 @@ const selectSeason = (season, year) => {
 };
 
 onMounted(() => {
-  console.log("User ID:", userId);
-  createStudentInfoIfNotExist();
+
 });
 </script>
 

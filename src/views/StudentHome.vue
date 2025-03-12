@@ -166,8 +166,12 @@ const createStudentInfoIfNotExist = async () => {
       studentId: '0000', 
       startingSemester: 'freshman 1',
     };
+    const studentInfo = await studentInfoServices.getStudentInfo(userId);
+    if (!studentInfo) {
+      await createStudentInfo(userId,studentInfo); 
+    }
+
     await studentInfoServices.createStudentInfo(studentInfo);
-    console.log("Student info created successfully");
   } catch (error) {
     console.error("Error creating student info:", error); 
   }

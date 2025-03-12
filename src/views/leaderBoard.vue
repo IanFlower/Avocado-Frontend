@@ -12,7 +12,7 @@
       <!-- Students List Section -->
       <v-row class="d-flex justify-center align-center" no-gutters>
         <v-col cols="12" md="6" v-for="(student, index) in students" :key="student.id">
-          <v-card :class="{'highlight-user': student.id === loggedInUserId}" outlined class="leaderboard-card">
+          <v-card :class="{'highlight-user': student.id === loggedInUserId.value}" outlined class="leaderboard-card">
             <v-row align="center" no-gutters>
               
               <!-- Rank Section with Colored Backgrounds -->
@@ -22,12 +22,13 @@
                 </v-avatar>
               </v-col>
 
-
               <!-- Student Info Section -->
               <v-col>
                 <v-card-text class="pt-2">
-                  <p class="text-h4 font-weight-bold">{{ student.name }}</p>
-                  <p class="text-subtitle-2">{{ student.major }}</p>
+                  <p class="text-h4 font-weight-bold">
+                    {{ student.fname }} {{ student.lname }}
+                  </p>
+                  <p class="text-subtitle-2">{{ student.major }}</p> 
                 </v-card-text>
               </v-col>
 
@@ -44,60 +45,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import roleUserServices from "../services/RoleUserServices";
-import studentInfoServices from "../services/studentInfoServices";
+import { ref, onMounted, computed } from "vue";
+import leaderboardService from "../services/leaderboardServices";
 import Utils from "../config/utils";
 
 // State for students data
 const students = ref([]);
-const storedUser = Utils.getStore("user"); // Retrieve user from local storage
-const loggedInUserId = ref(storedUser.id); 
-
-// Fetch users based on role
-const fetchUsers = () => {
-  return roleUserServices.getUsersByRoleId(1)
-    .then(response => response.data)
-    .catch(error => {
-      console.error("Error fetching users:", error);
-      throw error;
-    });
-};
-
-// Fetch student info based on ID
-const fetchStudentInfo = (user) => {
-  return studentInfoServices.getStudentInfoById(user.id)
-    .then(infoResponse => {
-      const studentInfo = infoResponse.data[0];
-      return {
-        id: user.id,
-        name: `${user.fName} ${user.lName}`,
-        major: studentInfo.major || "Unknown Major",
-        earnedPoints: studentInfo.earnedPoints,
-        initials: `${user.fName[0]}${user.lName[0]}`,
-        profilePicture: user.profilePicture || null
-      };
-    })
-    .catch(error => {
-      console.error(`Error fetching info for user ${user.id}:`, error);
-      throw error;
-    });
-};
+const storedUser = Utils.getStore("user");
+const loggedInUserId = ref(storedUser.id);
 
 // Sort and fetch all students
+const getUserById = (id) => {
+  return students.value.find(student => student.id === id);
+};
 const getStudents = () => {
-  fetchUsers()
-    .then(users => {
-      const studentPromises = users.map(user => fetchStudentInfo(user));
-      return Promise.all(studentPromises);
-    })
-    .then(studentData => {
-      students.value = studentData.sort((a, b) => b.earnedPoints - a.earnedPoints);
-    })
-    .catch(error => {
-      students.value = [];
-      console.error("Error processing students:", error);
-    });
+  leaderboardService.getAll().then((response) => {
+    students.value = response.data.map(student => ({
+      id: student.id,
+      fname: student.fname,
+      lname: student.lname,
+      major: student.major,
+      earnedPoints: student.earnedPoints
+    })).sort((a, b) => b.earnedPoints - a.earnedPoints); 
+  }).catch((error) => {
+    console.error("Error fetching leaderboard data:", error);
+  });
 };
 
 // Assign rank color classes

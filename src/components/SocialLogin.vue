@@ -20,18 +20,17 @@ import AuthServices from "../services/authServices";
 import Utils from "../config/utils.js";
 import { useRouter } from "vue-router";
 import UserServices from "../services/userServices";
-import RoleUserServices from "../services/roleUserServices";
-import UserInfoDialog from "../components/UserInfoDialog.vue";
+
 
 const router = useRouter();
 const user = ref({});
 const showUserInfoDialog = ref(true);
 
-
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
   const client = import.meta.env.VITE_APP_CLIENT_ID;
-  window.google.accounts.id.initialize({
+  console.log(client);
+  window.google.accounts.id.initialize({ 
     client_id: client,
     cancel_on_tap_outside: false,
     auto_select: true,
@@ -47,42 +46,40 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
+
   let token = {
     credential: response.credential,
   };
+  await AuthServices.loginUser(token)
+  .then((response) => {
+      user.value = response.data;
+      Utils.setStore("user", user.value);
+      user.value.profilePicture = response.data.profilePicture; 
+      fName.value = user.value.fName;
+      lName.value = user.value.lName;
+  })
+  .catch((error) => {
+    console.log("error", error);
+  });
 
-  try {
-    const res = await AuthServices.loginUser(token);
-    user.value = res.data;
-    Utils.setStore("user", user.value);
-
-    const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
-
-    if ([4, 2, 3].includes(roleRes.data.roleId)) {
-      router.push({ name: "AdminHome" });
-    } else {
+  await UserServices.getUserById(user.value.id)
+  .then(async (res) => {
+    try {
+      const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
+      
+      if ([4, 2, 3].includes(roleRes.data.roleId)) {  
+        router.push({ name: 'AdminHome' });
+      } else {
+        showUserInfoDialog.value = true; 
+      }
+    } catch (error) {
+      console.error("Error fetching role user", error);
       showUserInfoDialog.value = true;
     }
-  } catch (error) {
-    console.log("error", error);
-
-    RoleUserServices.createRoleUser({ userId: user.value.id, roleId: 1 })
-      .then(() => {
-        showUserInfoDialog.value = true;
-      })
-      .catch((error) => console.error("Error creating RoleUser", error));
-  }
-};
-
-const handleUserInfoSave = async (updatedUserInfo) => {
-  try {
-    const updatedUser = { ...user.value, ...updatedUserInfo };
-    await UserServices.updateUser(user.value.id, updatedUser);
-    Utils.setStore("user", updatedUser);
-    router.push({ name: "UserHome" });
-  } catch (error) {
-    console.error("Error updating user info", error);
-  }
+  })
+  .catch((error) => {
+    console.error("Error fetching user", error); 
+  }); 
 };
 
 onMounted(async () => {
@@ -95,3 +92,11 @@ onMounted(async () => {
   margin-top: 20px;
 }
 </style>
+ 
+<template>
+  <div class="signup-buttons">
+    <v-row justify="center">
+      <div display="flex" id="parent_id"></div> 
+    </v-row>
+  </div>
+</template>

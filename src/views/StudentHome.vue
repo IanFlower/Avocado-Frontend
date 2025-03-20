@@ -1,11 +1,28 @@
 <template>
-  <v-container class="mt-10">
+  <v-container fluid class="mt-10 fill-height">
     <v-row>
       <!-- Upcoming Events -->
-      <v-col cols="12" sm="6" md="4" lg="3" xl="3" class="d-flex justify-start">
-        <v-card class="d-flex flex-column pa-4 text-center secondary" height="1000" width="100%">
+      <v-col cols="3">
+        <v-card class="d-flex flex-column pa-4 text-center secondary w-100" height="665">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
+          <v-list class="secondary text-left" 
+          v-for="e in upcomingEvents" :key="e"></v-list>
+
+          <v-card class="secondary mb-5" elevation="0" max-width="400" 
+          v-for="e in upcomingEvents" :key="e">
+            <v-row align="center" no-gutters>
+              <v-col cols="4" class="text-center">
+                <div class="text-subtitle-1">{{ parseDate(e.startDateTime) }}</div>
+                <div class="text-caption text-grey-darken-1">{{ parseTime(e.startDateTime) }}</div>
+              </v-col>
+              <v-divider vertical class="mx-2"></v-divider>
+              <v-col>
+                <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
+              </v-col>
+            </v-row>
+          </v-card>
           <v-spacer></v-spacer>
           <v-card-actions class="justify-center secondary">
             <v-btn variant="plain" class="font-weight-light text-subtitle-1" @click="goToCalendar">
@@ -47,62 +64,45 @@
           </v-card>
         </v-row>
 
-        <v-row>
-          <v-col cols="6" class="my-4"></v-col>
-        </v-row>
-
         <!-- Tasks Section-->
         <h2 class="text-center my-3">Tasks</h2>
-        <v-row class="d-flex flex-column align-center" no-gutters>
-          <v-col cols="12" class="d-flex justify-center my-2">
-            <v-row class="overflow-y-auto" style="max-height: 350px;">
-              <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
-                <v-btn :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }" size="large"
-                  class="w-100 py-4 text-h6 d-flex justify-start align-center" elevation="2" shaped
+        <v-row no-gutters>
+            <v-list class="overflow-y-auto w-100" max-height="250">
+                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
                   @click="handleTaskClick(n)">
-                  Task Placeholder
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12" class="my-4"></v-col>
+                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Task Placeholder</v-card-text>
+                </v-card>
+              </v-list>
         </v-row>
 
         <!-- Experiences Section -->
-        <h2 class="text-center mt-4 mb-3">Experiences</h2>
-        <v-row class="d-flex flex-column align-center" no-gutters>
-          <v-col cols="12" class="d-flex justify-center my-2">
-            <v-row class="overflow-y-auto" style="max-height: 350px;">
-              <v-col v-for="n in 20" :key="n" cols="12" class="d-flex justify-center my-2">
-                <v-btn :class="{ 'secondary-button': !clickedExperience[n], 'accent': clickedExperience[n] }"
-                  size="large" class="w-100 py-4 text-h6 d-flex justify-start align-center" elevation="2" shaped
-                  @click="handleExperienceClick(n)">
-                  Experience Placeholder
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-col>
+        <h2 class="text-center my-3">Experiences</h2>
+        <v-row no-gutters>
+          <v-list class="overflow-y-auto w-100" max-height="250">
+                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
+                  @click="handleTaskClick(n)">
+                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Experience Placeholder</v-card-text>
+                </v-card>
+            </v-list>
         </v-row>
       </v-col>
 
 
 
-      <v-col cols="3" class="d-flex flex-column align-center pl-16 ml-0">
-        <v-row justify="center" align="center">
-          <v-col cols="auto">
-            <v-btn class="text-center accent clickable-card py-8 px-16 d-flex align-center justify-center"
+      <v-col cols="3" align="center" class="pa-0">
+        <v-row>
+          <v-col align="center">
+            <v-btn class="text-center accent clickable-card py-8 px-13 d-flex align-center justify-center"
               @click="goToShop" elevation="6" size="x-large">
               Points
             </v-btn>
           </v-col>
         </v-row>
 
-        <!-- LeaderBoard -->
-        <v-row align="center" justify="end" class="flex-grow-1">
-          <v-col cols="12" sm="12" md="12" lg="12" xl="12" class="d-flex justify-center">
+        <!-- Leaderboard -->
+        <v-row align="center">
             <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
               <v-card-title class="text-title-1">Leaderboard</v-card-title>
               <v-divider></v-divider>
@@ -111,12 +111,11 @@
                 Leaderboard Placeholder
               </v-btn>
             </v-card>
-          </v-col>
         </v-row>
 
         <!-- Latest Badge (Bottom) -->
-        <v-row align="end" justify="center" class="flex-grow-0">
-          <v-col>
+        <v-row>
+          <v-col align="center">
             <h4>Latest Badge:</h4>
             <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
               @click="goToBadges"></v-img>
@@ -133,11 +132,82 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
+import EventServices from "../services/eventServices"
 
 const router = useRouter();
+const upcomingEvents = ref([]);
+
+onMounted(() => {
+  getUpcomingEvents()
+})
+
+function getUpcomingEvents() {
+  EventServices.getAllEvents()
+  .then((res) => {
+    if (res) {
+      let currDate = Date.now()
+      let filteredData = res.data.map((event) => {
+        if (Date.parse(event.startDateTime) >= currDate - 86400000) {
+          return event
+        }
+      })
+      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)})
+    } else {
+      console.log("No events found")
+    }
+  })
+}
+
+function parseTime(date) {
+  let time = date.match(/T(\d{2}):(\d{2}):\d{2}/);
+
+    let hours = parseInt(time[1], 10);
+    let minutes = time[2];
+    let period = hours >= 12 ? "PM" : "AM";
+
+    // Convert to 12-hour format
+    hours = hours % 12 || 12;
+
+    return `${hours}:${minutes} ${period}`;
+}
+
+
+function parseDate(date) {
+  let parsedDate = new Date(date).toDateString();
+  if ( date.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
+    let weekday = parsedDate.match(/^(\S+)/)
+    let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
+    let day = date.match(/\d{4}-\d{2}-(\d{2})/)
+    let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
+    parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
+  }
+  return parsedDate;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const clickedExperience = ref({});
 
 const totalTasks = 10;

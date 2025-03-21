@@ -6,8 +6,6 @@
         <v-card class="d-flex flex-column pa-4 text-center secondary w-100" height="665">
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
-          <v-list class="secondary text-left" 
-          v-for="e in upcomingEvents" :key="e"></v-list>
 
           <v-card class="secondary mb-5" elevation="0" max-width="400" 
           v-for="e in upcomingEvents" :key="e">
@@ -136,6 +134,9 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices"
+import studentInfoServices from "../services/studentInfoServices.js";   
+import Utils from "../config/utils.js";
+import UserServices from "../services/userServices";
 
 const router = useRouter();
 const upcomingEvents = ref([]);
@@ -154,7 +155,7 @@ function getUpcomingEvents() {
           return event
         }
       })
-      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)})
+      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
     } else {
       console.log("No events found")
     }
@@ -215,6 +216,11 @@ const tasksCompleted = ref(0);
 const progressValue = ref(0);
 const clickedTask = ref(Array(totalTasks).fill(false));
 
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
+
+
 const handleTaskClick = (taskIndex) => {
   clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
   tasksCompleted.value = clickedTask.value.filter(v => v).length;
@@ -265,6 +271,10 @@ const selectSeason = (season, year) => {
   selectedYear.value = year;
   dropdownOpen.value = true;
 };
+
+onMounted(() => {
+
+});
 </script>
 
 <style scoped>

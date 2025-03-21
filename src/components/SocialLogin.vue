@@ -85,7 +85,7 @@ const handleCredentialResponse = async (response) => {
         if (studentInfo.data[0].firstLogin === true) {
         showUserInfoDialog.value = true;
         studentInfoServices.updateStudentInfo(user.value.id, {
-          firstLogin: true,
+          firstLogin: false,
         });
       }
         else {
@@ -98,7 +98,7 @@ const handleCredentialResponse = async (response) => {
       if (studentInfo.data[0].firstLogin === true) {
         showUserInfoDialog.value = true;
         studentInfoServices.updateStudentInfo(user.value.id, {
-          firstLogin: true,
+          firstLogin: false,
         });
       }
       else {

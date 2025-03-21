@@ -11,18 +11,18 @@
                         <v-select
                             label="Semesters Till Graduation"
                             :items="['1', '2', '3', '4', '5', '6', '7', '8']"
-                            v-model="userSemestersTillGraduation"
+                            v-model="UsersemestersTillGraduation"
                         ></v-select>
-                        <v-select 
-                            label="Majors" 
-                            multiple  
-                            :items="majors" 
-                            item-text="name"
+                        <v-select
+                            label="Majors"
+                            multiple
+                            :items="majors"
+                            v-model="userMajors"
                             item-value="id"
-                            v-model="userMajors" 
-                            clearable 
-                            chips 
-                        />              
+                            item-title="name"
+                            clearable
+                            chips
+                        ></v-select>                    
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -30,7 +30,7 @@
             <v-card-actions>
                 <v-btn class="bg-primary" variant="tonal" @click="closeDialog">I WANT TO BE AN ADMIN</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn color="blue" text @click="saveDialog">Go! get outa here!</v-btn>
+                <v-btn color="blue" text @click="saveDialog">Go! get outta here!</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -41,54 +41,75 @@ import { ref, computed, onMounted } from "vue";
 import router from "../router";
 import majorService from "../services/majors.Services";
 import studentInfoServices from "../services/studentInfoServices";
+import studentInfoMajorService from "../services/studentInfoMajorServices";
 import Utils from "../config/utils";
 
 const majors = ref([]);
-const userMajors = ref([]); // Holds selected major IDs
-const userSemestersTillGraduation = ref(null);
-const emit = defineEmits(["update:dialog", "save"]);
+const userMajors = ref([]);
+const UsersemestersTillGraduation = ref(null);
 
-// Fetch majors on mount
-onMounted(async () => {
-    try {
-        const { data } = await majorService.getAllMajors();
-        majors.value = data;
-    } catch (error) {
-        console.error("Failed to load majors", error);
-    }
+// Define emits for the component
+const emit = defineEmits(["update:dialog", "save"]);
+onMounted(() => {
+    majorService.getAllMajors().then((data) => {
+        majors.value = data.data;
+    }).catch((error) => {
+        console.log(error);
+    });
 });
 
-// Define props
-const props = defineProps({ dialog: Boolean });
+// Define props for the component
+const props = defineProps({
+    dialog: Boolean,
+});
 
-// Computed dialog binding
+// Computed property to handle the dialog visibility
 const dialogModel = computed({
     get: () => props.dialog,
     set: (value) => emit("update:dialog", value),
 });
 
-// Close dialog function
-const closeDialog = () => emit("update:dialog", false);
+// Function to close the dialog
+const closeDialog = () => {
+    emit("update:dialog", false);
+};
 
-// Save function combining student info and linking majors via bridge table
-const saveDialog = async () => {
+// Function to save the permissions
+const saveDialog = () => {
     const user = Utils.getStore("user");
     closeDialog();
 
-    // Update student info first
-    const studentInfoPayload = {
-        semestersTillGraduation: userSemestersTillGraduation.value,
-    };
-    await studentInfoServices.updateStudentInfo(user.id, studentInfoPayload);
-    for (const majorId of userMajors.value) {
-        await studentInfoServices.create(user.id, majorId);
-    }
-
-
-
     router.push("/home");
-};
 
+    // Update the student's info with the selected semesters till graduation
+    studentInfoServices.updateStudentInfo(user.id, {
+        semestersTillGraduation: UsersemestersTillGraduation.value,
+    }).then((response) => {
+        console.log(response);
+    }).catch((error) => {
+        console.log(error);
+    });
+    console.log(userMajors.value);
+
+    // Handle the majors selection by sending only the IDs
+    const studentInfoMajor = {
+        studentInfoId: user.id,
+        majors: userMajors.value, 
+    };
+
+    // Send each major as an individual entry
+    studentInfoMajor.majors.forEach((majorId) => {
+        console.log(majorId);
+        studentInfoMajorService.create({
+            studentInfoId: user.id,
+            majorId: majorId, 
+        }).then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+    });
+};
 </script>
 
 <style scoped>

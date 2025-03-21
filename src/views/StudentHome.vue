@@ -135,8 +135,9 @@
 
     </v-row>
     <TaskDialog 
-            :dialog="showTask"
-            :item="currentTask"></TaskDialog>
+      :dialog="showTask"
+      :item="currentTask"
+      @update:dialog="showTask = $event"/>
   </v-container>
 </template>
 

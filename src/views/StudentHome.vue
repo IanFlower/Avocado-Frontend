@@ -31,7 +31,6 @@
         </v-card>
       </v-col>
 
-
       <!-- Main Section -->
       <v-col cols="6">
         <!-- Semester Selection -->
@@ -87,8 +86,6 @@
         </v-row>
       </v-col>
 
-
-
       <v-col cols="3" align="center" class="pa-0">
         <v-row>
           <v-col align="center">
@@ -99,16 +96,40 @@
           </v-col>
         </v-row>
 
-        <!-- Leaderboard -->
-        <v-row align="center">
-            <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
-              <v-card-title class="text-title-1">Leaderboard</v-card-title>
-              <v-divider></v-divider>
-              <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
-                @click="goToLeaderboard" style="flex-grow: 1;">
-                Leaderboard Placeholder
-              </v-btn>
-            </v-card>
+        <!-- Leaderboard Section -->
+        <v-row align="center" class="pa-12">
+          <v-card class="d-flex flex-column text-center primary w-100" height="300px">
+            <v-card-title class="text-h4">Leaderboard</v-card-title>
+            <v-divider></v-divider>
+            <v-card-text>
+              <v-row
+                v-for="(student, index) in students.slice(0, 3)" 
+                :key="student.id"
+                align="center"
+                class="py-1"
+              >
+                <!-- Medal Image -->
+                <v-col cols="3" class="d-flex justify-center align-center">
+                  <v-avatar size="40">
+                    <v-img :src="getMedal(index)" alt="Medal"></v-img>
+                  </v-avatar>
+                </v-col>
+
+                <!-- Student Info -->
+                <v-col cols="9">
+                  <v-card
+                    :class="getRankClass(index)"
+                    class="text-h6 font-weight-bold py-1 px-2 "
+                  >
+                    <div class="d-flex justify-space-between align-center name-container">
+                      <span class="name-text">{{ student.fname }} {{ student.lname.charAt(0) }}.</span>
+                      <span class="text-body-2">{{ student.earnedPoints }} points</span>
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-row>
 
         <!-- Latest Badge (Bottom) -->
@@ -121,10 +142,6 @@
         </v-row>
       </v-col>
 
-
-
-
-
     </v-row>
   </v-container>
 </template>
@@ -134,47 +151,73 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices"
-import studentInfoServices from "../services/studentInfoServices.js";   
 import Utils from "../config/utils.js";
-import UserServices from "../services/userServices";
+import leaderboardService from '../services/leaderboardServices.js';
+import medal1 from '../assets/number_1.svg';
+import medal2 from '../assets/number_2.svg';
+import medal3 from '../assets/number_3.svg';
 
+const clickedExperience = ref({});
+const totalTasks = 10;
+const tasksCompleted = ref(0);
+const progressValue = ref(0);
+const clickedTask = ref(Array(totalTasks).fill(false));
+const dropdownOpen = ref(false);
+const selectedYear = ref(2025);
+const selectedSeason = ref('Spring');
+const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 const router = useRouter();
 const upcomingEvents = ref([]);
 
+// leaderboard variables
+const students = ref([]);
+
 onMounted(() => {
-  getUpcomingEvents()
-})
+  getUpcomingEvents();
+  getLeaderboardinfo();
+});
+
+function getLeaderboardinfo(){
+  leaderboardService.getSortedStudentsByClass(userId).then((response) => {
+    if (response) {
+      students.value = response.data;
+    } else {
+      console.log("No students found");
+    }
+  }).catch(error => {
+    console.log("Error fetching leaderboard:", error);
+  });
+}
 
 function getUpcomingEvents() {
   EventServices.getAllEvents()
   .then((res) => {
     if (res) {
-      let currDate = Date.now()
+      let currDate = Date.now();
       let filteredData = res.data.map((event) => {
         if (Date.parse(event.startDateTime) >= currDate - 86400000) {
-          return event
+          return event;
         }
-      })
-      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
+      });
+      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6);
     } else {
-      console.log("No events found")
+      console.log("No events found");
     }
-  })
+  }).catch(error => {
+    console.log("Error fetching events:", error);
+  });
 }
 
 function parseTime(date) {
   let time = date.match(/T(\d{2}):(\d{2}):\d{2}/);
-
-    let hours = parseInt(time[1], 10);
-    let minutes = time[2];
-    let period = hours >= 12 ? "PM" : "AM";
-
-    // Convert to 12-hour format
-    hours = hours % 12 || 12;
-
-    return `${hours}:${minutes} ${period}`;
+  let hours = parseInt(time[1], 10);
+  let minutes = time[2];
+  let period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  return `${hours}:${minutes} ${period}`;
 }
-
 
 function parseDate(date) {
   let parsedDate = new Date(date).toDateString();
@@ -182,136 +225,73 @@ function parseDate(date) {
     let weekday = parsedDate.match(/^(\S+)/)
     let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
     let day = date.match(/\d{4}-\d{2}-(\d{2})/)
-    let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
-    parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
+    let year = date.match(/(\d{4}-\d{2}-\d{2}).*\d{4}/)
+    return `${weekday[0]} ${month[1]} ${day[1]} ${year[0]}`
+  } else {
+    return parsedDate;
   }
-  return parsedDate;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
-
-
-const handleTaskClick = (taskIndex) => {
-  clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
-  tasksCompleted.value = clickedTask.value.filter(v => v).length;
-  progressValue.value = (tasksCompleted.value / totalTasks) * 100;
-};
-
-const goToShop = () => {
-  router.push('/shop');
-};
-
-const goToBadges = () => {
-  router.push('/badges');
-};
-
-const goToCalendar = () => {
-  router.push('/calendar');
-};
-
-const goToLeaderboard = () => {
-  router.push('/leaderboard');
-};
-
-const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return '';
-  }
-};
-
-const handleExperienceClick = (experienceId) => {
-  clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
-};
-
-const dropdownOpen = ref(false);
-const selectedYear = ref(2025);
-const selectedSeason = ref('Spring');
-const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
-
-const selectSeason = (season, year) => {
-  selectedSeason.value = season;
+function selectSeason(season, year) {
   selectedYear.value = year;
-  dropdownOpen.value = true;
-};
+  selectedSeason.value = season;
+  dropdownOpen.value = false;
+}
 
-onMounted(() => {
+function getRankClass(index) {
+  if (index === 0) return 'bg-gold';  
+  if (index === 1) return 'bg-silver'; 
+  if (index === 2) return 'bg-bronze'; 
+  return ''; 
+}
+function getMedal(index) {
+  if (index === 0) return medal1;
+  if (index === 1) return medal2;
+  if (index === 2) return medal3;
+  return null;
+}
 
-});
+function goToShop() {
+  router.push("/shop");
+}
+
+function goToBadges() {
+  router.push("/badges");
+}
+
+function goToCalendar() {
+  router.push("/calendar");
+}
+
+function handleTaskClick(n) {
+  clickedTask.value[n] = !clickedTask.value[n];
+  tasksCompleted.value = clickedTask.value.filter(Boolean).length;
+  progressValue.value = (tasksCompleted.value / totalTasks) * 100;
+}
+
 </script>
 
 <style scoped>
-.clickable-image {
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+.bg-gold {
+  background-color: #ffd700; 
 }
 
-.clickable-image:hover {
-  transform: scale(1.1);
+.bg-silver {
+  background-color: #c0c0c0; 
 }
 
-.white {
-  background-color: white !important;
-  color: black;
+.bg-bronze {
+  background-color: #cd7f32; 
 }
 
-.opacity-25 {
-  opacity: 0.25;
+.name-container {
+  max-width: 100%; 
+  overflow: hidden; 
 }
 
-.opacity-50 {
-  opacity: 0.5;
-}
-
-body,
-html {
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 100% !important;
-}
-
-.v-application {
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
+.name-text {
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 </style>

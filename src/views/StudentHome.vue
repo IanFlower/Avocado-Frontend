@@ -91,7 +91,10 @@
           <v-col align="center">
             <v-btn class="text-center accent clickable-card py-8 px-13 d-flex align-center justify-center"
               @click="goToShop" elevation="6" size="x-large">
-              Points
+              <div class="d-flex flex-column align-center">
+                <span class="font-weight-bold">Points:</span>
+                <span class="text-h6">{{ selectedStudentPoints ? selectedStudentPoints : 0 }}</span>
+              </div>
             </v-btn>
           </v-col>
         </v-row>
@@ -170,6 +173,7 @@ const user = Utils.getStore("user");
 let userId = user ? user.id : null;
 const router = useRouter();
 const upcomingEvents = ref([]);
+const selectedStudentPoints = ref(null);
 
 // leaderboard variables
 const students = ref([]);
@@ -183,6 +187,9 @@ function getLeaderboardinfo(){
   leaderboardService.getSortedStudentsByClass(userId).then((response) => {
     if (response) {
       students.value = response.data;
+      if (students.value.length > 0) {
+        selectedStudentPoints.value = students.value.find(student => student.userId === userId).currentPoints;
+      }
     } else {
       console.log("No students found");
     }

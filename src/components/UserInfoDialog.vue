@@ -12,6 +12,8 @@
                             label="Semesters Till Graduation"
                             :items="['1', '2', '3', '4', '5', '6', '7', '8']"
                             v-model="UsersemestersTillGraduation"
+                            :error="submitted && errors.semestersTillGraduation"
+                            error-messages="Please select the number of semesters till graduation."
                         ></v-select>
                         <v-select
                             label="Majors"
@@ -22,6 +24,8 @@
                             item-title="name"
                             clearable
                             chips
+                            :error="submitted && errors.majors"
+                            error-messages="Please select at least one major."
                         ></v-select>                    
                     </v-col>
                 </v-row>
@@ -30,7 +34,7 @@
             <v-card-actions>
                 <v-btn class="bg-primary" variant="tonal" @click="closeDialog">I WANT TO BE AN ADMIN</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn color="blue" text @click="saveDialog">Go! get outta here!</v-btn>
+                <v-btn color="blue" text @click="validateAndSave">Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -47,8 +51,12 @@ import Utils from "../config/utils";
 const majors = ref([]);
 const userMajors = ref([]);
 const UsersemestersTillGraduation = ref(null);
+const errors = ref({
+    semestersTillGraduation: false,
+    majors: false,
+});
+const submitted = ref(false);
 
-// Define emits for the component
 const emit = defineEmits(["update:dialog", "save"]);
 onMounted(() => {
     majorService.getAllMajors().then((data) => {
@@ -58,12 +66,10 @@ onMounted(() => {
     });
 });
 
-// Define props for the component
 const props = defineProps({
     dialog: Boolean,
 });
 
-// Computed property to handle the dialog visibility
 const dialogModel = computed({
     get: () => props.dialog,
     set: (value) => emit("update:dialog", value),
@@ -72,6 +78,19 @@ const dialogModel = computed({
 // Function to close the dialog
 const closeDialog = () => {
     emit("update:dialog", false);
+};
+
+// Function to validate inputs and save the data
+const validateAndSave = () => {
+    submitted.value = true; 
+
+    // Reset errors
+    errors.value.semestersTillGraduation = !UsersemestersTillGraduation.value;
+    errors.value.majors = userMajors.value.length === 0;
+
+    if (!errors.value.semestersTillGraduation && !errors.value.majors) {
+        saveDialog();
+    }
 };
 
 // Function to save the permissions

@@ -12,7 +12,7 @@ import experienceMajorService from '../services/experienceMajorServices';
 import taskMajorService from '../services/taskMajorServices';
 import taskStrengthService from '../services/taskStrengthService';
 import experienceStrengthService from '../services/experienceStrengthService';
-import { authorizeRoute } from '../auth/routeAuth';
+import { authorizeRoute , authorizeUser , ENUM} from '../auth/routeAuth';
 
 // Valication
 const required = (label) => (value) => !!value || `The ${label} field is required.`;

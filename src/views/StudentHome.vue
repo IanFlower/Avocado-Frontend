@@ -217,7 +217,7 @@ function parseDate(date) {
 function getTasks() {
   FlightPlanExperiences.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
   .then((res) => {
-    tasks.value = res.data.tasks;
+    tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
   })
 }
 

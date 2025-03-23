@@ -79,7 +79,7 @@ function upload() {
 </script>
 
 <template>
-    <v-dialog v-model="dialogModel" max-width="300px">
+    <v-dialog v-model="dialogModel" max-width="500px">
         <v-card>
             <v-card-title class="bg-secondary text-center sticky-title">
                 <span>{{ item.task.name }} - Description</span>

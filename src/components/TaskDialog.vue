@@ -3,6 +3,8 @@ import PrerequisiteServices from "../services/prerequisiteServices";
 import { computed, onMounted, ref, watch } from "vue";
 
 const prerequisite = ref(null)
+const docRequired = ref(false)
+const showUpload = ref(false)
 
 // Define emits for the component
 const emit = defineEmits("update:dialog", "update:task");
@@ -33,8 +35,11 @@ onMounted(() => {
 
 function initialize() {
     prerequisite.value = null;
+    docRequired.value = null;
     item.value = props.item
     getPrerequisites()
+    try {docRequired.value = item.value.task.documentRequired}
+    catch {}
 }
 
 // Watch for changes in the selected task and re-initialize
@@ -67,6 +72,10 @@ function openPrerequisite(prerequisite) {
     closeDialog()
     emit("update:task", prerequisite);
 }
+
+function upload() {
+    showUpload.value = true;
+}
 </script>
 
 <template>
@@ -78,6 +87,7 @@ function openPrerequisite(prerequisite) {
             <v-card-text class="text-center">
                 <v-container>
                     <v-row>{{ item.task.desc }}</v-row>
+                    <v-row v-if="prerequisite" align="center"><v-col class="text-center font-weight-bold">Prerequisites</v-col></v-row>
                     <v-row v-for="p in prerequisite" :key="p">
                         <v-card 
                             class="w-100 pa-0 mt-5 mr-2 secondary" elevation="2" shaped
@@ -93,11 +103,18 @@ function openPrerequisite(prerequisite) {
                             </v-card-text>
                         </v-card>
                     </v-row>
+                    <v-row v-if="docRequired" align="center"><v-col class="text-center font-weight-bold">Document Upload (Choose 1)</v-col></v-row>
+                    <v-row v-if="docRequired" class="mt-4"><v-textarea label="Provide Link"></v-textarea></v-row>
+                    <v-row v-if="docRequired" align="center"><v-col class="text-center font-weight-bold">Or</v-col></v-row>
+                    <v-row v-if="docRequired" align="center"><v-col><v-btn class="secondary-button" @click="upload()">Upload a file<v-icon icon=mdi-upload-box-outline /></v-btn></v-col></v-row>
                 </v-container></v-card-text>
             <v-card-actions>
-                <v-container>
-                    <v-row>
-                        <v-col><v-btn class="secondary justify-center" @click="closeDialog()">Close</v-btn></v-col>
+                <v-btn v-if="docRequired" class="secondary-button" text @click="closeDialog()">Cancel</v-btn>
+                <v-spacer v-if="docRequired"></v-spacer>
+                <v-btn v-if="docRequired" color="blue darken-1" text @click="saveDialog()">Save</v-btn>
+                <v-container v-if="!docRequired">
+                    <v-row align="center">
+                        <v-col align="center"><v-btn class="secondary" @click="closeDialog()">Close</v-btn></v-col>
                     </v-row>
                 </v-container>
             </v-card-actions>

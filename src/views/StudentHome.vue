@@ -137,12 +137,14 @@
     <TaskDialog 
       :dialog="showTask"
       :item="currentTask"
-      @update:dialog="showTask = $event"/>
+      :refresh="refresh"
+      @update:dialog="showTask = $event"
+      @update:task="changeTask($event)"/>
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
@@ -153,12 +155,20 @@ const router = useRouter();
 const upcomingEvents = ref([]);
 const tasks = ref([]);
 const showTask = ref(false)
-const currentTask = ref()
+const currentTask = ref(null)
+const refresh = ref(null)
 
 onMounted(() => {
   getUpcomingEvents()
   getTasks()
 })
+
+
+function changeTask(task) {
+  currentTask.value = task;
+  refresh.value = true;
+  showTask.value = true;
+}
 
 function getUpcomingEvents() {
   EventServices.getAllEvents()

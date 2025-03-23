@@ -5,11 +5,12 @@ import { computed, onMounted, ref, watch } from "vue";
 const prerequisite = ref(null)
 
 // Define emits for the component
-const emit = defineEmits("update:dialog");
+const emit = defineEmits("update:dialog", "update:task");
 
 const props = defineProps({
     dialog: Boolean,
     item: String,
+    refresh: Boolean
 });
 
 // Computed property to handle the dialog visibility
@@ -31,6 +32,7 @@ onMounted(() => {
 })
 
 function initialize() {
+    prerequisite.value = null;
     item.value = props.item
     getPrerequisites()
 }
@@ -42,17 +44,28 @@ watch(() => props.item, (currItem) => {
     }
 });
 
+// Watch for changes in the selected task and re-initialize
+watch(() => props.refresh, () => {
+    if (props.refresh == true) {
+        initialize()
+    }
+});
+
 function getPrerequisites() {
     if (item.value) {
         PrerequisiteServices.getAllForTaskId(item.value.task.id)
         .then((res) => {
             prerequisite.value = res.data
-            console.log(prerequisite.value)
         })
         .catch((error) => {
             console.log("No prerequisites found, error: " + error)
         })
     }
+}
+
+function openPrerequisite(prerequisite) {
+    closeDialog()
+    emit("update:task", prerequisite);
 }
 </script>
 
@@ -65,17 +78,17 @@ function getPrerequisites() {
             <v-card-text class="text-center">
                 <v-container>
                     <v-row>{{ item.task.desc }}</v-row>
-                    <v-row v-if="prerequisite" no-gutters>
+                    <v-row v-for="p in prerequisite" :key="p">
                         <v-card 
-                            class="w-97 pa-0 mb-5 mr-2 secondary" elevation="2" shaped
-                            @click="initialize()">
+                            class="w-100 pa-0 mt-5 mr-2 secondary" elevation="2" shaped
+                            @click="openPrerequisite(p)">
                             <v-card-text class="text-h6 pa-0 pl-4">
                                 <v-row class="pa-0 ma-0" height="60">
                                 <v-col class="ml-4 mt-1">
-                                    <v-row>{{ t.task.name }}</v-row>
-                                    <v-row v-if="t.task.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.task.subtext}}</v-row>
+                                    <v-row>{{ p.task.name }}</v-row>
+                                    <v-row v-if="p.task.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{p.task.subtext}}</v-row>
                                 </v-col>
-                                <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
+                                <v-col align="end" class="text-end">{{ p.task.points }}</v-col>
                                 </v-row>
                             </v-card-text>
                         </v-card>

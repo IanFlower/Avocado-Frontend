@@ -66,15 +66,17 @@
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
             <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="t in tasks" :key="t"
-                  class="w-97 pa-0 mb-5 mr-2 secondary" elevation="2" shaped
+                <v-card v-for="t in tasks" :key="t"              
+                  :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
                   @click="handleTaskClick(t)">
                   <v-card-text class="text-h6 pa-0 pl-4">
                     <v-row class="pa-0 ma-0" height="60">
                       <v-col class="ml-4 mt-1">
                         <v-row>{{ t.task.name }}</v-row>
-                        <v-row v-if="t.task.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.task.subtext}}</v-row>
+                        <v-row v-if="t.flightPlanTask.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.flightPlanTask.subtext}}</v-row>
                       </v-col>
+                      <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
                       <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
                     </v-row>
                   </v-card-text>
@@ -148,7 +150,7 @@ import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
-import FlightPlanExperiences from "../services/flightPlanTaskServices";
+import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
 
 const router = useRouter();
@@ -215,7 +217,7 @@ function parseDate(date) {
 }
 
 function getTasks() {
-  FlightPlanExperiences.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
+  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
   .then((res) => {
     tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
   })

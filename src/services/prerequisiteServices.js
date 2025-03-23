@@ -12,8 +12,8 @@ const prerequisiteService = {
   },
   
   // Get all prerequisite for a specific task
-  getAllForTaskId(taskId) {
-    return apiClient.get(`/prerequisite/byTask/${taskId}`);
+  getAllForTaskId(taskId, flightPlanId) {
+    return apiClient.get(`/prerequisite/byTask/${taskId}/${flightPlanId}`);
   },
 
   // Get all prerequisite for a specific task

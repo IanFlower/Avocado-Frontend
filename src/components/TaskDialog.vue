@@ -58,7 +58,7 @@ watch(() => props.refresh, () => {
 
 function getPrerequisites() {
     if (item.value) {
-        PrerequisiteServices.getAllForTaskId(item.value.task.id)
+        PrerequisiteServices.getAllForTaskId(item.value.task.id, item.value.flightPlanTask.flightPlanId)
         .then((res) => {
             prerequisite.value = res.data
         })
@@ -90,13 +90,14 @@ function upload() {
                     <v-row v-if="prerequisite" align="center"><v-col class="text-center font-weight-bold">Prerequisites</v-col></v-row>
                     <v-row v-for="p in prerequisite" :key="p">
                         <v-card 
-                            class="w-100 pa-0 mt-5 mr-2 secondary" elevation="2" shaped
-                            @click="openPrerequisite(p)">
+                            :class="{ 'secondary': !p.prereq.completed, 'accent': p.prereq.completed }" 
+                            class="w-100 pa-0 mt-5 mr-2 " elevation="2" shaped
+                            @click="openPrerequisite(p)"> 
                             <v-card-text class="text-h6 pa-0 pl-4">
                                 <v-row class="pa-0 ma-0" height="60">
                                 <v-col class="ml-4 mt-1">
                                     <v-row>{{ p.task.name }}</v-row>
-                                    <v-row v-if="p.task.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{p.task.subtext}}</v-row>
+                                    <v-row v-if="p.flightPlanTask.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{p.flightPlanTask.subtext}}</v-row>
                                 </v-col>
                                 <v-col align="end" class="text-end">{{ p.task.points }}</v-col>
                                 </v-row>

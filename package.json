@@ -14,6 +14,7 @@
   "dependencies": {
     "@mdi/font": "^7.0.96",
     "axios": "^1.1.3",
+    "compressorjs": "^1.2.1",
     "dotenv": "^16.4.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",

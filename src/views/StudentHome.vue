@@ -101,8 +101,9 @@
 
         <!-- Leaderboard Section -->
         <v-row align="center" class="pa-12">
-          <v-card class="d-flex flex-column text-center primary w-100" height="300px">
-            <v-card-title class="text-h4">Leaderboard</v-card-title>
+          <v-card class="d-flex flex-column text-center primary w-100" height="300px" @click="goToLeaderboard">
+            <v-card-title 
+              class="text-h4">Leaderboard</v-card-title>            
             <v-divider></v-divider>
             <v-card-text>
               <v-row
@@ -268,6 +269,9 @@ function goToBadges() {
 
 function goToCalendar() {
   router.push("/calendar");
+}
+function goToLeaderboard() {
+  router.push("/leaderboard");
 }
 
 function handleTaskClick(n) {

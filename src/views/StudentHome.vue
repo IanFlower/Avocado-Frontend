@@ -66,10 +66,20 @@
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
             <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
-                  @click="handleTaskClick(n)">
-                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Task Placeholder</v-card-text>
+                <v-card v-for="t in tasks" :key="t"              
+                  :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
+                  @click="handleTaskClick(t)">
+                  <v-card-text class="text-h6 pa-0 pl-4">
+                    <v-row class="pa-0 ma-0" height="60">
+                      <v-col class="ml-4 mt-1">
+                        <v-row>{{ t.task.name }}</v-row>
+                        <v-row v-if="t.flightPlanTask.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.flightPlanTask.subtext}}</v-row>
+                      </v-col>
+                      <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
+                      <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
+                    </v-row>
+                  </v-card-text>
                 </v-card>
               </v-list>
         </v-row>
@@ -126,24 +136,44 @@
 
 
     </v-row>
+    <TaskDialog 
+      :dialog="showTask"
+      :item="currentTask"
+      :refresh="refresh"
+      @update:dialog="showTask = $event"
+      @update:task="changeTask($event)"/>
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
-import EventServices from "../services/eventServices"
+import EventServices from "../services/eventServices";
+import FlightPlanTask from "../services/flightPlanTaskServices";
+import TaskDialog from "../components/TaskDialog.vue";
 import studentInfoServices from "../services/studentInfoServices.js";   
 import Utils from "../config/utils.js";
 import UserServices from "../services/userServices";
 
 const router = useRouter();
 const upcomingEvents = ref([]);
+const tasks = ref([]);
+const showTask = ref(false)
+const currentTask = ref(null)
+const refresh = ref(null)
 
 onMounted(() => {
   getUpcomingEvents()
+  getTasks()
 })
+
+
+function changeTask(task) {
+  currentTask.value = task;
+  refresh.value = true;
+  showTask.value = true;
+}
 
 function getUpcomingEvents() {
   EventServices.getAllEvents()
@@ -188,26 +218,12 @@ function parseDate(date) {
   return parsedDate;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function getTasks() {
+  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
+  .then((res) => {
+    tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
+  })
+}
 
 const clickedExperience = ref({});
 
@@ -220,11 +236,9 @@ const user = Utils.getStore("user");
 let userId = user ? user.id : null;
 
 
-
-const handleTaskClick = (taskIndex) => {
-  clickedTask.value[taskIndex] = !clickedTask.value[taskIndex];
-  tasksCompleted.value = clickedTask.value.filter(v => v).length;
-  progressValue.value = (tasksCompleted.value / totalTasks) * 100;
+const handleTaskClick = (task) => {
+  showTask.value = true;
+  currentTask.value = task
 };
 
 const goToShop = () => {

@@ -7,4 +7,4 @@ const leaderboardService = {
   },
 };
 
-export default leaderboardService;
+export default leaderboardService; 

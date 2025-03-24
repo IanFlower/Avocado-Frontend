@@ -152,6 +152,9 @@ import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
 import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
+import studentInfoServices from "../services/studentInfoServices.js";   
+import Utils from "../config/utils.js";
+import UserServices from "../services/userServices";
 
 const router = useRouter();
 const upcomingEvents = ref([]);
@@ -183,7 +186,6 @@ function getUpcomingEvents() {
         }
       })
       upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
-
     } else {
       console.log("No events found")
     }
@@ -229,6 +231,10 @@ const totalTasks = 10;
 const tasksCompleted = ref(0);
 const progressValue = ref(0);
 const clickedTask = ref(Array(totalTasks).fill(false));
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
 
 const handleTaskClick = (task) => {
   showTask.value = true;
@@ -279,6 +285,10 @@ const selectSeason = (season, year) => {
   selectedYear.value = year;
   dropdownOpen.value = true;
 };
+
+onMounted(() => {
+
+});
 </script>
 
 <style scoped>

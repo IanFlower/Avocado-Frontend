@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, onBeforeMount } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import experienceService from '../services/experiencesServices';
 import taskService from '../services/tasksServices';
 import categoryService from '../services/categoryServices';
@@ -12,7 +12,6 @@ import experienceMajorService from '../services/experienceMajorServices';
 import taskMajorService from '../services/taskMajorServices';
 import taskStrengthService from '../services/taskStrengthService';
 import experienceStrengthService from '../services/experienceStrengthService';
-import { authorizeRoute , authorizeUser , ENUM} from '../auth/routeAuth';
 
 // Valication
 const required = (label) => (value) => !!value || `The ${label} field is required.`;
@@ -140,10 +139,6 @@ function deleteItem() {
     });
     tableOverLayRefs.value.dialogDelete = false
 }
-// Authorize before mounting
-onBeforeMount(async () => {
-    await authorizeUser()
-})
 // Loading data upon mounting
 onMounted(async () => {
     // Set default semester

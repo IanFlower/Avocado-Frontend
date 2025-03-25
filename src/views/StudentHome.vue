@@ -20,7 +20,7 @@
                 <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
               </v-col>
             </v-row>
-          </v-card>
+          </v-card> 
           <v-spacer></v-spacer>
           <v-card-actions class="justify-center secondary">
             <v-btn variant="plain" class="font-weight-light text-subtitle-1" @click="goToCalendar">
@@ -154,12 +154,14 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
-import EventServices from "../services/eventServices"
+import EventServices from "../services/eventServices"; 
 import Utils from "../config/utils.js";
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
+import FlightPlanTask from "../services/flightPlanTaskServices"; 
+import TaskDialog from "../components/TaskDialog.vue"; 
 
 const clickedExperience = ref({});
 const totalTasks = 10;

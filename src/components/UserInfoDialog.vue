@@ -46,6 +46,7 @@ import router from "../router";
 import majorService from "../services/majors.Services";
 import studentInfoServices from "../services/studentInfoServices";
 import studentInfoMajorService from "../services/studentInfoMajorServices";
+import userService from "../services/userServices";
 import Utils from "../config/utils";
 
 const majors = ref([]);
@@ -96,9 +97,18 @@ const validateAndSave = () => {
 // Function to save the permissions
 const saveDialog = () => {
     const user = Utils.getStore("user");
-    closeDialog();
+    console.log(user.id);
+    userService.UpdateUsersFirstLogin(user.id, {
+        firstLogin: false,
+    }).then((response) => {
+        console.log(response);
+        closeDialog();
+        router.push("/home");
+    }).catch((error) => {
+        console.log(error);
+    });
 
-    router.push("/home");
+
 
     // Update the student's info with the selected semesters till graduation
     studentInfoServices.updateStudentInfo(user.id, {

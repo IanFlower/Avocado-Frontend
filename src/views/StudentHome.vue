@@ -65,20 +65,10 @@
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
             <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="t in tasks" :key="t"              
-                  :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
-                  @click="handleTaskClick(t)">
-                  <v-card-text class="text-h6 pa-0 pl-4">
-                    <v-row class="pa-0 ma-0" height="60">
-                      <v-col class="ml-4 mt-1">
-                        <v-row>{{ t.task.name }}</v-row>
-                        <v-row v-if="t.flightPlanTask.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.flightPlanTask.subtext}}</v-row>
-                      </v-col>
-                      <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
-                      <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
-                    </v-row>
-                  </v-card-text>
+                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
+                  @click="handleTaskClick(n)">
+                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Task Placeholder</v-card-text>
                 </v-card>
               </v-list>
         </v-row>
@@ -157,25 +147,14 @@
       </v-col>
 
     </v-row>
-    <TaskDialog 
-      :dialog="showTask"
-      :item="currentTask"
-      :refresh="refresh"
-      @update:dialog="showTask = $event"
-      @update:task="changeTask($event)"/>
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices"
-
-import EventServices from "../services/eventServices";
-import FlightPlanTask from "../services/flightPlanTaskServices";
-import TaskDialog from "../components/TaskDialog.vue";
-import studentInfoServices from "../services/studentInfoServices.js";   
 import Utils from "../config/utils.js";
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
@@ -218,23 +197,6 @@ function getLeaderboardinfo(){
   }).catch(error => {
     console.log("Error fetching leaderboard:", error);
   });
-}
-=======
-const tasks = ref([]);
-const showTask = ref(false)
-const currentTask = ref(null)
-const refresh = ref(null)
-
-onMounted(() => {
-  getUpcomingEvents()
-  getTasks()
-})
-
-
-function changeTask(task) {
-  currentTask.value = task;
-  refresh.value = true;
-  showTask.value = true;
 }
 
 function getUpcomingEvents() {
@@ -317,76 +279,6 @@ function handleTaskClick(n) {
   tasksCompleted.value = clickedTask.value.filter(Boolean).length;
   progressValue.value = (tasksCompleted.value / totalTasks) * 100;
 }
-=======
-function getTasks() {
-  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-  .then((res) => {
-    tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
-  })
-}
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
-
-const handleTaskClick = (task) => {
-  showTask.value = true;
-  currentTask.value = task
-};
-
-const goToShop = () => {
-  router.push('/shop');
-};
-
-const goToBadges = () => {
-  router.push('/badges');
-};
-
-const goToCalendar = () => {
-  router.push('/calendar');
-};
-
-const goToLeaderboard = () => {
-  router.push('/leaderboard');
-};
-
-const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return '';
-  }
-};
-
-const handleExperienceClick = (experienceId) => {
-  clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
-};
-
-const dropdownOpen = ref(false);
-const selectedYear = ref(2025);
-const selectedSeason = ref('Spring');
-const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
-
-const selectSeason = (season, year) => {
-  selectedSeason.value = season;
-  selectedYear.value = year;
-  dropdownOpen.value = true;
-};
-
-
 
 </script>
 

@@ -2,9 +2,9 @@
 import apiClient from './services';
 
 const leaderboardService = {
-  getAll() {
-    return apiClient.get(`/leaderboard`);
+  getSortedStudentsByClass(userId) {
+    return apiClient.get(`/leaderboard/${userId}`);
   },
 };
 
-export default leaderboardService;
+export default leaderboardService; 

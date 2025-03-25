@@ -2,7 +2,7 @@
   <v-container>
     <!-- Title Section -->
     <v-card-title class="text-h4 text-center font-weight-bold">
-      Top Point Leaders
+      Top Point Leaders - {{ classification }}
     </v-card-title>
 
     <!-- Divider Section -->
@@ -53,21 +53,37 @@ import Utils from "../config/utils";
 const students = ref([]);
 const storedUser = Utils.getStore("user");
 const loggedInUserId = ref(storedUser.id);
+const classification = ref("");
 
 
-const getStudents = () => {
-  leaderboardService.getAll().then((response) => {
+
+
+const getStudentsByClass = () => {
+  leaderboardService.getSortedStudentsByClass(storedUser.id).then((response) => {
+    // Map and sort the students based on earnedPoints
     students.value = response.data.map(student => ({
       id: student.id,
       fname: student.fname,
       lname: student.lname,
       major: student.major,
-      earnedPoints: student.earnedPoints
-    })).sort((a, b) => b.earnedPoints - a.earnedPoints); 
+      earnedPoints: student.earnedPoints,
+      classification: student.classification
+    })).sort((a, b) => b.earnedPoints - a.earnedPoints);
+
+    // Set classification to the first student's classification or a default value
+    if (students.value.length > 0) {
+      classification.value = students.value[0].classification; // Setting classification to the first student's classification
+    } else {
+      classification.value = 'All Students'; // Default value if no students are returned
+    }
+
+    // Logging classification for debugging
+    console.log("Classification:", classification.value);
   }).catch((error) => {
     console.error("Error fetching leaderboard data:", error);
   });
 };
+
 
 const getRankClass = (rank) => {
   if (rank === 0) return "gold-rank";
@@ -76,8 +92,10 @@ const getRankClass = (rank) => {
   return "default-rank";
 };
 
+
 onMounted(() => {
-  getStudents();
+  getStudentsByClass();
+
 });
 </script>
 

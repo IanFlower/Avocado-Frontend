@@ -5,7 +5,7 @@ import taskService from '../services/tasksServices';
 import categoryService from '../services/categoryServices';
 import cliftonStrengthService from '../services/cliftonStrengthServices';
 import experienceEventTypeService from '../services/experienceEventTypeService';
-import eventTypeService from '../services/eventTypesService';
+import TypeService from '../services/typeServices';
 import majorService from '../services/majors.Services';
 import TableOverLay from '../components/TableOverLay.vue';
 import experienceMajorService from '../services/experienceMajorServices';
@@ -36,7 +36,7 @@ const categories = ref([])
 const cliftonStrengths = ref([])
 const majors = ref([])
 
-const eventTypes = ref([])
+const types = ref([])
 // Data
 const experiencesTasksData = ref([]);
 const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester + 1 && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
@@ -60,7 +60,7 @@ async function editSaveItem() {
                 experiencesTasksData.value.push(JSON.parse(JSON.stringify(tableOverLayRefs.value.item)))
             }
         ).catch((error) => {
-            console.log(`An error occurred adding ${tableOverLayRefs.value.item.dataType}: ${error}`);
+            console.log(`An error occurred adding ${tableOverLayRefs.value.item.dataType}`);
         });
     }
     else {
@@ -70,60 +70,60 @@ async function editSaveItem() {
                 experiencesTasksData.value[index] = JSON.parse(JSON.stringify(tableOverLayRefs.value.item))
             }
         ).catch((error) => {
-            console.log(`An error occurred updating ${tableOverLayRefs.value.item.dataType}: ${error}}`);
+            console.log(`An error occurred updating ${tableOverLayRefs.value.item.dataType}`);
         });
     }
     if (tableOverLayRefs.value.item.dataType == "Experience") {
         // Delete existing bridge table records for experienceId
         await experienceEventTypeService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
-            console.log(`An error occurred deleting experience event type: ${error}`);
+            console.log("An error occurred deleting experience event type");
         })
-        // Create new bridge table records for experienceId and eventTypes
+        // Create new bridge table records for experienceId and types
         tableOverLayRefs.value.item.experienceEventType.forEach((item) => {
             experienceEventTypeService.create({ experienceId: tableOverLayRefs.value.item.data.id, eventTypeId: item }).catch((error) => {
-                console.log(`An error occurred creating experience event type: ${error}`);
+                console.log("An error occurred creating experience event type");
             })
         })
         // Delete existing bridge table records for experienceId
         await experienceMajorService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
-            console.log(`An error occurred deleting experience major: ${error}`);
+            console.log("An error occurred deleting experience major");
         })
         // Create new bridge table records for experienceId and majors
         tableOverLayRefs.value.item.majors.forEach((item) => {
             experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log(`An error occurred creating experience major: ${error}`);
+                console.log("An error occurred creating experience major");
             })
         })
         // Delete existing bridge table records for experienceId
         await experienceStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
-            console.log(`An error occurred deleting experience major: ${error}`);
+            console.log("An error occurred deleting experience strength");
         })
         // Create new bridge table records for experienceId and majors
         tableOverLayRefs.value.item.cliftonStrengths.forEach((item) => {
             experienceStrengthService.create({ experienceId: tableOverLayRefs.value.item.data.id, strengthId: item }).catch((error) => {
-                console.log(`An error occurred creating experience strength: ${error}`);
+                console.log("An error occurred creating experience strength");
             })
         })
     }
     else if (tableOverLayRefs.value.item.dataType == "Task") {
         // Delete existing bridge table records for experienceId
         await taskMajorService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
-            console.log(`An error occurred deleting task major: ${error}`);
+            console.log("An error occurred deleting task major");
         })
         // Create new bridge table records for experienceId and majors
         tableOverLayRefs.value.item.majors.forEach((item) => {
             taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log(`An error occurred creating task major: ${error}`);
+                console.log("An error occurred creating task major");
             })
         })
         // Delete existing bridge table records for experienceId
         await taskStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
-            console.log(`An error occurred deleting task strength: ${error}`);
+            console.log("An error occurred deleting task strength");
         })
         // Create new bridge table records for experienceId and Strengths
         tableOverLayRefs.value.item.cliftonStrengths.forEach((item) => {
             taskStrengthService.create({ taskId: tableOverLayRefs.value.item.data.id, strengthId: item }).catch((error) => {
-                console.log(`An error occurred creating task strength: ${error}`);
+                console.log("An error occurred creating task strength");
             })
         })
     }
@@ -147,16 +147,16 @@ onMounted(async () => {
     // Get Prerequisite data for selects
     categoryService.getAllCategories().then((data) => {
         categories.value = data.data
-    }).catch((error) => { console.log(error) })
+    }).catch((error) => { console.log("An error occurred fetching categories") })
     cliftonStrengthService.getAllCliftonStrengths().then((data) => {
         cliftonStrengths.value = data.data
-    }).catch((error) => { console.log(error) })
+    }).catch((error) => { console.log("An error occurred fetching clifton strengths") })
     majorService.getAllMajors().then((data) => {
         majors.value = data.data
-    }).catch((error) => { console.log(error) })
-    eventTypeService.getAll().then((data) => {
-        eventTypes.value = data.data
-    }).catch((error) => { console.log(error) })
+    }).catch((error) => { console.log("An error occurred fetching majors") })
+    TypeService.getAllTypes().then((data) => {
+        types.value = data.data
+    }).catch((error) => { console.log("An error occurred fetching types") })
     // Load experiences and tasks
     await experienceService.getAll().then((data) => {
         data.data.forEach(async (item) => {
@@ -167,19 +167,19 @@ onMounted(async () => {
             await experienceEventTypeService.getAllForExperienceId(item.id).then((d) => {
                 arrEventTypes = d.data.map((item) => { return item.eventTypeId })
             }).catch((error) => {
-                console.log(`An error occurred fetching experience event type: ${error}`);
+                console.log("An error occurred fetching experience event types");
             })
             // Get Majors
             await experienceMajorService.getAllForExperienceId(item.id).then((d) => {
                 arrMajors = d.data.map((item) => { return item.majorId })
             }).catch((error) => {
-                console.log(`An error occurred fetching experience event type: ${error}`);
+                console.log("An error occurred fetching experience majors");
             })
             // Get Strengths
             await experienceStrengthService.getAllForExperienceId(item.id).then((d) => {
                 arrStrengths = d.data.map((item) => { return item.strengthId })
             }).catch((error) => {
-                console.log(`An error occurred fetching experience event type: ${error}`);
+                console.log("An error occurred fetching experience strengths");
             })
             experiencesTasksData.value.push({
                 dataType: "Experience",
@@ -190,7 +190,7 @@ onMounted(async () => {
             })
         })
     }).catch((error) => {
-        console.log(`An error occurred fetching experiences: ${error}`);
+        console.log("An error occurred fetching experiences");
     })
     await taskService.getAll().then((data) => {
         data.data.forEach(async (item) => {
@@ -200,13 +200,13 @@ onMounted(async () => {
             await taskMajorService.getAllForTaskId(item.id).then((d) => {
                 arrMajors = d.data.map((item) => { return item.majorId })
             }).catch((error) => {
-                console.log(`An error occurred fetching task major: ${error}`);
+                console.log("An error occurred fetching task majors");
             })
             // Get strengths 
             await taskStrengthService.getAllForTaskId(item.id).then((d) => {
                 arrStrengths = d.data.map((item) => { return item.strengthId })
             }).catch((error) => {
-                console.log(`An error occurred fetching task strength: ${error}`);
+                console.log("An error occurred fetching task strengths");
             })
             experiencesTasksData.value.push({
                 dataType: "Task",
@@ -285,7 +285,7 @@ onMounted(async () => {
                             item-value="id" item-title="name" clearable chips></v-select>
                         <!--  Majors-->
                         <v-select v-if="tableOverLayRefs.item.dataType == 'Experience'" label="Event Type"
-                            v-model="tableOverLayRefs.item.experienceEventType" :items="eventTypes" item-title="type"
+                            v-model="tableOverLayRefs.item.experienceEventType" :items="types" item-title="name"
                             item-value="id" clearable multiple chips></v-select>
                     </v-form>
                 </v-card-text>

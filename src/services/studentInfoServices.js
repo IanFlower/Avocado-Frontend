@@ -1,15 +1,16 @@
-// userService.js
+// studentInfoServices.js
 import apiClient from '../services/services';
 
 const studentInfoServices = {
-  // Get all users
-  createStudentInfo() {
-    return apiClient.get('');
+  createStudentInfo(data) {
+    return apiClient.post ('/studentInfo', data);   
+  },
+  updateStudentInfo(userId,data) {
+    return apiClient.put (`/studentInfo/${userId}`, data); 
   },
 
-  // Get a specific user by ID
-  getStudentIfoByUserId(userId) {
-    return apiClient.get(`/user/${userId}`);
+   getStudentInfoById(userId) {  
+    return apiClient.get(`/studentInfo/user/${userId}`);
   }
 };
 

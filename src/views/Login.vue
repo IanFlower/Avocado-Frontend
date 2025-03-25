@@ -20,7 +20,7 @@ import SocialLogin from '../components/SocialLogin.vue'
           class="d-flex flex-column pa-4 primary"
         >
           <v-card-title style="color: white; font-size: 28px;">
-            Welcome To OC's <br>Flight Plan
+            Welcome To OC's <br>Flight Plan 
           </v-card-title>
 
           <v-spacer></v-spacer> 

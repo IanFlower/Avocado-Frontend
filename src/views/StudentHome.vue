@@ -357,7 +357,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.bg-gold {
+  background-color: #ffd700; 
+}
 .bg-silver {
   background-color: #c0c0c0; 
 }

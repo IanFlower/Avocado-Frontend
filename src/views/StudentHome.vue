@@ -104,21 +104,49 @@
           <v-col align="center">
             <v-btn class="text-center accent clickable-card py-8 px-13 d-flex align-center justify-center"
               @click="goToShop" elevation="6" size="x-large">
-              Points
+              <div class="d-flex flex-column align-center">
+                <span class="font-weight-bold">Points:</span>
+                <span class="text-h6">{{ selectedStudentPoints ? selectedStudentPoints : 0 }}</span>
+              </div>
             </v-btn>
           </v-col>
         </v-row>
 
-        <!-- Leaderboard -->
-        <v-row align="center">
-            <v-card class="d-flex flex-column text-center pa-4 primary w-100 ma-4" height="400px">
-              <v-card-title class="text-title-1">Leaderboard</v-card-title>
-              <v-divider></v-divider>
-              <v-btn v-for="(n, index) in 4" :key="n" :class="getButtonClass(index)" class="mb-2"
-                @click="goToLeaderboard" style="flex-grow: 1;">
-                Leaderboard Placeholder
-              </v-btn>
-            </v-card>
+        <!-- Leaderboard Section -->
+        <v-row align="center" class="pa-12">
+          <v-card class="d-flex flex-column text-center primary w-100" height="300px" @click="goToLeaderboard">
+            <v-card-title 
+              class="text-h4">Leaderboard</v-card-title>            
+            <v-divider></v-divider>
+            <v-card-text>
+              <v-row
+                v-for="(student, index) in students.slice(0, 3)" 
+                :key="student.id"
+                align="center"
+                class="py-1"
+              >
+                <!-- Medal Image -->
+                <v-col cols="3" class="d-flex justify-center align-center">
+                  <v-avatar size="40">
+                    <v-img :src="getMedal(index)" alt="Medal"></v-img>
+                  </v-avatar>
+                </v-col>
+
+                <!-- Student Info -->
+                <v-col cols="9">
+                  <v-card
+                    :class="getRankClass(index)"
+                    class="text-h6 font-weight-bold py-1 px-2 "
+                  >
+                    <div class="d-flex justify-space-between align-center name-container">
+                      <span class="name-text">{{ student.fname }} {{ student.lname.charAt(0) }}.</span>
+                      <span class="text-body-2">{{ student.earnedPoints }} points</span>
+                    </div>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-row>
 
         <!-- Latest Badge (Bottom) -->
@@ -156,6 +184,14 @@ import studentInfoServices from "../services/studentInfoServices.js";
 import Utils from "../config/utils.js";
 import UserServices from "../services/userServices";
 
+import leaderboardService from '../services/leaderboardServices.js';
+import medal1 from '../assets/number_1.svg';
+import medal2 from '../assets/number_2.svg';
+import medal3 from '../assets/number_3.svg';
+
+// leaderboard variables
+const students = ref([]);
+
 const router = useRouter();
 const upcomingEvents = ref([]);
 const tasks = ref([]);
@@ -166,8 +202,37 @@ const refresh = ref(null)
 onMounted(() => {
   getUpcomingEvents()
   getTasks()
+  getLeaderboardinfo();
 })
 
+
+function getLeaderboardinfo(){
+  leaderboardService.getSortedStudentsByClass(userId).then((response) => {
+    if (response) {
+      students.value = response.data;
+      if (students.value.length > 0) {
+        selectedStudentPoints.value = students.value.find(student => student.userId === userId).currentPoints;
+      }
+    } else {
+      console.log("No students found");
+    }
+  }).catch(error => {
+    console.log("Error fetching leaderboard:", error);
+  });
+}
+
+function getRankClass(index) {
+  if (index === 0) return 'bg-gold';  
+  if (index === 1) return 'bg-silver'; 
+  if (index === 2) return 'bg-bronze'; 
+  return ''; 
+}
+function getMedal(index) {
+  if (index === 0) return medal1;
+  if (index === 1) return medal2;
+  if (index === 2) return medal3;
+  return null;
+}
 
 function changeTask(task) {
   currentTask.value = task;
@@ -292,6 +357,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.bg-gold {
+  background-color: #ffd700; 
+}
+.bg-silver {
+  background-color: #c0c0c0; 
+}
+.bg-bronze {
+  background-color: #cd7f32; 
+}
+
+.name-container {
+  max-width: 100%; 
+  overflow: hidden; 
+}
+.name-text {
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
 .clickable-image {
   cursor: pointer;
   transition: transform 0.3s ease-in-out;

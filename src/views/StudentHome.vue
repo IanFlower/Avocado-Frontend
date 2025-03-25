@@ -206,8 +206,6 @@ import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
-import FlightPlanTask from "../services/flightPlanTaskServices"; 
-import TaskDialog from "../components/TaskDialog.vue"; 
 
 const clickedExperience = ref({});
 const totalTasks = 10;
@@ -233,13 +231,6 @@ const selectedStudentPoints = ref(null);
 
 // leaderboard variables
 const students = ref([]);
-
-const router = useRouter();
-const upcomingEvents = ref([]);
-const tasks = ref([]);
-const showTask = ref(false)
-const currentTask = ref(null)
-const refresh = ref(null)
 
 onMounted(() => {
   getUpcomingEvents()
@@ -270,111 +261,12 @@ function changeExperience(experience) {
   showExperience.value = true;
 }
 
-function getUpcomingEvents() {
-  EventServices.getAllEvents()
-  .then((res) => {
-    if (res) {
-      let currDate = Date.now();
-      let filteredData = res.data.map((event) => {
-        if (Date.parse(event.startDateTime) >= currDate - 86400000) {
-          return event;
-        }
-      });
-      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6);
-    } else {
-      console.log("No events found");
-    }
-  }).catch(error => {
-    console.log("Error fetching events:", error);
-  });
-}
-
-function parseTime(date) {
-  let time = date.match(/T(\d{2}):(\d{2}):\d{2}/);
-  let hours = parseInt(time[1], 10);
-  let minutes = time[2];
-  let period = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12;
-  return `${hours}:${minutes} ${period}`;
-}
-
-function parseDate(date) {
-  let parsedDate = new Date(date).toDateString();
-  if ( date.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
-    let weekday = parsedDate.match(/^(\S+)/)
-    let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
-    let day = date.match(/\d{4}-\d{2}-(\d{2})/)
-    let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
-    parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
-  }
-  return parsedDate;
-}
-
-function getTasks() {
-  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-  .then((res) => {
-    tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
-  })
-}
-
 
 function getExperiences() {
   FlightPlanExperience.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
   .then((res) => {
     experiences.value = res.data.experiences.sort((experienceA, experienceB) => {return experienceA.experience.priority - experienceB.experience.priority});
   })
-}
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
-
-const handleTaskClick = (task) => {
-  showTask.value = true;
-  currentTask.value = task
-};
-
-const goToShop = () => {
-  router.push('/shop');
-};
-
-const goToBadges = () => {
-  router.push('/badges');
-};
-
-const goToCalendar = () => {
-  router.push('/calendar');
-};
-
-const goToLeaderboard = () => {
-  router.push('/leaderboard');
-};
-
-const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return parsedDate;
-  }
-}
-
-function selectSeason(season, year) {
-  selectedYear.value = year;
-  selectedSeason.value = season;
-  dropdownOpen.value = false;
 }
 
 function getRankClass(index) {
@@ -446,16 +338,6 @@ function getTasks() {
   })
 }
 
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
 
 const handleTaskClick = (task) => {
   showTask.value = true;
@@ -496,10 +378,6 @@ const handleExperienceClick = (experienceId) => {
   clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
 };
 
-const dropdownOpen = ref(false);
-const selectedYear = ref(2025);
-const selectedSeason = ref('Spring');
-const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
 
 const selectSeason = (season, year) => {
   selectedSeason.value = season;

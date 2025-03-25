@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-
+import { authorizeRoute, authorizeUser, ENUM } from "./auth/routeAuth";
 import Login from "./views/Login.vue";
- import StudentHome from "./views/StudentHome.vue";
- import Badges from "./views/Badges.vue";
+import StudentHome from "./views/StudentHome.vue";
+import Badges from "./views/Badges.vue";
 import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
 import leaderBoard from "./views/leaderBoard.vue";
+import Unauthorized from "./views/Unauthorized.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
@@ -19,28 +20,28 @@ import approval from "./views/approval.vue"
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { 
-      path: "/AdminHome", 
+    {
+      path: "/AdminHome",
       alias: "/AdminHome",
-      name: "AdminHome", 
-      component: AdminHome
+      name: "AdminHome",
+      component: AdminHome,
     },
-    { 
-      path: "/AdminManageEvents", 
+    {
+      path: "/AdminManageEvents",
       alias: "/AdminManageEvents",
-      name: "AdminManageEvents", 
-      component: AdminManageEvents
+      name: "AdminManageEvents",
+      component: AdminManageEvents,
     },
-    { 
-      path: "/home", 
+    {
+      path: "/home",
       alias: "/studentHome",
-      name: "StudentHome", 
-      component: StudentHome
+      name: "StudentHome",
+      component: StudentHome,
     },
-    { 
-      path: "/ManageUsers", 
+    {
+      path: "/ManageUsers",
       alias: "/ManageUsers",
-      name: "ManageUsers", 
+      name: "ManageUsers",
       component: ManageUsers,
     },
     { 
@@ -49,7 +50,6 @@ const router = createRouter({
       name: "UserInfoDialog", 
       component: UserInfoDialog
     },
-
     {
       path: "/",
       alias: "/Login",
@@ -62,6 +62,12 @@ const router = createRouter({
       alias: "/ManageExperiencesTasks",
       name: "ManageExperiencesTasks",
       component: ManageExperiencesTasks,
+      beforeEnter: async (to, from, next) => {
+        if (true != (await authorizeRoute(ENUM.ADD_EXPERIENCE))) next({
+          name: 'unauthorized'
+        });
+       next()
+      },
     },
     {
       path: "/approval",
@@ -69,37 +75,46 @@ const router = createRouter({
       name: "approval",
       component: approval,
     },
-
-  //   {
-  //     path: '/admin-view', 
-  //     name: 'AdminView', 
-  //     component: AdminView,
-  //     props: route => ({ resumeId: route.query.resumeId })
-  //   }
-  {
-    path: '/badges',
-    alias: '/BadgePage',
-    name: "badge",
-    component: Badges,
-  },
-  {
-    path: '/shop',
-    alias: '/shopPoints',
-    name: "shop",
-    component: Shop,
-  },
-  {
-    path: '/calendar',
-    alias: '/calendarPage',
-    name: "calendar",
-    component: Calendar,
-  },
-  {
-    path: '/leaderboard',
-    alias: '/leaderboardPage',
-    name: "leaderboard",
-    component: leaderBoard,
-  }
+    //   {
+    //     path: '/admin-view',
+    //     name: 'AdminView',
+    //     component: AdminView,
+    //     props: route => ({ resumeId: route.query.resumeId })
+    //   }
+    {
+      path: "/badges",
+      alias: "/BadgePage",
+      name: "badge",
+      component: Badges,
+    },
+    {
+      path: "/shop",
+      alias: "/shopPoints",
+      name: "shop",
+      component: Shop,
+    },
+    {
+      path: "/calendar",
+      alias: "/calendarPage",
+      name: "calendar",
+      component: Calendar,
+    },
+    {
+      path: "/leaderboard",
+      alias: "/leaderboardPage",
+      name: "leaderboard",
+      component: leaderBoard,
+    },
+    {
+      path: "/unauthorized",
+      alias: "/unauthorizedPage",
+      name: "unauthorized",
+      component: Unauthorized,
+    },
   ],
 });
+router.beforeResolve(async (to, from) => {
+  if (true !== (await authorizeUser()) && to.name !== 'Login') return{ name: 'Login' };
+})
+
 export default router;

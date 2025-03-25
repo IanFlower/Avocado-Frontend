@@ -62,7 +62,7 @@
           </v-card>
         </v-row>
 
-        <!-- Tasks Section-->
+        <!-- Tasks Section -->
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
             <v-list class="overflow-y-auto w-100" max-height="250">

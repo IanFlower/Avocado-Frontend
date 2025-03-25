@@ -87,23 +87,13 @@
         <!-- Experiences Section -->
         <h2 class="text-center my-3">Experiences</h2>
         <v-row no-gutters>
-            <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="e in experiences" :key="e"              
-                  :class="{ 'secondary': !e.flightPlanExperience.completed, 'accent': e.flightPlanExperience.completed }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
-                  @click="handleExperienceClick(t)">
-                  <v-card-text class="text-h6 pa-0 pl-4">
-                    <v-row class="pa-0 ma-0" height="60">
-                      <v-col class="ml-4 mt-1">
-                        <v-row>{{ e.experience.name }}</v-row>
-                        <v-row v-if="e.flightPlanExperience.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{e.flightPlanExperience.subtext}}</v-row>
-                      </v-col>
-                      <v-col align="center" v-if="e.flightPlanExperience.completed" class="font-weight-bold">Completed</v-col>
-                      <v-col align="end" class="text-end">{{ e.experience.points }}</v-col>
-                    </v-row>
-                  </v-card-text>
+          <v-list class="overflow-y-auto w-100" max-height="250">
+                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
+                  @click="handleTaskClick(n)">
+                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Experience Placeholder</v-card-text>
                 </v-card>
-              </v-list>
+            </v-list>
         </v-row>
       </v-col>
 
@@ -180,12 +170,6 @@
       :refresh="refresh"
       @update:dialog="showTask = $event"
       @update:task="changeTask($event)"/>
-    <ExperienceDialog 
-      :dialog="showExperience"
-      :item="currentExperience"
-      :refresh="refresh"
-      @update:dialog="showExperience = $event"
-      @update:experience="changeExperience($event)"/>
   </v-container>
 </template>
 
@@ -196,8 +180,6 @@ import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
 import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
-import FlightPlanExperience from "../services/flightPlanExperienceServices";
-import ExperienceDialog from "../components/ExperienceDialog.vue";
 import studentInfoServices from "../services/studentInfoServices.js";   
 import Utils from "../config/utils.js";
 import UserServices from "../services/userServices";
@@ -207,37 +189,22 @@ import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
 
-const clickedExperience = ref({});
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-const dropdownOpen = ref(false);
-const selectedYear = ref(2025);
-const selectedSeason = ref('Spring');
-const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
+// leaderboard variables
+const students = ref([]);
+
 const router = useRouter();
 const upcomingEvents = ref([]);
 const tasks = ref([]);
 const showTask = ref(false)
 const currentTask = ref(null)
-const experiences = ref([]);
-const showExperience = ref(false)
-const currentExperience = ref(null)
 const refresh = ref(null)
-const selectedStudentPoints = ref(null);
-
-// leaderboard variables
-const students = ref([]);
 
 onMounted(() => {
   getUpcomingEvents()
   getTasks()
-  getExperiences()
   getLeaderboardinfo();
 })
+
 
 function getLeaderboardinfo(){
   leaderboardService.getSortedStudentsByClass(userId).then((response) => {
@@ -252,21 +219,6 @@ function getLeaderboardinfo(){
   }).catch(error => {
     console.log("Error fetching leaderboard:", error);
   });
-}
-
-
-function changeExperience(experience) {
-  currentExperience.value = experience;
-  refresh.value = true;
-  showExperience.value = true;
-}
-
-
-function getExperiences() {
-  FlightPlanExperience.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-  .then((res) => {
-    experiences.value = res.data.experiences.sort((experienceA, experienceB) => {return experienceA.experience.priority - experienceB.experience.priority});
-  })
 }
 
 function getRankClass(index) {
@@ -338,6 +290,16 @@ function getTasks() {
   })
 }
 
+const clickedExperience = ref({});
+
+const totalTasks = 10;
+const tasksCompleted = ref(0);
+const progressValue = ref(0);
+const clickedTask = ref(Array(totalTasks).fill(false));
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
 
 const handleTaskClick = (task) => {
   showTask.value = true;
@@ -378,6 +340,10 @@ const handleExperienceClick = (experienceId) => {
   clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
 };
 
+const dropdownOpen = ref(false);
+const selectedYear = ref(2025);
+const selectedSeason = ref('Spring');
+const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
 
 const selectSeason = (season, year) => {
   selectedSeason.value = season;

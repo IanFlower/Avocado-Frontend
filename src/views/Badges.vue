@@ -1,38 +1,21 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import Utils from '../config/utils';
+</script>
+
 <template>
-    <v-container class="fill-height d-flex justify-center align-center">
-      <v-card class="pa-5 text-center" height="300px" width="300px">
-        <v-card-title>Latest Badge</v-card-title>
-        <v-img
-          height="250px"
-          width="250px"
-          :src="elite"
-          alt="Elite Badge"
-          class="clickable-image"
-          @click="goHome"
-        ></v-img>
-      </v-card>
+    <v-container>
+        <v-row>
+            <v-col cols="12" >
+                <h1 align="center">Flight Plan Badges</h1>
+            </v-col>
+        </v-row>
+        <v-container fluid fill-height >
+                <v-card  height="100%" width="90vw" elevation="24"  align="center" display="flex"  justify="center" class="primary">
+                    adsadas
+                </v-card>
+        </v-container>
+        <v-spacer></v-spacer>
+
     </v-container>
-  </template>
-  
-  <script setup>
-  import { useRouter } from 'vue-router';
-  import elite from '../assets/elite.png'; 
-  
-  const router = useRouter();
-  
-  const goHome = () => {
-    router.push('/home'); 
-  };
-  </script>
-  
-  <style scoped>
-  .clickable-image {
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out;
-  }
-  
-  .clickable-image:hover {
-    transform: scale(1.05);
-  }
-  </style>
-  
+</template>

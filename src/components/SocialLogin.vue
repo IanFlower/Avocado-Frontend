@@ -84,6 +84,7 @@ const handleCredentialResponse = async (response) => {
       } else {
         if (studentInfo.data[0].firstLogin === true) {
         showUserInfoDialog.value = true;
+
       }
         else {
           router.push({ name: 'StudentHome' });
@@ -92,9 +93,11 @@ const handleCredentialResponse = async (response) => {
     } catch (error) {
       const studentInfo = await studentInfoServices.getStudentInfoById(user.value.id);
       console.error("Error fetching role user", error);
-      if (studentInfo.data[0].firstLogin === true) { 
+      if (studentInfo.data[0].firstLogin === true) {
         showUserInfoDialog.value = true;
-
+        studentInfoServices.updateStudentInfo(user.value.id, {
+          firstLogin: false,
+        });
       }
       else {
         router.push({ name: 'StudentHome' });

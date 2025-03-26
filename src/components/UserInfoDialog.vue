@@ -48,6 +48,8 @@ import studentInfoServices from "../services/studentInfoServices";
 import studentInfoMajorService from "../services/studentInfoMajorServices";
 import userService from "../services/userServices";
 import Utils from "../config/utils";
+import roleUserServices from "../services/roleUserServices";
+const user = Utils.getStore("user");
 
 const majors = ref([]);
 const userMajors = ref([]);
@@ -57,6 +59,8 @@ const errors = ref({
     majors: false,
 });
 const submitted = ref(false);
+const snackbar = ref(false); // Controls snackbar visibility
+const snackbarMessage = ref(""); // Stores the snackbar message
 
 const emit = defineEmits(["update:dialog", "save"]);
 onMounted(() => {
@@ -78,8 +82,20 @@ const dialogModel = computed({
 
 // Function to close the dialog
 const closeDialog = () => {
-    emit("update:dialog", false);
+    dialogModel.value = false; // Close the dialog
+    emit("update"); // Emit the save event
+    const roleId = 5;
+
+    roleUserServices.updateUserRole(user.id, roleId)
+        .then(() => {
+            snackbarMessage.value = "Your request to be an admin has been sent."; // Set the snackbar message
+            snackbar.value = true; // Show the snackbar
+        })
+        .catch(() => {
+            console.log("Error updating user role");
+        });
 };
+
 
 // Function to validate inputs and save the data
 const validateAndSave = () => {

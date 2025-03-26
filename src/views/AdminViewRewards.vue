@@ -82,26 +82,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- Delete Reward Dialog -->
-  <v-dialog v-model="deleteRewardDialogBox" max-width="400px">
-    <v-card>
-      <v-card-title>Delete Reward</v-card-title>
-      <v-card-text>
-        <DeleteDialog 
-            :dialog="deleteDialog"
-            :item="currentItem" 
-            :category="category"
-            @update:dialog="deleteDialog = $event"
-            @delete="refreshDeleteRewards()"
-        />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="closeDeleteRewardDialog">Cancel</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
   <!-- Image Dialog -->
   <v-dialog v-model="imageDialog" max-width="800px">
     <v-card>
@@ -115,6 +95,14 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+  
+  <DeleteDialog 
+    :dialog="deleteDialog"
+    :item="currentItem" 
+    :category="category"
+    @update:dialog="deleteDialog = $event"
+    @delete="refreshDeleteRewards()"
+  />
 
 </template>
 
@@ -166,7 +154,6 @@ const initialize = async () => {
 
 // Open and Close functions for dialogs
 const deleteItem = (item) => {
-  console.log(category, currentItem, item);
   deleteDialog.value = true;
   currentItem.value = item;
 };

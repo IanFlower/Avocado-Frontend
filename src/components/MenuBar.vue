@@ -39,7 +39,7 @@ async function getNotifications() {
 
 async function deleteNotification(notification) {
     await Notification.deleteNotification(notification.id)
-    getNotifications()
+    // .then(() => {getNotifications()})
 }
 
 // Lifecycle hook: Runs when the component is mounted
@@ -71,7 +71,7 @@ onMounted(() => {
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
 
             <!-- Notifications -->
-            <v-menu bottom max-width="300px" rounded offset-y>
+            <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props">
                         <v-icon icon="mdi-bell" size="30"></v-icon>

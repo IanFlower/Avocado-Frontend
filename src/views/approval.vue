@@ -1,15 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import ApprovalAdmin from "../components/ApprovalAdmin.vue";
 
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(''); // Message displayed in snackbar
 const snackbarColor = ref(''); // Snackbar color (success/error)
 const selectedButton = ref(1); // Default to 'Students'
-const newEditDialog = ref(false); // Controls new edit dialog visibility
 const newSelectedUser = ref(null); 
 const selectedUser = ref(null); // Currently selected user
-const editDialog = ref(false); // Controls edit dialog visibility
 
 // Function to handle button clicks
 const toggleActive = (button) => {
@@ -17,10 +16,6 @@ const toggleActive = (button) => {
     search.value = ''; // Clear the search query
 };
 
-// Function to initialize the component
-const initialize = () => {
-  console.log("Component initialized");
-};
 
 // Function to show a snackbar message
 const showSnackbar = (message, color) => {
@@ -32,15 +27,9 @@ const showSnackbar = (message, color) => {
   }, 3000); 
 };
 
-// Function to handle new edit item
-const newEditItem = async (item) => {
-  newSelectedUser.value = item;
-  await fetchAvailableRoles();
-  newEditDialog.value = true; 
-};
+
 
 onMounted(() => {
-  initialize();
 });
 
 </script>
@@ -51,7 +40,7 @@ onMounted(() => {
   <v-spacer></v-spacer>
   <div>
     <div class="pa-12">
-      <v-row>
+      <v-row class="pb-0">
         <v-col cols="8"> 
           <v-btn
             class="secondary"
@@ -112,9 +101,8 @@ onMounted(() => {
   </div>
 
   <!-- Conditional Rendering Section -->
-  <div class="pa-12">
     <div v-if="selectedButton === 1">
-        <p>students Component</p>
+      <p>Students Component</p>
 
     </div>
     <div v-else-if="selectedButton === 2">
@@ -124,12 +112,11 @@ onMounted(() => {
       <p>Experiences Component</p>
     </div>
     <div v-else-if="selectedButton === 4">
-      <p>Admin Approval Component</p>
+      <ApprovalAdmin/> 
     </div>
     <div v-else-if="selectedButton === 5">
       <p>Requested Approval Component</p>
     </div>
-  </div>
 </template>
 
 <style scoped>

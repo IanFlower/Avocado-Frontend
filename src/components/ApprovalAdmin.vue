@@ -1,20 +1,19 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import roleUser from '../services/roleUserServices';
-
+import userSerices from "../services/userServices"; 
 
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(''); // Message displayed in snackbar
 const snackbarColor = ref(''); // Snackbar color (success/error)
-const selectedButton = ref(1); // Default to 'Students'
-const headers = ref([ 
-  { title: 'Full Name', key: 'fullName' },
-  { title: 'Role', key: 'role', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false },
-]); 
-const users = ref([]); // List of users  
+const users = ref([]); // List of users
 
+const headers = ref([ 
+  { title: 'fName', key: 'fName' },
+  { title: 'email', key: 'email', sortable: false },
+  { title: 'aprove', key: 'approve', sortable: false },
+]); 
+ 
 
 
 const showSnackbar = (message, color) => {
@@ -24,17 +23,23 @@ const showSnackbar = (message, color) => {
   setTimeout(() => {
     snackbar.value = false;
   }, 3000); 
+}; 
+
+const fetchUsers = async () => {
+    userSerices.getWantToBeAdminUsers()
+    .then(response => {
+      users.value = response.data;
+    }) 
+
+
 };
+const approveUser = async (user) => {
 
-
-
-
-const saveUser = (user) => {
-  showSnackbar('User updated successfully', 'success');
 };
 
 onMounted(() => {
-
+  // Fetch users from the database
+  fetchUsers();
 });
 
 </script> 
@@ -47,16 +52,12 @@ onMounted(() => {
         :headers="headers"
         :items="users"
         :search="search"
-        item-value="fullName"
+        item-value="fName" 
       >
-        <template v-slot:item.actions="{ item }">
-          <v-icon color="#004761" size="large" class="pa-6" @click="editItem(item)">mdi-shield</v-icon> 
-          <v-icon color="#004761" size="large" @click="newEditItem(item)">mdi-pencil-box-outline</v-icon>  
-        </template>
+        <template v-slot:item.approve="{ item }">
+          <v-icon color="#004761" size="large" class="pa-6">mdi-thumb-up</v-icon> 
+        </template> 
       </v-data-table>
-
-
-
     </div>
   </div>
 </template> 

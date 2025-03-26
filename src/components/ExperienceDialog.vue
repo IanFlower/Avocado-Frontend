@@ -1,10 +1,11 @@
 <script setup>
-import PrerequisiteServices from "../services/prerequisiteServices";
 import { computed, onMounted, ref, watch } from "vue";
+import flightPlanExperienceService from "../services/flightPlanExperienceServices";
 
 const prerequisite = ref(null)
 const docRequired = ref(false)
 const showUpload = ref(false)
+const upcomingEvents = ref([])
 
 // Define emits for the component
 const emit = defineEmits("update:dialog", "update:experience");
@@ -34,10 +35,9 @@ onMounted(() => {
 })
 
 function initialize() {
-    prerequisite.value = null;
     docRequired.value = null;
     item.value = props.item
-    getPrerequisites()
+    getUpcomingEvents(item.value)
     try {docRequired.value = item.value.experience.documentRequired}
     catch {}
 }
@@ -56,25 +56,38 @@ watch(() => props.refresh, () => {
     }
 });
 
-function getPrerequisites() {
-    if (item.value) {
-        PrerequisiteServices.getAllForExperienceId(item.value.experience.id, item.value.flightPlanExperience.flightPlanId)
-        .then((res) => {
-            prerequisite.value = res.data
-        })
-        .catch((error) => {
-            console.log("No prerequisites found, error: " + error)
-        })
-    }
+function getUpcomingEvents(ex) {
+    if (!ex) return
+    flightPlanExperienceService.getEventsByExperience(ex.Experience.id)
+    .then((res) => {
+        upcomingEvents.value = res.data;
+    })
 }
 
-function openPrerequisite(prerequisite) {
-    closeDialog()
-    emit("update:experience", prerequisite);
+function parseTime(date) {
+  let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
+
+    let hours = parseInt(time[1], 10);
+    let minutes = time[2];
+    let period = hours >= 12 ? "PM" : "AM";
+
+    // Convert to 12-hour format
+    hours = hours % 12 || 12;
+
+    return `${hours}:${minutes} ${period}`;
 }
 
-function upload() {
-    showUpload.value = true;
+
+function parseDate(date) {
+  let parsedDate = new Date(date.startDateTime).toDateString();
+  if ( date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
+    let weekday = parsedDate.match(/^(\S+)/)
+    let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
+    let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
+    let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
+    parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
+  }
+  return parsedDate;
 }
 </script>
 
@@ -82,38 +95,33 @@ function upload() {
     <v-dialog v-model="dialogModel" max-width="500px">
         <v-card>
             <v-card-title class="bg-secondary text-center sticky-title">
-                <span>{{ item.experience.name }} - Description</span>
+                <span>{{ item.Experience.name }} - Description</span>
             </v-card-title>
             <v-card-text class="text-center">
                 <v-container>
-                    <v-row>{{ item.experience.desc }}</v-row>
-                    <v-row v-if="prerequisite" align="center"><v-col class="text-center font-weight-bold">Prerequisites</v-col></v-row>
-                    <v-row v-for="p in prerequisite" :key="p">
-                        <v-card 
-                            :class="{ 'secondary': !p.prereq.completed, 'accent': p.prereq.completed }" 
-                            class="w-100 pa-0 mt-5 mr-2 " elevation="2" shaped
-                            @click="openPrerequisite(p)"> 
-                            <v-card-text class="text-h6 pa-0 pl-4">
-                                <v-row class="pa-0 ma-0" height="60">
-                                <v-col class="ml-4 mt-1">
-                                    <v-row>{{ p.experience.name }}</v-row>
-                                    <v-row v-if="p.flightPlanExperience.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{p.flightPlanExperience.subtext}}</v-row>
-                                </v-col>
-                                <v-col align="end" class="text-end">{{ p.experience.points }}</v-col>
+                    <v-row>{{ item.Experience.desc }}</v-row>
+                    <v-row align="center" v-if="upcomingEvents.length != 0"><v-col>Upcoming Events that satisfy this experience:</v-col></v-row>
+                    <v-row align="center">
+                        <v-col>
+                            <v-card class="secondary mb-5" elevation="0" max-width="400" 
+                            v-for="e in upcomingEvents" :key="e">
+                                <v-row align="center" no-gutters>
+                                    <v-col cols="4" class="text-center">
+                                        <div class="text-subtitle-1">{{ parseDate(e) }}</div>
+                                        <div class="text-caption text-grey-darken-1">{{ parseTime(e) }}</div>
+                                    </v-col>
+                                <v-divider vertical class="mx-2"></v-divider>
+                                    <v-col>
+                                        <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                                        <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
+                                    </v-col>
                                 </v-row>
-                            </v-card-text>
-                        </v-card>
+                            </v-card>
+                        </v-col>
                     </v-row>
-                    <v-row v-if="docRequired" align="center"><v-col class="text-center font-weight-bold">Document Upload (Choose 1)</v-col></v-row>
-                    <v-row v-if="docRequired" class="mt-4"><v-textarea label="Provide Link"></v-textarea></v-row>
-                    <v-row v-if="docRequired" align="center"><v-col class="text-center font-weight-bold">Or</v-col></v-row>
-                    <v-row v-if="docRequired" align="center"><v-col><v-btn class="secondary-button" @click="upload()">Upload a file<v-icon icon=mdi-upload-box-outline /></v-btn></v-col></v-row>
                 </v-container></v-card-text>
             <v-card-actions>
-                <v-btn v-if="docRequired" class="secondary-button" text @click="closeDialog()">Cancel</v-btn>
-                <v-spacer v-if="docRequired"></v-spacer>
-                <v-btn v-if="docRequired" color="blue darken-1" text @click="saveDialog()">Save</v-btn>
-                <v-container v-if="!docRequired">
+                <v-container>
                     <v-row align="center">
                         <v-col align="center"><v-btn class="secondary" @click="closeDialog()">Close</v-btn></v-col>
                     </v-row>

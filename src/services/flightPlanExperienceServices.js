@@ -16,6 +16,11 @@ const flightPlanExperienceService = {
    getFlightPlanExperienceByUserId(id) {
     return apiClient.get(`/flightPlanExperience/byUser/${id}`);
   },
+  
+   // Get a specific flightPlanExperience by userId
+   getEventsByExperience(id) {
+    return apiClient.get(`/flightPlanExperience/events/byExperience/${id}`);
+  },
 
   // Create a new flightPlanExperience
   createFlightPlanExperience(flightPlanExperienceData) {

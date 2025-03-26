@@ -154,7 +154,7 @@ onMounted(() => {
                     <v-btn variant="text">Comments</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Student Approval</v-btn>
+                    <v-btn variant="text"to="/approval">Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item to="AdminManageEvents">
                     <v-btn variant="text">Manage Events</v-btn>

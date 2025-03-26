@@ -134,8 +134,8 @@ const category = "reward";
 const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
-const imageDialog = ref(false); // For image dialog
-const imageUrl = ref(""); // To store the clicked image URL
+const imageDialog = ref(false);
+const imageUrl = ref(""); 
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
@@ -156,7 +156,7 @@ const initialize = async () => {
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
       requiredPoints: reward.requiredPoints,
-      image: reward.image // Ensure the image URL is part of the response
+      image: reward.image 
     }))];
   } catch (error) {
     console.error("Error fetching rewards:", error);
@@ -202,11 +202,6 @@ const closeEditRewardDialog = () => {
   selectedReward.value = null;
 };
 
-const openDeleteRewardDialog = (reward) => {
-  selectedReward.value = reward;
-  deleteRewardDialogBox.value = true;
-};
-
 const closeDeleteRewardDialog = () => {
   deleteRewardDialogBox.value = false;
   selectedReward.value = null;
@@ -214,7 +209,7 @@ const closeDeleteRewardDialog = () => {
 
 // Image Dialog functions
 const openImageDialog = (item) => {
-  imageUrl.value = item.image || "default-image-path"; // Set a default image if not available
+  imageUrl.value = item.image || "default-image-path"; 
   imageDialog.value = true;
 };
 

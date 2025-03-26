@@ -3,15 +3,11 @@
     <v-form ref="rewardForm">
       <v-text-field v-model="reward.name" label="Name" required></v-text-field>
       <v-textarea v-model="reward.desc" label="Description" required></v-textarea>
-      <v-text-field v-model.number="reward.requiredPoints" label="Required Points" type="number" required></v-text-field>
+      <v-text-field v-model.number="reward.requiredPoints" label="Required Points" type="number"
+        required></v-text-field>
 
       <!-- Image Upload -->
-      <v-file-upload 
-        label="Upload Image" 
-        @change="handleImageUpload" 
-        accept="image/*" 
-        required
-      ></v-file-upload>
+      <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
 
       <v-btn @click="AddReward" color="primary">Save</v-btn>
     </v-form>
@@ -19,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'; 
+import { ref } from 'vue';
 import rewardServices from '../services/rewardServices.js';
 import iconServices from '../services/iconServices.js';
 import { VFileUpload } from 'vuetify/labs/VFileUpload';
@@ -31,7 +27,7 @@ const reward = ref({
 });
 
 const icon = ref({
-  image: null, 
+  image: null,
   forBadge: false,
 });
 
@@ -50,7 +46,7 @@ const AddReward = async () => {
       forBadge: icon.value.forBadge,
     };
 
-    const iconResponse = await iconServices.addIcon(iconData); 
+    const iconResponse = await iconServices.addIcon(iconData);
     console.log('Icon Response:', iconResponse);
 
     const rewardResponse = await rewardServices.addReward({
@@ -60,7 +56,7 @@ const AddReward = async () => {
     });
     console.log('Reward Response:', rewardResponse);
 
-    emit('rewardAdded'); 
+    emit('rewardAdded');
   } catch (error) {
     console.error('Error adding reward:', error);
   }
@@ -68,14 +64,14 @@ const AddReward = async () => {
 
 
 function handleImageUpload(event) {
-  const files = event.target.files; 
+  const files = event.target.files;
 
   if (!files || files.length === 0) {
     console.error('No files selected');
     return;
   }
 
-  const selectedImage = files[0]; 
+  const selectedImage = files[0];
   console.log('Selected file:', selectedImage);
 
   // Store the file object in the icon ref

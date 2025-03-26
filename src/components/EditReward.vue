@@ -14,7 +14,6 @@
         alt="Reward Image"
       ></v-img>
 
-      <!-- Image upload (allows replacing the image) -->
       <v-file-upload 
         v-if="!reward.image || reward.image instanceof File"
         label="Upload Image" 
@@ -89,9 +88,9 @@ const updateReward = async () => {
     // If a new image is uploaded, add it
     if (reward.value.image instanceof File) {
       const iconData = new FormData();
-      iconData.append('image', reward.value.image); // Append the file object
-      const iconResponse = await iconServices.addIcon(iconData); // Add the icon to the database
-      updatedReward.iconId = iconResponse.data.id; // Assuming the API returns the new icon ID
+      iconData.append('image', reward.value.image);
+      const iconResponse = await iconServices.addIcon(iconData); 
+      updatedReward.iconId = iconResponse.data.id; 
 
       console.log('Icon added/updated:', iconResponse);
     }
@@ -106,7 +105,6 @@ const updateReward = async () => {
   }
 };
 
-// Function to handle image upload
 function handleImageUpload(event) {
   const files = event.target.files;
   if (!files || files.length === 0) {

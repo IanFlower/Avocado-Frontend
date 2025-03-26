@@ -33,18 +33,17 @@
           <span>{{ item.requiredPoints }}</span>
         </template>
 
-        <template v-slot:item.image="{ }">
-          <span>Not Available</span>
-        </template>
-
         <template v-slot:item.actions="{ item }">
           <v-btn icon class="transparent no-padding" @click="openEditRewardDialog(item)">
             <v-icon color="#004761" size="large">mdi-pencil</v-icon>
           </v-btn>
 
-          <!-- <v-btn icon class="transparent no-padding" @click="openDeleteRewardDialog(item)"> -->
-            <v-icon  @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-          <!-- </v-btn> -->
+          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
+
+          <!-- Image Icon to trigger image dialog -->
+          <v-icon v-if="item.image" @click="openImageDialog(item)" style="cursor: pointer;" color="primary">
+            mdi-image
+          </v-icon>
         </template>
       </v-data-table>
     </div>
@@ -85,30 +84,37 @@
 
   <!-- Delete Reward Dialog -->
   <v-dialog v-model="deleteRewardDialogBox" max-width="400px">
-  <v-card>
-    <v-card-title>Delete Reward</v-card-title>
-    <v-card-text>
-      <!-- <deleteReward 
-        v-if="selectedReward" 
-        :reward="selectedReward" 
-        :dialogVisible="deleteRewardDialogBox"
-        @rewardDeleted="refreshDeleteRewards"
-        @update:dialogVisible="deleteRewardDialogBox = $event"
-      /> -->
-      <DeleteDialog 
+    <v-card>
+      <v-card-title>Delete Reward</v-card-title>
+      <v-card-text>
+        <DeleteDialog 
             :dialog="deleteDialog"
             :item="currentItem" 
             :category="category"
             @update:dialog="deleteDialog = $event"
             @delete="refreshDeleteRewards()"
-            />
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="red" text @click="closeDeleteRewardDialog">Cancel</v-btn>
-    </v-card-actions>
-  </v-card>
-</v-dialog>
+        />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="closeDeleteRewardDialog">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <!-- Image Dialog -->
+  <v-dialog v-model="imageDialog" max-width="800px">
+    <v-card>
+      <v-card-title class="headline">Reward Image</v-card-title>
+      <v-card-text>
+        <v-img :src="imageUrl" max-width="100%" alt="Image" />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="red" text @click="closeImageDialog">Close</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
 </template>
 
@@ -122,56 +128,48 @@ import DeleteDialog from "../components/DeleteDialog.vue";
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
 const selectedReward = ref(null);
-
 const deleteDialog = ref(false);
 const currentItem = ref();
 const category = "reward";
-
 const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
+const imageDialog = ref(false); // For image dialog
+const imageUrl = ref(""); // To store the clicked image URL
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
   { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
   { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
-  { title: "Image", key: "image", align: "center", sortable: false },
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
-
-
 
 const initialize = async () => {
   try {
     const response = await rewardServices.getAllRewards();
-    console.log("Fetched rewards:", response.data); 
+    console.log("Fetched rewards:", response.data);
 
     rewards.value = [...response.data.map(reward => ({
       id: reward.id,
       name: reward.name,
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
-      requiredPoints: reward.requiredPoints
+      requiredPoints: reward.requiredPoints,
+      image: reward.image // Ensure the image URL is part of the response
     }))];
-
   } catch (error) {
     console.error("Error fetching rewards:", error);
     rewards.value = [];
   }
 };
 
-
-
 // Open and Close functions for dialogs
-
-
 const deleteItem = (item) => {
-  console.log(category, currentItem, item)
-    deleteDialog.value = true; 
-    currentItem.value = item;
-}
-
+  console.log(category, currentItem, item);
+  deleteDialog.value = true;
+  currentItem.value = item;
+};
 
 const openAddRewardDialog = () => {
   showAddRewardDialog.value = true;
@@ -212,6 +210,16 @@ const openDeleteRewardDialog = (reward) => {
 const closeDeleteRewardDialog = () => {
   deleteRewardDialogBox.value = false;
   selectedReward.value = null;
+};
+
+// Image Dialog functions
+const openImageDialog = (item) => {
+  imageUrl.value = item.image || "default-image-path"; // Set a default image if not available
+  imageDialog.value = true;
+};
+
+const closeImageDialog = () => {
+  imageDialog.value = false;
 };
 
 onMounted(initialize);

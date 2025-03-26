@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@mdi/font": "^7.0.96",
-    "axios": "^1.1.3",
+    "axios": "^1.8.4",
     "compressorjs": "^1.2.1",
     "dotenv": "^16.4.5",
     "html2canvas": "^1.4.1",
-    "jspdf": "^2.5.2",
+    "jspdf": "^3.0.1",
     "vite-plugin-vuetify": "^2.0.4",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
@@ -34,6 +34,6 @@
     "eslint": "^9.20.1",
     "eslint-plugin-vue": "^9.32.0",
     "globals": "^15.14.0",
-    "vite": "^5.4.10"
+    "vite": "^6.2.3"
   }
 }

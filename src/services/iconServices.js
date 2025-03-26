@@ -1,4 +1,4 @@
-import { Axios } from 'axios';
+import Axios from 'axios';
 import apiClient from '../services/services';
 
 const iconService = {
@@ -12,21 +12,32 @@ const iconService = {
 
   addIcon(icon) {
     const formData = new FormData();
+
+    
+    if (!icon.image || !(icon.image instanceof File)) {
+      console.error("Invalid file object:", icon.image);
+      throw new Error("Invalid file object");
+    }
+
     formData.append('image', icon.image);
     formData.append('forBadge', icon.forBadge);
 
-    return Axios.post('http://localhost:3032/upload', formData, {
+    console.log("FormData before sending:", formData);
+
+    return Axios.post('http://localhost:3032/flight-plan-t2/icon/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     })
-    .then((response) => {
-      return response.data;
-    })
-    .catch((error) => {
-      throw error;
-    });
+      .then((response) => {
+        return response.data;
+      })
+      .catch((error) => {
+        console.error("Error during file upload:", error);
+        throw error;
+      });
   },
+
 
   updateIcon(icon) {
     return apiClient.put(`/icon/${icon.id}`, icon);

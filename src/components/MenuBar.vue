@@ -37,6 +37,11 @@ async function getNotifications() {
    notifications.value = res.data
 }
 
+async function deleteNotification(notification) {
+    await Notification.deleteNotification(notification.id)
+    getNotifications()
+}
+
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
     logoURL.value = ocLogo; // Set logo URL
@@ -75,9 +80,17 @@ onMounted(() => {
 
                 <!-- User menu content -->
                 <v-card class="pa-4">
-                    <v-card-title>Notifications</v-card-title>
+                    <v-card-title class="mb-3">Notifications</v-card-title>
                     <v-card-text class="text-center">
-                        <v-list v-for="n in notifications" :key="n" class="overflow-auto"><v-divider/>{{ n.desc }}</v-list>
+                        <v-row v-for="n in notifications" :key="n" class="mb-3">
+                                <v-card class="w-100" variant="outlined" :color="n.goodNews ? 'green-lighten-2' : 'red-lighten-2'">
+                                    <v-row class="w-100 pl-2 pt-2" align="center" justify="space-between">
+                                        <v-card-title>{{ n.title }}</v-card-title>
+                                        <v-icon @click="deleteNotification(n)">mdi-close</v-icon>
+                                    </v-row>
+                                    <v-card-text class="text-left">{{ n.desc }}</v-card-text>
+                                </v-card>
+                        </v-row>
                     </v-card-text>
                 </v-card>
             </v-menu>

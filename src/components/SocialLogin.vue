@@ -6,9 +6,9 @@
 
     <!-- User Info Dialog Popup -->
     <UserInfoDialog
-      v-if="showUserInfoDialog"
-      v-model="showUserInfoDialog"
+      v-model="showUserInfoDialog"  
       :user="user"
+      @update:dialog="showUserInfoDialog = $event"
       @save="handleUserInfoSave"
     />
   </div>
@@ -22,19 +22,13 @@ import { useRouter } from "vue-router";
 import UserServices from "../services/userServices"; 
 import RoleUserServices from "../services/roleUserServices";
 import UserInfoDialog from "./UserInfoDialog.vue";
-import studentInfoMajorService from "../services/studentInfoMajorServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
-
 
 const router = useRouter();
 const user = ref({});
 const showUserInfoDialog = ref(false);
 const fName = ref("");
 const lName = ref("");
-
-
-
-
 
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
@@ -95,7 +89,7 @@ const handleCredentialResponse = async (response) => {
       console.error("Error fetching role user", error);
       if (studentInfo.data[0].firstLogin === true) {
         showUserInfoDialog.value = true;
-        studentInfoServices.updateStudentInfo(user.value.id, {
+        studentInfoServices.updateStudentInfo(user.value.id, { 
           firstLogin: false,
         });
       }
@@ -119,4 +113,4 @@ onMounted(async () => {
   margin-top: 20px;
 }
 </style>
- 
+

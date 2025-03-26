@@ -5,12 +5,12 @@ const prerequisiteService = {
   getAll() {
     return apiClient.get(`/prerequisite`);
   },
-  
+
   // Get all prerequisite for a specific task
   getAllForId(id) {
     return apiClient.get(`/prerequisite/${id}`);
   },
-  
+
   // Get all prerequisite for a specific task
   getAllForTaskId(taskId, flightPlanId) {
     return apiClient.get(`/prerequisite/byTask/${taskId}/${flightPlanId}`);
@@ -20,12 +20,12 @@ const prerequisiteService = {
   getAllForPrerequisiteId(taskId) {
     return apiClient.get(`/prerequisite/byPrerequisite/${taskId}`);
   },
-  
+
   // Create a new prerequisite
   create(prerequisiteData) {
     return apiClient.post('/prerequisite', prerequisiteData);
   },
-  
+
   // Update a specific prerequisite
   update(id, prerequisiteData) {
     return apiClient.put(`/prerequisite/${id}`, prerequisiteData);

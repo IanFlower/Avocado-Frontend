@@ -2,7 +2,9 @@
 let isDark = false;
 document.documentElement.setAttribute('data-theme', 'light');
 </script>
-<link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'></link>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet"></link>
 <style>
 /* OC Red */
 .primary{
@@ -17,9 +19,9 @@ document.documentElement.setAttribute('data-theme', 'light');
 }
 
 /* OC Blue */
-.secondary{
-    color: black !important;
-    background-color: var(--secondary) !important;
+.tertiary{
+    color: white !important;
+    background-color: var(--tertiary) !important;
 }
 
 /* OC Gold */
@@ -92,12 +94,21 @@ document.documentElement.setAttribute('data-theme', 'light');
 tbody tr:nth-of-type(odd) {
     background-color: white !important;
 } */
-
-html *
-{
-    font-family: 'Inter' !important;
-}
 .v-data-table thead {
     background-color: #D5DFE7;
+}
+
+.merriweather-font {
+  font-family: "Merriweather", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }
 </style>

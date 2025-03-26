@@ -30,7 +30,7 @@
                 </v-card>
             </v-col>
             <v-col align="center" class="ml-4">
-                <v-card class="secondary" link>
+                <v-card class="secondary" to="approval" link>
                     <v-container align="left">
                         <v-row>
                             <v-col cols="1">

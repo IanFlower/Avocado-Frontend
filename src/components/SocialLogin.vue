@@ -1,15 +1,40 @@
+<template>
+  <div class="signup-buttons">
+    <v-row justify="center">
+      <div display="flex" id="parent_id"></div>
+    </v-row>
+
+    <!-- User Info Dialog Popup -->
+    <UserInfoDialog
+      v-if="showUserInfoDialog"
+      v-model="showUserInfoDialog"
+      :user="user"
+      @save="handleUserInfoSave"
+    />
+  </div>
+</template>
+
 <script setup>
 import { ref, onMounted } from "vue";
 import AuthServices from "../services/authServices";
 import Utils from "../config/utils.js";
 import { useRouter } from "vue-router";
-import UserServices from "../services/userServices";
-import RoleUserServices from "../services/roleUserServices"; 
+import UserServices from "../services/userServices"; 
+import RoleUserServices from "../services/roleUserServices";
+import UserInfoDialog from "./UserInfoDialog.vue";
+import studentInfoMajorService from "../services/studentInfoMajorServices.js";
+import studentInfoServices from "../services/studentInfoServices.js";
+
 
 const router = useRouter();
+const user = ref({});
+const showUserInfoDialog = ref(false);
 const fName = ref("");
 const lName = ref("");
-const user = ref({});
+
+
+
+
 
 const loginWithGoogle = () => {
   window.handleCredentialResponse = handleCredentialResponse;
@@ -51,15 +76,29 @@ const handleCredentialResponse = async (response) => {
   .then(async (res) => {
     try {
       const roleRes = await RoleUserServices.getRoleByUserId(user.value.id);
+      const studentInfo = await studentInfoServices.getStudentInfoById(user.value.id);
+
       
       if ([4, 2, 3].includes(roleRes.data.roleId)) {  
         router.push({ name: 'AdminHome' });
       } else {
-        router.push({ name: 'StudentHome' }); 
+        if (studentInfo.data[0].firstLogin === true) {
+        showUserInfoDialog.value = true;
+      }
+        else {
+          router.push({ name: 'StudentHome' });
+        }
       }
     } catch (error) {
+      const studentInfo = await studentInfoServices.getStudentInfoById(user.value.id);
       console.error("Error fetching role user", error);
-      router.push({ name: 'StudentHome' });
+      if (studentInfo.data[0].firstLogin === true) { 
+        showUserInfoDialog.value = true;
+
+      }
+      else {
+        router.push({ name: 'StudentHome' });
+      }
     }
   })
   .catch((error) => {
@@ -72,10 +111,9 @@ onMounted(async () => {
 });
 </script>
 
-<template>
-  <div class="signup-buttons">
-    <v-row justify="center">
-      <div display="flex" id="parent_id"></div> 
-    </v-row>
-  </div>
-</template>
+<style scoped>
+.signup-buttons {
+  margin-top: 20px;
+}
+</style>
+ 

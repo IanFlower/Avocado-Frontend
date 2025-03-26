@@ -9,7 +9,8 @@ import leaderBoard from "./views/leaderBoard.vue";
 import Unauthorized from "./views/Unauthorized.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
-import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
+import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue";
+import UserInfoDialog from "./components/UserInfoDialog.vue";
 // import HomePage from "./views/HomePage.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";

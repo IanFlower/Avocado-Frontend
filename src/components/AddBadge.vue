@@ -4,9 +4,10 @@
       <v-text-field v-model="badge.name" label="Name" required></v-text-field>
       <v-textarea v-model="badge.desc" label="Description" required></v-textarea>
 
-      <v-file-input label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-input>
+      <!-- Image Upload -->
+      <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
 
-      <v-btn @click="handleSubmit" color="primary">Save</v-btn>
+      <v-btn @click="AddBadge" color="primary">Save</v-btn>
     </v-form>
   </v-container>
 </template>
@@ -14,58 +15,70 @@
 <script setup>
 import { ref } from 'vue';
 import badgeServices from '../services/badgeServices.js';
-import iconServices from '../services/IconServices.js';
+import iconServices from '../services/iconServices.js';
 
 const badge = ref({
   name: '',
   desc: '',
-  image: ''
+  iconUrl: '',  // Store the URL of the uploaded icon
 });
 
 const icon = ref({
-  name: '',
-  link: '',
-  forBadge: true
+  image: null,
+  forBadge: true,
 });
 
 const badgeForm = ref(null);
 
-const handleImageUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      badge.value.image = reader.result;
-      icon.value.link = reader.result; 
-    };
-  }
-};
-
 const emit = defineEmits(['badgeAdded']);
 
-const addIcon = async () => {
-  console.log('Submitting Icon:', icon.value);
-  await iconServices.addIcon(icon.value);
-};
-
-const Addbadge = async () => {
-  console.log('Submitting badge:', badge.value);
-  await badgeServices.addBadge({
-    name: badge.value.name,
-    desc: badge.value.desc,
-  });
-
-  await addIcon();
-  emit('badgeAdded');
-};
-
-const handleSubmit = async () => {
+const AddBadge = async () => {
   try {
-    await Addbadge();
-    console.log('Badge and icon added successfully');
+    if (!icon.value.image) {
+      throw new Error('No image uploaded');
+    }
+
+    // First, upload the icon and get the image URL
+    const iconData = {
+      image: icon.value.image,
+      forBadge: icon.value.forBadge,
+    };
+
+    const iconResponse = await iconServices.addIcon(iconData);
+    console.log('Icon Response:', iconResponse);
+
+    // Once the icon is uploaded, use the URL for the badge
+    badge.value.iconUrl = iconResponse.imageUrl;  // This is the uploaded icon URL
+
+    // Now create the badge
+    const badgeResponse = await badgeServices.addBadge({
+      name: badge.value.name,
+      desc: badge.value.desc,
+      iconUrl: badge.value.iconUrl,  // Send the icon URL when creating the badge
+    });
+
+    console.log('Badge Response:', badgeResponse);
+
+    emit('badgeAdded');
   } catch (error) {
-    console.error('Error adding badge or icon:', error);
+    console.error('Error adding badge:', error);
   }
 };
+
+function handleImageUpload(event) {
+  const files = event.target.files;
+
+  if (!files || files.length === 0) {
+    console.error('No files selected');
+    return;
+  }
+
+  const selectedImage = files[0];
+  console.log('Selected file:', selectedImage);
+
+  // Store the file object in the icon ref
+  icon.value.image = selectedImage;
+
+  console.log('Selected Image:', icon.value.image);
+}
 </script>

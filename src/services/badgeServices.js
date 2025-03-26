@@ -1,7 +1,6 @@
-import apiClient from '../services/services'; 
+import apiClient from '../services/services';
 
 const badgeService = {
-
   getAllBadges() {
     return apiClient.get('/badge');
   },
@@ -11,7 +10,12 @@ const badgeService = {
   },
 
   addBadge(badge) {
-    return apiClient.post('/badge', badge);
+    // Send the badge data along with the icon URL (which you will get from the icon upload)
+    return apiClient.post('/badge', {
+      name: badge.name,
+      desc: badge.desc,
+      iconUrl: badge.iconUrl,  
+    });
   },
 
   updateBadge(badge) {
@@ -20,8 +24,7 @@ const badgeService = {
 
   deleteBadge(badgeId) {
     return apiClient.delete(`/badge/${badgeId}`);
-  }
-  
+  },
 };
 
 export default badgeService;

@@ -12,7 +12,7 @@ const dialog = ref(false); // Controls the confirmation dialog visibility
 const selectedUser = ref(null); // Stores the user to be approved
 
 const headers = ref([
-  { title: "fName", key: "fName" },
+  { title: "First Name", key: "fName" },
   { title: "email", key: "email", sortable: false },
   { title: "approve", key: "approve", sortable: false },
 ]);

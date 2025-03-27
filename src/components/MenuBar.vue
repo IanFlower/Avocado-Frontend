@@ -39,7 +39,7 @@ async function getNotifications() {
 
 async function deleteNotification(notification) {
     await Notification.deleteNotification(notification.id)
-    // .then(() => {getNotifications()})
+    getNotifications()
 }
 
 // Lifecycle hook: Runs when the component is mounted

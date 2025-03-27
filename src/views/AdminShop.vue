@@ -70,10 +70,10 @@ const initialize = async () => {
     const response = await userServices.getAllUsers();
     const usersData = response.data;
 
-    // Fetch student points for each user
+    
     for (let user of usersData) {
       const studentInfo = await studentInfoServices.getStudentInfoById(user.id);
-      user.currentPoints = studentInfo.data[0]?.currentPoints || 0; // Assuming studentInfo returns an array
+      user.currentPoints = studentInfo.data[0]?.currentPoints || 0; 
     }
 
     users.value = usersData.map(user => ({

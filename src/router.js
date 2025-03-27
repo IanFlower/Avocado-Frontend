@@ -16,6 +16,7 @@ import UserInfoDialog from "./components/UserInfoDialog.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
 import approval from "./views/approval.vue"
+import RequestExperience from "./views/RequestExperience.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,6 +112,12 @@ const router = createRouter({
       name: "unauthorized",
       component: Unauthorized,
     },
+    {
+      path: "/RequestExperience",
+      alias: "/RequestExperience",
+      name: "RequestExperience",
+      component: RequestExperience,   
+    }
   ],
 });
 router.beforeResolve(async (to, from) => {

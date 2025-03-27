@@ -10,13 +10,14 @@ import Unauthorized from "./views/Unauthorized.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
+import UserInfoDialog from "./components/UserInfoDialog.vue"
+// import HomePage from "./views/HomePage.vue";
 //import RedeemPoints from "./views/AdminRedeem.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./views/PurchaseRewards.vue";
-import UserInfoDialog from "./components/UserInfoDialog.vue"
-// import HomePage from "./views/HomePage.vue";
+>>>>>>>>> Temporary merge branch 2
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"

@@ -14,11 +14,6 @@
           class="ma-2"
         />
       </v-col>
-      <v-col cols="6" class="d-flex justify-end">
-        <v-chip color="primary" class="ma-2">
-          Your Points: {{ studentInfo.length > 0 ? studentInfo[0].currentPoints : 'Loading...' }}
-        </v-chip>
-      </v-col>
     </v-row>
 
     <v-data-table 

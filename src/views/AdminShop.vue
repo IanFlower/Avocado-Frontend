@@ -10,7 +10,6 @@
             single-line class="ma-2"></v-text-field>
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <!-- Use the custom class for color -->
           <v-btn class="custom-btn" @click="editRewards">
             Edit Rewards
           </v-btn>
@@ -56,7 +55,8 @@ const initialize = async () => {
 };
 
 const goToRedeemPoints = (id) => {
-  router.push({ name: "purchaseRewards", params: { id } });
+  console.log("Navigating to purchase rewards with userId:", id);
+  router.push({ name: "purchaseRewards", params: { userId: id } }); 
 };
 
 const editRewards = () => {

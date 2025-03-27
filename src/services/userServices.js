@@ -6,11 +6,20 @@ const userService = {
   getAllUsers() {
     return apiClient.get('/user');
   },
+  UpdateUsersFirstLogin(userId) {
+    return apiClient.get(`/user/firstLogin/${userId}`);
+  },
+
+  // Get all users that want to be admin
+  getWantToBeAdminUsers() {
+    return apiClient.get('/user/wantToBeAdmin/all');  
+  },
+
 
   // Get a specific user by ID
   getUserById(userId) {
     return apiClient.get(`/user/${userId}`);
-  }
+  } 
 };
 
 export default userService;

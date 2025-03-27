@@ -1,0 +1,169 @@
+<template>
+    <v-dialog v-model="dialogModel" height="500px" max-width="500px">
+        <v-card class="d-flex flex-column">
+            <v-card-title class="bg-secondary text-center sticky-title">
+                <span>Before you login we need some information!</span>
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col>
+                        <p>Semesters Till Graduation</p>
+                        <v-select
+                            label="Semesters Till Graduation"
+                            :items="['1', '2', '3', '4', '5', '6', '7', '8']"
+                            v-model="UsersemestersTillGraduation"
+                            :error="submitted && errors.semestersTillGraduation"
+                            error-messages="Please select the number of semesters till graduation."
+                        ></v-select>
+                        <v-select
+                            label="Majors"
+                            multiple
+                            :items="majors"
+                            v-model="userMajors"
+                            item-value="id"
+                            item-title="name"
+                            clearable
+                            chips
+                            :error="submitted && errors.majors"
+                            error-messages="Please select at least one major."
+                        ></v-select>                    
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-actions>
+                <v-btn class="bg-primary" variant="tonal" @click="closeDialog()">I WANT TO BE AN ADMIN</v-btn> 
+                <v-spacer></v-spacer>
+                <v-btn color="blue" text @click="validateAndSave()">Submit</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import router from "../router";
+import majorService from "../services/majors.Services";
+import studentInfoServices from "../services/studentInfoServices";
+import studentInfoMajorService from "../services/studentInfoMajorServices";
+import userService from "../services/userServices";
+import Utils from "../config/utils";
+import roleUserServices from "../services/roleUserServices";
+const user = Utils.getStore("user");
+
+const majors = ref([]);
+const userMajors = ref([]);
+const UsersemestersTillGraduation = ref(null);
+const errors = ref({
+    semestersTillGraduation: false,
+    majors: false,
+});
+const submitted = ref(false);
+const snackbar = ref(false); // Controls snackbar visibility
+const snackbarMessage = ref(""); // Stores the snackbar message
+
+const emit = defineEmits("update:dialog", "save");
+onMounted(() => {
+    majorService.getAllMajors().then((data) => {
+        majors.value = data.data;
+    }).catch((error) => {
+        console.log(error);
+    });
+});
+
+const props = defineProps({
+    dialog: Boolean,
+});
+
+
+const dialogModel = computed({
+    get: () => props.dialog,
+    set: (value) => emit("update:dialog", value),
+});
+
+// Function to close the dialog
+const closeDialog = () => {
+    dialogModel.value = false; // Close the dialog
+    emit("update:dialog", false);    
+    const roleId = 5;
+
+    roleUserServices.updateUserRole(user.id, roleId)
+        .then(() => {
+            snackbarMessage.value = "Your request to be an admin has been sent."; // Set the snackbar message
+            snackbar.value = true; // Show the snackbar
+        })
+        .catch(() => {
+            console.log("Error updating user role");
+        });
+};
+
+
+// Function to validate inputs and save the data
+const validateAndSave = () => {
+    submitted.value = true; 
+
+    // Reset errors
+    errors.value.semestersTillGraduation = !UsersemestersTillGraduation.value;
+    errors.value.majors = userMajors.value.length === 0;
+
+    if (!errors.value.semestersTillGraduation && !errors.value.majors) {
+        saveDialog();
+    }
+};
+
+// Function to save the permissions
+const saveDialog = () => {
+    const user = Utils.getStore("user");
+    console.log(user.id);
+    userService.UpdateUsersFirstLogin(user.id, {
+        firstLogin: false,
+    }).then((response) => {
+        console.log(response);
+        closeDialog();
+        router.push("/home");
+    }).catch((error) => {
+        console.log(error);
+    });
+
+
+
+    // Update the student's info with the selected semesters till graduation
+    studentInfoServices.updateStudentInfo(user.id, {
+        semestersTillGraduation: UsersemestersTillGraduation.value,
+    }).then((response) => {
+        console.log(response);
+    }).catch((error) => {
+        console.log(error);
+    });
+    console.log(userMajors.value);
+
+    // Handle the majors selection by sending only the IDs
+    const studentInfoMajor = {
+        studentInfoId: user.id,
+        majors: userMajors.value, 
+    };
+
+    // Send each major as an individual entry
+    studentInfoMajor.majors.forEach((majorId) => {
+        console.log(majorId);
+        studentInfoMajorService.create({
+            studentInfoId: user.id,
+            majorId: majorId, 
+        }).then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+    });
+};
+</script>
+
+<style scoped>
+.full-height {
+    height: 100%;
+}
+
+.v-divider.full-height {
+    height: 100%;
+}
+</style>

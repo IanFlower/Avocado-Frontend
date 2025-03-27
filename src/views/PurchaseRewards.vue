@@ -14,11 +14,6 @@
           class="ma-2"
         />
       </v-col>
-      <v-col cols="6" class="d-flex justify-end">
-        <v-chip color="primary" class="ma-2">
-          Your Points: {{ studentPoints }}
-        </v-chip>
-      </v-col>
     </v-row>
 
     <v-data-table 
@@ -44,25 +39,24 @@
         <span>{{ item.requiredPoints }}</span>
       </template>
 
-      <template v-slot:item.image="{ }">
-        <span>Not Available</span>
+      <template v-slot:item.currentPoints="{ item }">
+        <span>{{ studentInfo.length > 0 ? studentInfo[0].currentPoints : 'Loading...' }}</span>
       </template>
 
       <template v-slot:item.actions="{ item }">
         <v-btn 
-          :disabled="studentPoints < item.requiredPoints" 
+          :disabled="studentInfo.length === 0 || studentInfo[0].currentPoints < item.requiredPoints" 
           color="primary" 
           class="text-none" 
           @click="confirmPurchase(item)"
           block
         >
-          {{ studentPoints < item.requiredPoints ? 'Not Enough Points' : 'Purchase' }}
+          {{ studentInfo.length === 0 || studentInfo[0].currentPoints < item.requiredPoints ? 'Not Enough Points' : 'Purchase' }}
         </v-btn>
       </template>
     </v-data-table>
   </v-container>
 
-  <!-- Confirmation Dialog -->
   <v-dialog v-model="dialog" max-width="400">
     <v-card>
       <v-card-title class="text-h5">Confirm Purchase</v-card-title>
@@ -78,38 +72,35 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, watch } from "vue";
+import { ref, onMounted, defineProps } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
 
-// Props
 const props = defineProps({
-  userId: Number, // Expecting userId as a prop
+  userId: String,
 });
 
 const rewards = ref([]);
 const searchQuery = ref("");
 const dialog = ref(false);
 const selectedReward = ref(null);
-const studentPoints = ref(0); // Store student's current points
+const studentInfo = ref([]);
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
   { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
   { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
-  { title: "Image", key: "image", align: "center", sortable: false },
+  { title: "Current Points", key: "currentPoints", align: "center", sortable: true },
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
 
-const fetchStudentPoints = async () => {
+const fetchStudentInfo = async () => {
   try {
-    if (!props.userId) return;
-
-    const studentResponse = await studentInfoServices.getStudentInfoById(props.userId);
-    studentPoints.value = studentResponse.data.currentPoints;
+    const response = await studentInfoServices.getStudentInfoById(props.userId);
+    studentInfo.value = response.data;
   } catch (error) {
-    console.error("Error fetching student points:", error);
+    console.error("Error fetching student info:", error);
   }
 };
 
@@ -130,8 +121,7 @@ const fetchRewards = async () => {
 };
 
 const confirmPurchase = (reward) => {
-  if (studentPoints.value < reward.requiredPoints) {
-    console.warn("Not enough points to purchase this reward.");
+  if (studentInfo.value.length === 0 || studentInfo.value[0].currentPoints < reward.requiredPoints) {
     return;
   }
 
@@ -142,38 +132,24 @@ const confirmPurchase = (reward) => {
 const purchaseReward = async () => {
 
   if (!selectedReward.value || !selectedReward.value.id) {
-    console.error("Error: selectedReward is undefined or missing an ID", selectedReward.value);
     return;
   }
-
   try {
-    console.log("Attempting to purchase reward:", selectedReward.value);
-
-    // Deduct points from the student
-    studentPoints.value -= selectedReward.value.requiredPoints;
-
-    // Update UI
+    studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints;
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
       rewards.value[rewardIndex].purchaseCount += 1;
     }
-
-    // Close dialog
+    await studentInfoServices.updateStudentInfo(props.userId, { currentPoints: studentInfo.value[0].currentPoints });
     dialog.value = false;
+    fetchStudentInfo();
   } catch (error) {
     console.error("Error updating reward:", error);
   }
 };
 
 onMounted(() => {
-  fetchStudentPoints();
+  fetchStudentInfo();
   fetchRewards();
-});
-
-
-watch(() => props.userId, (newId) => {
-  if (newId) {
-    fetchStudentPoints();
-  }
 });
 </script>

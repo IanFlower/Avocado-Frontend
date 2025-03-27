@@ -1,14 +1,16 @@
 import { createRouter, createWebHistory } from "vue-router";
-
+import { authorizeRoute, authorizeUser, ENUM } from "./auth/routeAuth";
 import Login from "./views/Login.vue";
 import StudentHome from "./views/StudentHome.vue";
 import Badges from "./views/Badges.vue";
 import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
 import leaderBoard from "./views/leaderBoard.vue";
+import Unauthorized from "./views/Unauthorized.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
-import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue"
+import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue";
+import UserInfoDialog from "./components/UserInfoDialog.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
@@ -17,6 +19,8 @@ import AdminBadge from "./views/AdminBadge.vue";
 // import AdminPage from "./components/AdminPage.vue"
 // import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
+import approval from "./views/approval.vue";
+import AdminBadge from "./views/AdminBadge.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,19 +29,19 @@ const router = createRouter({
       path: "/AdminHome",
       alias: "/AdminHome",
       name: "AdminHome",
-      component: AdminHome
+      component: AdminHome,
     },
-    { 
-      path: "/AdminManageEvents", 
+    {
+      path: "/AdminManageEvents",
       alias: "/AdminManageEvents",
-      name: "AdminManageEvents", 
-      component: AdminManageEvents
+      name: "AdminManageEvents",
+      component: AdminManageEvents,
     },
-    { 
-      path: "/home", 
+    {
+      path: "/home",
       alias: "/studentHome",
       name: "StudentHome",
-      component: StudentHome
+      component: StudentHome,
     },
     {
       path: "/ManageUsers",
@@ -45,90 +49,85 @@ const router = createRouter({
       name: "ManageUsers",
       component: ManageUsers,
     },
-
-
+    { 
+      path: "/UserInfoDialog", 
+      alias: "/UserInfoDialog",
+      name: "UserInfoDialog", 
+      component: UserInfoDialog,
+    },
     {
       path: "/",
       alias: "/Login",
       name: "Login",
       component: Login,
     },
-
     {
       path: "/ManageExperiencesTasks",
       alias: "/ManageExperiencesTasks",
       name: "ManageExperiencesTasks",
       component: ManageExperiencesTasks,
+      beforeEnter: async (to, from, next) => {
+        if (true !== (await authorizeRoute(ENUM.ADD_EXPERIENCE))) next({
+          name: 'unauthorized',
+        });
+        next();
+      },
     },
-  //   {
-  //     path: "/Create",
-  //     alias: "/CreateResume",
-  //     name: "CreateResume",
-  //     component: CreateResume,
-  //   },
-
-    //   {
-    //     path: '/admin-view', 
-    //     name: 'AdminView', 
-    //     component: AdminView,
-    //     props: route => ({ resumeId: route.query.resumeId })
-    //   }
     {
-      path: '/badges',
-      alias: '/BadgePage',
+      path: "/approval",
+      alias: "/approval",
+      name: "approval",
+      component: approval,
+    },
+    {
+      path: "/badges",
+      alias: "/BadgePage",
       name: "badge",
       component: Badges,
     },
     {
-      path: '/shop',
-      alias: '/shopPoints',
+      path: "/shop",
+      alias: "/shopPoints",
       name: "shop",
       component: Shop,
     },
-
     {
-      path: '/calendar',
-      alias: '/calendarPage',
+      path: "/calendar",
+      alias: "/calendarPage",
       name: "calendar",
       component: Calendar,
     },
-
     {
-      path: '/leaderBoard',
-      alias: '/LeaderBoardPage',
+      path: "/leaderboard",
+      alias: "/leaderboardPage",
       name: "leaderboard",
       component: leaderBoard,
     },
-
     {
-      path: '/Purchase',
-      alias: '/PurchaseRewards',
+      path: "/unauthorized",
+      alias: "/unauthorizedPage",
+      name: "unauthorized",
+      component: Unauthorized,
+    },
+    {
+      path: '/Purchase/:userId',
+      alias: '/PurchaseRewards', // Both paths now match and use :userId
       name: 'purchaseRewards',
       component: PurchaseRewards,
+      props: true, // Pass the userId as a prop to the component
     },
-
-    //{
-    //  path: '/adminRedeem',
-     // alias: '/admindRedeemPoints',
-     // name: 'redeemPoints',
-     // component: RedeemPoints,
-    //},
-  
     {
       path: '/AdminShop',
       alias: '/adminShop',
       name: "AdminShop",
       component: AdminShop,
     },
-
     {
       path: '/AdminBadge',
-      alias: '/AdminBadgePage',
-      name: 'AdminBadge',
+      alias: '/adminBadge',
+      name: "AdminBadge",
       component: AdminBadge,
-
     },
-
     {
       path: '/ViewRewards',
       alias: '/AdminViewRewards',
@@ -140,8 +139,12 @@ const router = createRouter({
       alias: '/AddReward',
       name: 'AddReward',
       component: AddReward,
-
     }
   ],
 });
+
+router.beforeResolve(async (to, from) => {
+  if (true !== (await authorizeUser()) && to.name !== 'Login') return { name: 'Login' };
+})
+
 export default router;

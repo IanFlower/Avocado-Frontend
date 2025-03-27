@@ -6,20 +6,42 @@
     <div class="pa-12">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details
-            single-line class="ma-2"></v-text-field>
+          <v-text-field 
+            v-model="searchQuery" 
+            label="Search" 
+            prepend-inner-icon="mdi-magnify" 
+            variant="outlined" 
+            hide-details 
+            single-line 
+            class="ma-2"
+          ></v-text-field>
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <!-- Use the custom class for color -->
           <v-btn class="custom-btn" @click="editRewards">
-            Edit Rewards
+            Rewards
           </v-btn>
         </v-col>
       </v-row>
 
-      <v-data-table :headers="headers" :items="users" :search="searchQuery" item-value="fullName">
+      <v-data-table 
+        :headers="headers" 
+        :items="users" 
+        :search="searchQuery" 
+        item-value="fullName"
+      >
         <template v-slot:item.actions="{ item }">
-          <v-icon color="#004761" size="large" class="pa-6" @click="goToRedeemPoints(item.id)">mdi-cart</v-icon>
+          <v-icon 
+            color="#004761" 
+            size="large" 
+            class="pa-6" 
+            @click="goToRedeemPoints(item.id)"
+          >
+            mdi-cart
+          </v-icon>
+        </template>
+
+        <template v-slot:item.points="{ item }">
+          <span>{{ item.currentPoints !== undefined ? item.currentPoints : 'Loading...' }}</span>
         </template>
       </v-data-table>
     </div>
@@ -30,6 +52,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import userServices from "../services/userServices.js";
+import studentInfoServices from "../services/studentInfoServices.js";
 
 const router = useRouter();
 const users = ref([]);
@@ -45,18 +68,28 @@ const headers = ref([
 const initialize = async () => {
   try {
     const response = await userServices.getAllUsers();
-    users.value = response.data.map(user => ({
+    const usersData = response.data;
+
+    
+    for (let user of usersData) {
+      const studentInfo = await studentInfoServices.getStudentInfoById(user.id);
+      user.currentPoints = studentInfo.data[0]?.currentPoints || 0; 
+    }
+
+    users.value = usersData.map(user => ({
       fullName: `${user.fName} ${user.lName}`,
       id: user.id,
-      points: user.points
+      points: user.points,
+      currentPoints: user.currentPoints
     }));
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching users or student info:", error);
   }
 };
 
 const goToRedeemPoints = (id) => {
-  router.push({ name: "purchaseRewards", params: { id } });
+  console.log("Navigating to purchase rewards with userId:", id);
+  router.push({ name: "purchaseRewards", params: { userId: id } });
 };
 
 const editRewards = () => {

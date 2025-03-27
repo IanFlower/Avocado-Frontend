@@ -11,7 +11,7 @@
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
           <v-btn class="custom-btn" @click="editRewards">
-            Edit Rewards
+            Rewards
           </v-btn>
         </v-col>
       </v-row>

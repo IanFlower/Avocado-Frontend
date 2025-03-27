@@ -16,8 +16,6 @@ import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./views/PurchaseRewards.vue";
 import AdminBadge from "./views/AdminBadge.vue";
-// import AdminPage from "./components/AdminPage.vue"
-// import AdminView from "./components/AdminView.vue";
 import ManageUsers from "./views/ManageUsers.vue"
 import approval from "./views/approval.vue";
 import AdminBadge from "./views/AdminBadge.vue";

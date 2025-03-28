@@ -11,8 +11,8 @@
           v-for="e in upcomingEvents" :key="e">
             <v-row align="center" no-gutters>
               <v-col cols="4" class="text-center">
-                <div class="text-subtitle-1">{{ parseDate(e.startDateTime) }}</div>
-                <div class="text-caption text-grey-darken-1">{{ parseTime(e.startDateTime) }}</div>
+                <div v-if="e.startDateTime != null" class="text-subtitle-1">{{ parseDate(e) }}</div>
+                <div v-if="e.startDateTime != null" class="text-caption text-grey-darken-1">{{ parseTime(e) }}</div>
               </v-col>
               <v-divider vertical class="mx-2"></v-divider>
               <v-col>
@@ -87,13 +87,22 @@
         <!-- Experiences Section -->
         <h2 class="text-center my-3">Experiences</h2>
         <v-row no-gutters>
-          <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="n in 20" :key="n" :class="{ 'secondary-button': !clickedTask[n], 'accent': clickedTask[n] }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped height="45px"
-                  @click="handleTaskClick(n)">
-                  <v-card-text class="text-h6 pa-0 pl-4 pt-2">Experience Placeholder</v-card-text>
+            <v-list class="overflow-y-auto w-100" max-height="250">
+                <v-card v-for="ex in experiences" :key="ex"              
+                  :class="{ 'secondary': !ex.flightPlanExperience.completed, 'accent': ex.flightPlanExperience.completed }"
+                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
+                  @click="handleExperienceClick(ex)">
+                  <v-card-text class="text-h6 pa-0 pl-4">
+                    <v-row class="pa-0 ma-0" height="60">
+                      <v-col class="ml-4 mt-1">
+                        <v-row>{{ ex.Experience.name }}</v-row>
+                      </v-col>
+                      <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">Completed</v-col>
+                      <v-col align="end" class="text-end">{{ ex.Experience.points }}</v-col>
+                    </v-row>
+                  </v-card-text>
                 </v-card>
-            </v-list>
+              </v-list>
         </v-row>
       </v-col>
 
@@ -170,6 +179,13 @@
       :refresh="refresh"
       @update:dialog="showTask = $event"
       @update:task="changeTask($event)"/>
+
+    <ExperienceDialog 
+      :dialog="showExperience"
+      :item="currentExperience"
+      :refresh="refresh"
+      @update:dialog="showExperience = $event"
+      @update:experience="changeExperience($event)"/>
   </v-container>
 </template>
 
@@ -180,9 +196,12 @@ import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
 import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
+import FlightPlanExperience from "../services/flightPlanExperienceServices";
+import ExperienceDialog from "../components/ExperienceDialog.vue";
 import studentInfoServices from "../services/studentInfoServices.js";   
 import Utils from "../config/utils.js";
 import UserServices from "../services/userServices";
+import FlightPlan from "../services/flightPlanServices"
 
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
@@ -197,11 +216,16 @@ const upcomingEvents = ref([]);
 const tasks = ref([]);
 const showTask = ref(false)
 const currentTask = ref(null)
+const experiences = ref([]);
+const showExperience = ref(false)
+const currentExperience = ref(null)
 const refresh = ref(null)
 
-onMounted(() => {
+onMounted( async () => {
+  await FlightPlan.createFlightPlan()
   getUpcomingEvents()
   getTasks()
+  getExperiences()
   getLeaderboardinfo();
 })
 
@@ -240,6 +264,13 @@ function changeTask(task) {
   showTask.value = true;
 }
 
+
+function changeExperience(experience) {
+  currentExperience.value = experience;
+  refresh.value = true;
+  showExperience.value = true;
+}
+
 function getUpcomingEvents() {
   EventServices.getAllEvents()
   .then((res) => {
@@ -250,7 +281,8 @@ function getUpcomingEvents() {
           return event
         }
       })
-      upcomingEvents.value = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
+      let sortedData = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
+      upcomingEvents.value = sortedData.filter((item) => {return item !== undefined});
     } else {
       console.log("No events found")
     }
@@ -258,7 +290,7 @@ function getUpcomingEvents() {
 }
 
 function parseTime(date) {
-  let time = date.match(/T(\d{2}):(\d{2}):\d{2}/);
+  let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
 
     let hours = parseInt(time[1], 10);
     let minutes = time[2];
@@ -272,11 +304,11 @@ function parseTime(date) {
 
 
 function parseDate(date) {
-  let parsedDate = new Date(date).toDateString();
-  if ( date.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
+  let parsedDate = new Date(date.startDateTime).toDateString();
+  if ( date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
     let weekday = parsedDate.match(/^(\S+)/)
     let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
-    let day = date.match(/\d{4}-\d{2}-(\d{2})/)
+    let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
     let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
     parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
   }
@@ -287,6 +319,14 @@ function getTasks() {
   FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
   .then((res) => {
     tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
+  })
+}
+
+
+function getExperiences() {
+  FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
+  .then((res) => {
+    experiences.value = res.data.Experiences.sort((experienceA, experienceB) => {return experienceA.Experience.priority - experienceB.Experience.priority});
   })
 }
 
@@ -304,6 +344,12 @@ let userId = user ? user.id : null;
 const handleTaskClick = (task) => {
   showTask.value = true;
   currentTask.value = task
+};
+
+
+const handleExperienceClick = (experience) => {
+  showExperience.value = true;
+  currentExperience.value = experience
 };
 
 const goToShop = () => {
@@ -334,10 +380,6 @@ const getButtonClass = (index) => {
   } else {
     return '';
   }
-};
-
-const handleExperienceClick = (experienceId) => {
-  clickedExperience.value[experienceId] = !clickedExperience.value[experienceId];
 };
 
 const dropdownOpen = ref(false);

@@ -32,9 +32,9 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
-                <v-btn class="bg-primary" variant="tonal" @click="closeDialog">I WANT TO BE AN ADMIN</v-btn>
+                <v-btn class="bg-primary" variant="tonal" @click="closeDialog()">I WANT TO BE AN ADMIN</v-btn> 
                 <v-spacer></v-spacer>
-                <v-btn color="blue" text @click="validateAndSave">Submit</v-btn>
+                <v-btn color="blue" text @click="validateAndSave()">Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -48,6 +48,8 @@ import studentInfoServices from "../services/studentInfoServices";
 import studentInfoMajorService from "../services/studentInfoMajorServices";
 import userService from "../services/userServices";
 import Utils from "../config/utils";
+import roleUserServices from "../services/roleUserServices";
+const user = Utils.getStore("user");
 
 const majors = ref([]);
 const userMajors = ref([]);
@@ -57,8 +59,10 @@ const errors = ref({
     majors: false,
 });
 const submitted = ref(false);
+const snackbar = ref(false); // Controls snackbar visibility
+const snackbarMessage = ref(""); // Stores the snackbar message
 
-const emit = defineEmits(["update:dialog", "save"]);
+const emit = defineEmits("update:dialog", "save");
 onMounted(() => {
     majorService.getAllMajors().then((data) => {
         majors.value = data.data;
@@ -71,6 +75,7 @@ const props = defineProps({
     dialog: Boolean,
 });
 
+
 const dialogModel = computed({
     get: () => props.dialog,
     set: (value) => emit("update:dialog", value),
@@ -78,8 +83,20 @@ const dialogModel = computed({
 
 // Function to close the dialog
 const closeDialog = () => {
-    emit("update:dialog", false);
+    dialogModel.value = false; // Close the dialog
+    emit("update:dialog", false);    
+    const roleId = 5;
+
+    roleUserServices.updateUserRole(user.id, roleId)
+        .then(() => {
+            snackbarMessage.value = "Your request to be an admin has been sent."; // Set the snackbar message
+            snackbar.value = true; // Show the snackbar
+        })
+        .catch(() => {
+            console.log("Error updating user role");
+        });
 };
+
 
 // Function to validate inputs and save the data
 const validateAndSave = () => {

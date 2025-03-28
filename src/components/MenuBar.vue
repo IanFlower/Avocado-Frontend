@@ -5,6 +5,7 @@ import ocLogo from "../assets/OC-really-good-logo.png"; // Importing the OC logo
 import Utils from "../config/utils"; // Importing a utility module for local storage management
 import userService from "../services/userServices"; // Importing a user service to fetch user data
 import authServices from "../services/authServices";
+import Notification from "../services/notification.Services";
 
 const user = ref(null); // Reactive variable to store the logged-in user
 const title = ref("Career services"); // Reactive title 
@@ -14,6 +15,7 @@ const logoURL = ref(""); // Reactive variable for the logo URL
 const router = useRouter(); // Vue Router instance for navigation
 const admin = ref(null); // Reactive variable to store admin-related user data
 const drawer = ref(false); // Set drawer to false to keep it closed by default
+const notifications = ref([]) // List of notifications
   
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
@@ -30,10 +32,21 @@ function logout() {
         .then(user.value = null, router.push({ name: 'Login' }))
 }
 
+async function getNotifications() {
+   let res = await Notification.getByUser()
+   notifications.value = res.data
+}
+
+async function deleteNotification(notification) {
+    await Notification.deleteNotification(notification.id)
+    getNotifications()
+}
+
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
     logoURL.value = ocLogo; // Set logo URL
     resetMenu(); // Initialize user data
+    getNotifications();
 });
 </script>
 
@@ -56,9 +69,34 @@ onMounted(() => {
             <v-toolbar-title class="title">Career Services</v-toolbar-title>
 
             <v-spacer></v-spacer> <!-- Pushes elements to the right -->
-            <v-btn>
-                <v-icon icon="mdi-bell" size="30"></v-icon>
-            </v-btn>
+
+            <!-- Notifications -->
+            <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props">
+                        <v-icon icon="mdi-bell" size="30"></v-icon>
+                    </v-btn>
+                </template> 
+
+                <!-- User menu content -->
+                <v-card class="pa-4">
+                    <v-card-title class="mb-3">Notifications</v-card-title>
+                    <v-card-text class="text-center">
+                        <v-row v-for="n in notifications" :key="n" class="mb-3">
+                                <v-card class="w-100" variant="outlined" :color="n.goodNews ? 'green-lighten-2' : 'red-lighten-2'">
+                                    <v-row class="w-100 pl-2 pt-2" align="center" justify="space-between">
+                                        <v-card-title>{{ n.title }}</v-card-title>
+                                        <v-icon @click="deleteNotification(n)">mdi-close</v-icon>
+                                    </v-row>
+                                    <v-card-text class="text-left">{{ n.desc }}</v-card-text>
+                                </v-card>
+                        </v-row>
+                    </v-card-text>
+                </v-card>
+            </v-menu>
+
+
+
 
             <!-- User Dropdown Menu -->
             <v-menu bottom min-width="200px" rounded offset-y v-if="user">
@@ -139,6 +177,9 @@ onMounted(() => {
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Badge Management</v-btn>
+                </v-list-item>
+                <v-list-item>
+                    <v-btn variant="text" to="/adminShop">Rewards</v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

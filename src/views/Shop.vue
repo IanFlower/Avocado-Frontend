@@ -37,11 +37,11 @@ const item = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
               <v-img src="https://cdn.vuetifyjs.com/images/cards/sun.png"  cover crop height="28vh" width="15vw"></v-img>
               <v-spacer></v-spacer>
               <v-card-actions >
-                <v-row height="7vh" class="align-center">
+                <v-row height="7vh" class="align-center mb-1 mx-auto">
                   <v-col cols="8">
                     <span class="text-h6">{{ item }}</span>
                   </v-col>
-                  <v-col cols="4" class="mb-1">
+                  <v-col cols="4">
                     <v-btn :icon="`mdi-numeric-${100}`" width="2.8vw" height="2.8vw" class="accent-button">
                       100
                     </v-btn>

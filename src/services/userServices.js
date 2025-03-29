@@ -14,7 +14,10 @@ const userService = {
   getWantToBeAdminUsers() {
     return apiClient.get('/user/wantToBeAdmin/all');  
   },
-
+  //get all the requests from users
+  getAllRequestsFromUsers() {
+    return apiClient.get('/user/get/requests/getAllRequests');  
+  },
 
   // Get a specific user by ID
   getUserById(userId) {

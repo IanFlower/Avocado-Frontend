@@ -1,21 +1,29 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import userSerices from "../services/userServices";
-import roleUserServices from "../services/roleUserServices";
+import flightPlanTaskService from "../services/flightPlanTaskServices";
+import studentInfoServices from "../services/studentInfoServices";
+import flightPlanServices from "../services/flightPlanServices";
+import userServices from "../services/userServices";
+import taskService from "../services/tasksServices";
+import taskMajorService from "../services/taskMajorServices";
+import majorService from "../services/majors.Services";
+import notificationService from "../services/notification.Services";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
-const users = ref([]); // List of users
 const dialog = ref(false); // Controls the confirmation dialog visibility
-const selectedUser = ref(null); // Stores the user to be approved
+const selectedTask = ref(null); // Stores the task to be approved
+const flightPlanTasks = ref([])
+const listItems = ref([])
 
 const headers = ref([
-  { title: "Task Name", key: "tName" },
-  { title: "Semester", key: "semester", sortable: false },
+  { title: "Task Name", key: "taskName" },
+  { title: "Semesters From Graduation", key: "semestersFromGraduation", sortable: false },
   { title: "Major", key: "major" },
-  { title: "Student Name", key: "sName", sortable: false },
+  { title: "Student Name", key: "studentName", sortable: false },
   { title: "Approve", key: "approve", sortable: false },
 ]);
 
@@ -28,80 +36,139 @@ const showSnackbar = (message, color) => {
   }, 3000);
 };
 
-const fetchUsers = async () => {
-  userSerices.getWantToBeAdminUsers().then((response) => {
-    users.value = response.data;
-  });
+const approveTask = async (approval) => {
+  let notification = null
+  if (approval) {
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: ""})
+    notification = {
+      userId: selectedTask.value.userId, 
+      title: `${selectedTask.value.taskName} Approval`,
+      desc: `Your ${selectedTask.value.taskName} task has been approved!`,
+      goodNews: 1
+    }
+    await notificationService.createNotification(notification)
+    let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
+    let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
+    await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+  } else {
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied"})
+    notification = {
+      userId: selectedTask.value.userId, 
+      title: `${selectedTask.value.taskName} Denial`,
+      desc: `Your ${selectedTask.value.taskName} task has been denied.`,
+      goodNews: 0
+    }
+    await notificationService.createNotification(notification)
+  }
+  dialog.value = false;
+  fetchTasks()
 };
 
-const approveUser = async () => {
-  const roleId = 3;
-  if (!selectedUser.value) return;
-
-  roleUserServices
-    .updateUserRole(selectedUser.value.id, roleId)
-    .then((response) => {
-      fetchUsers();
-      showSnackbar("User approved successfully", "success");
-    })
-    .catch((error) => {
-      showSnackbar("Error approving user", "error");
-    })
-    .finally(() => {
-      dialog.value = false; 
-      selectedUser.value = null;
-    });
-};
-
-const confirmApproval = (user) => {
-  selectedUser.value = user; 
+const confirmApproval = (task) => {
+  selectedTask.value = task; 
   dialog.value = true; 
 };
 
+async function fetchTasks() {
+  // Fetch pending tasks
+  flightPlanTasks.value = await flightPlanTaskService.getAllPendingFlightPlanTasks();
+
+  // Wait for all mapped promises to resolve
+  listItems.value = await Promise.all(
+    flightPlanTasks.value.data.map(async (fpTask) => {
+      // Get task
+      let task = await taskService.getById(fpTask.taskId);
+
+      let taskPoints = task.data.points;
+      // Get majors
+      let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
+
+      let majors = await Promise.all( 
+        taskMajors.data.map( async (tm) => {
+          let currMajor = await majorService.getMajorById(tm.majorId)
+          return currMajor.data.name
+        })
+      )
+
+      let allMajors = ""
+      majors.forEach((major) => {allMajors += `${major} `})
+      
+      
+      // Get student name
+      let flightPlan = await flightPlanServices.getFlightPlanById(fpTask.flightPlanId);
+      let studentInfo = await studentInfoServices.getStudentInfoById(flightPlan.data.studentInfoId);
+      let userId = studentInfo.data[0].userId
+      let user = await userServices.getUserById(userId);
+      let name = `${user.data.fName} ${user.data.lName}`;
+      let currPoints = studentInfo.data[0].currentPoints;
+      let earnedPoints = studentInfo.data[0].earnedPoints;
+
+      // Construct list item
+      return {
+        taskName: task.data.name,
+        semestersFromGraduation: task.data.semestersFromGraduation,
+        major: allMajors,
+        studentName: name,
+        fpTaskId: fpTask.id,
+        userId: userId,
+        taskPoints: taskPoints,
+        currPoints: currPoints,
+        earnedPoints: earnedPoints
+      };
+    })
+  );
+}
+
+
 onMounted(() => {
-  fetchUsers();
+  fetchTasks();
 });
 </script>
 
 <template>
-  <v-spacer></v-spacer>
   <div>
-    <div class="pa-12">
-      <v-data-table
-        :headers="headers"
-        :items="users"
-        :search="search"
-        item-value="fName"
-      >
-        <template v-slot:item.approve="{ item }">
-          <v-icon
-            color="#004761"
-            size="large"
-            class="pa-6"
-            @click="confirmApproval(item)"
-          >
-            mdi-thumb-up
-          </v-icon>
-        </template>
-      </v-data-table>
+    <v-spacer></v-spacer>
+    <div>
+      <div class="pa-12">
+        <v-data-table
+          :headers="headers"
+          :items="listItems"
+          :search="search"
+        >
+          <template v-slot:item.approve="{ item }">
+            <v-icon
+              color="#004761"
+              size="large"
+              class="pa-6"
+              @click="confirmApproval(item)"
+            >
+              mdi-eye-outline
+            </v-icon>
+          </template>
+        </v-data-table>
+      </div>
     </div>
-  </div>
 
-  <!-- Confirmation Dialog ------------------------------------------------------->
-  <v-dialog v-model="dialog" max-width="400">
-    <v-card>
-      <v-card-title class="headline">Confirm Approval</v-card-title>
-      <v-card-text>
-        Are you sure you want to approve
-        <strong>{{ selectedUser?.fName }}</strong>?
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="dialog = false">Cancel</v-btn>
-        <v-btn color="green" text @click="approveUser">Approve</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <!-- Confirmation Dialog ------------------------------------------------------->
+    <v-dialog v-model="dialog" max-width="400">
+      <v-card>
+        <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
+        <v-card-text>
+          Are you sure you want to approve
+          <strong>{{ selectedTask?.taskName }}</strong> for 
+          <strong>{{ selectedTask?.studentName }}</strong>?
+        </v-card-text>
+        <v-card-text>DOCUMENT HERE</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-row class="pa-0 ma-0 w-100">
+            <v-col align="start"><v-btn color="red darken-1" text @click="approveTask(false)">Deny</v-btn></v-col>
+            <v-col align="end"><v-btn color="blue darken-1" text @click="approveTask(true)">Approve</v-btn></v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <style scoped>

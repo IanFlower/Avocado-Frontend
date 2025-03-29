@@ -9,7 +9,7 @@
       <!-- Image Upload -->
       <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
 
-      <v-btn @click="AddReward" color="primary">Save</v-btn>
+      <v-btn @click="AddReward" color="blue darken-1">Save</v-btn>
     </v-form>
   </v-container>
 </template>

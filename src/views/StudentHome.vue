@@ -220,6 +220,8 @@ const experiences = ref([]);
 const showExperience = ref(false)
 const currentExperience = ref(null)
 const refresh = ref(null)
+const selectedStudentPoints = ref(0); 
+
 
 onMounted( async () => {
   await FlightPlan.createFlightPlan()
@@ -241,7 +243,7 @@ function getLeaderboardinfo(){
       console.log("No students found");
     }
   }).catch(error => {
-    console.log("Error fetching leaderboard:", error);
+    console.log("Error fetching leaderboard:", error); 
   });
 }
 

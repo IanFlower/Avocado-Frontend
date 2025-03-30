@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ApprovalAdmin from "../components/ApprovalAdmin.vue";
+import ApprovalExperience from "../components/ApprovalExperience.vue";
 
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -109,7 +110,7 @@ onMounted(() => {
       <p>Tasks Component</p>
     </div>
     <div v-else-if="selectedButton === 3">
-      <p>Experiences Component</p>
+      <ApprovalTask/>
     </div>
     <div v-else-if="selectedButton === 4">
       <ApprovalAdmin/> 

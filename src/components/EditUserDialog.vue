@@ -35,6 +35,7 @@
                                 @change="toggleFullPermission('addReward', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addEvent" label="Event" class="mb-1"
                                 @change="toggleFullPermission('addEvent', $event)"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addNotification" label="Notification" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.changePermissions" label="Alter User Permissions"
                                 class="mb-1"></v-checkbox>
                         </v-col>
@@ -90,6 +91,7 @@ const localPermission = ref({
     addEvent: false,
     changeEvent: false,
     removeEvent: false,
+    addNotification: false,
     userId: null,
 });
 

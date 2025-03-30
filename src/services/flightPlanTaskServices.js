@@ -7,6 +7,11 @@ const flightPlanTaskService = {
     return apiClient.get(`/flightPlanTask`);
   },
 
+  // Get all flightPlanTasks for a specific user
+  getAllPendingFlightPlanTasks() {
+    return apiClient.get(`/flightPlanTask/pending/tasks`);
+  },
+
   // Get a specific flightPlanTask by ID
   getFlightPlanTaskById(id) {
     return apiClient.get(`/flightPlanTask/${id}`);

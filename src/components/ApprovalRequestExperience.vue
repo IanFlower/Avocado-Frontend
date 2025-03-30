@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import userServices from "../services/userServices";
 import experienceService from "../services/experiencesServices";
+import notificationService from "../services/notification.Services";
+import { no } from "vuetify/locale";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -15,14 +17,13 @@ const headers = ref([
   { title: "Request Name", key: "name", sortable: false },
   { title: "Description", key: "desc", sortable: false },
   { title: "Full Name", key: "fullName" },
-
   { title: "Actions", key: "actions", sortable: false },
 ]);
 
 // Show a snackbar with a message and color
 const showSnackbar = (message, color) => {
   snackbarMessage.value = message;
-  snackbarColor.value = color === "success" ? "green" : "red";
+  snackbarColor.value = color === "success" ? "green" : "red"; 
   snackbar.value = true;
   setTimeout(() => {
     snackbar.value = false;
@@ -40,52 +41,76 @@ const fetchUsers = async () => {
         id: request.id,
         name: request.name,
         desc: request.desc,
-        studentId: request.studentId,
         studentInfoId: request.studentInfoId,
-        fullName: `${request.user?.fName || "N/A"} ${request.user?.lName || "N/A"}`, 
+        userId: request.user?.id || null, 
+        fullName: `${request.user?.fName || "N/A"} ${request.user?.lName || "N/A"}`,
         email: request.user?.email || "N/A",
+        points: request.points || 0, 
       }));
     } else {
       console.error("Unexpected response format:", response.data);
+      showSnackbar("Unexpected response format from server", "error"); 
     }
   } catch (error) {
     console.error("Error fetching experience requests:", error);
+    showSnackbar("Failed to fetch experience requests", "error");
   }
 };
 
 // Approve the selected experience request
 const approveUser = async () => {
-  try {
-     dialog.value = false;
+  console.log("Approving user:", selectedRequest.value.userId); 
 
-    experienceService.update(selectedRequest.value.id, {
+  try {
+    dialog.value = false;
+
+    await experienceService.update(selectedRequest.value.id, {
       approved: true,
       requestedByStudent: false,
-    }).then(() => {
-        fetchUsers();
+      subtext: "approved",
+      points: selectedRequest.value.points,
+      userId: selectedRequest.value.userId,
     });
-    
+
+    notificationService.createNotification({
+      userId: selectedRequest.value.userId,
+      title: "Request Approved", 
+      desc: `Your request for ${selectedRequest.value.name} has been approved.`,
+      goodNews: true,
+    });
+
+    fetchUsers();
     users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
 
+    showSnackbar("Request approved successfully", "success");
   } catch (error) {
     console.error("Error approving request:", error);
     showSnackbar("Failed to approve request", "error");
   }
 };
 
+// Deny the selected experience request
 const denyUser = async () => {
   try {
     dialog.value = false;
 
-    experienceService.update(selectedRequest.value.id, { 
+    await experienceService.update(selectedRequest.value.id, {
       denied: true,
-      requestedByStudent: false, 
-    }).then(() => {
-        fetchUsers();
+      requestedByStudent: false,
+      subtext: "denied", 
     });
-    
+
+    notificationService.createNotification({
+      userId: selectedRequest.value.userId,
+      title: "Request Denied", 
+      desc: `Your request for ${selectedRequest.value.name} has been Denied.`,
+      goodNews: false,
+    });
+
+    fetchUsers(); 
     users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
 
+    showSnackbar("Request denied successfully", "success");
   } catch (error) {
     console.error("Error denying request:", error);
     showSnackbar("Failed to deny request", "error");
@@ -94,7 +119,7 @@ const denyUser = async () => {
 
 // Open the confirmation dialog for approval
 const confirmApproval = (request) => {
-  selectedRequest.value = request;
+  selectedRequest.value = { ...request, points: request.points || 0 }; 
   dialog.value = true;
 };
 
@@ -134,19 +159,27 @@ onMounted(() => {
       <!-- Dialog Title -->
       <v-card-title class="secondary text-center d-flex justify-space-between pt-2">
         <span class="headline">Confirm Approval</span>
-          <v-icon class="secondary"@click="dialog=false">mdi-close</v-icon> 
+          <v-icon @click="dialog = false">mdi-close</v-icon>
       </v-card-title>
 
-      <!-- Dialog Content --> 
-      <v-card-text> 
-        <p> 
-          Are you sure you want to approve the request 
+      <!-- Dialog Content -->
+      <v-card-text>
+        <p>
+          Are you sure you want to approve the request
           <strong>{{ selectedRequest?.name }}</strong> for
           <strong>{{ selectedRequest?.fullName }}</strong>?
         </p>
         <v-divider class="my-4"></v-divider>
         <p class="headline mb-2">Description:</p>
         <p class="text-body-1">{{ selectedRequest?.desc }}</p>
+        <p>How many points are you giving them?</p>
+        <v-text-field
+          v-model="selectedRequest.points"
+          label="Points"
+          type="number"
+          class="mt-4"
+          min="0"
+        ></v-text-field>
       </v-card-text>
 
       <!-- Dialog Actions -->

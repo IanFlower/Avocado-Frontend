@@ -107,7 +107,6 @@
           outlined 
           required
         ></v-textarea>
-        <v-text-field v-model="experienceType" label="Type" required></v-text-field>
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
@@ -175,6 +174,8 @@ function showDialog() {
 // Function to hide the dialog
 function hideDialog() {
   dialog.value = false;
+  experienceName.value = "";
+  experienceDescription.value = "";
 }
 
 // Function to save a new experience
@@ -188,14 +189,13 @@ async function saveDialog() {
     const experienceData = {
       name: experienceName.value,
       desc: experienceDescription.value,
-      type: experienceType.value,
       requestedByStudent: true,
       approved: false,
       subtext: "pending",
       priority: 1,
       studentInfoId: studentInfoId.value,
     };
-
+ 
     await experienceService.create(experienceData);
     hideDialog();
 

@@ -76,7 +76,8 @@ onMounted(() => {
             <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props">
-                        <v-icon icon="mdi-bell" size="30"></v-icon>
+                        <v-icon v-if="notifications.length == 0" icon="mdi-bell" size="30"></v-icon>
+                        <v-icon v-if="notifications.length > 0" icon="mdi-bell-ring" size="30"></v-icon>
                     </v-btn>
                 </template> 
 

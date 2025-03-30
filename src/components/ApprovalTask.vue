@@ -18,6 +18,7 @@ const dialog = ref(false); // Controls the confirmation dialog visibility
 const selectedTask = ref(null); // Stores the task to be approved
 const flightPlanTasks = ref([])
 const listItems = ref([])
+const comment = ref("")
 
 const headers = ref([
   { title: "Task Name", key: "taskName" },
@@ -38,12 +39,17 @@ const showSnackbar = (message, color) => {
 
 const approveTask = async (approval) => {
   let notification = null
+  let notificationComment = null
+  if (comment.value) {
+    notificationComment = ` Comment from approver: ${comment.value}`
+  }
+
   if (approval) {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: ""})
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
     notification = {
       userId: selectedTask.value.userId, 
       title: `${selectedTask.value.taskName} Approval`,
-      desc: `Your ${selectedTask.value.taskName} task has been approved!`,
+      desc: `Your ${selectedTask.value.taskName} task has been approved!${notificationComment}`,
       goodNews: 1
     }
     await notificationService.createNotification(notification)
@@ -51,17 +57,18 @@ const approveTask = async (approval) => {
     let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
     await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
   } else {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied"})
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {
       userId: selectedTask.value.userId, 
       title: `${selectedTask.value.taskName} Denial`,
-      desc: `Your ${selectedTask.value.taskName} task has been denied.`,
+      desc: `Your ${selectedTask.value.taskName} task has been denied.${notificationComment}`,
       goodNews: 0
     }
     await notificationService.createNotification(notification)
   }
   dialog.value = false;
   fetchTasks()
+  comment.value = null;
 };
 
 const confirmApproval = (task) => {
@@ -159,6 +166,7 @@ onMounted(() => {
           <strong>{{ selectedTask?.studentName }}</strong>?
         </v-card-text>
         <v-card-text>DOCUMENT HERE</v-card-text>
+        <v-textarea class="px-3" label="Enter a comment if desired:" v-model="comment"></v-textarea>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-row class="pa-0 ma-0 w-100">

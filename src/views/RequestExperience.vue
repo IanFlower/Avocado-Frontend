@@ -32,7 +32,7 @@
               <v-card
                 v-for="ex in pendingExperience"
                 :key="ex.id"
-                :class="secondary"
+                :class="{ 'secondary': !ex.flightPlanExperience?.completed, 'accent': ex.flightPlanExperience?.completed }"
                 class="w-97 pa-0 mb-5 mr-2"
                 elevation="2"
                 shaped

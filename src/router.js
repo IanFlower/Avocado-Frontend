@@ -13,7 +13,6 @@ import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue";
 import UserInfoDialog from "./components/UserInfoDialog.vue";
-import ManageUsers from "./views/ManageUsers.vue";
 import Approval from "./views/approval.vue";
 import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";

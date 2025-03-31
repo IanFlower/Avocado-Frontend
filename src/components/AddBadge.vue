@@ -1,4 +1,7 @@
 <template>
+  <v-dialog max-width="500px">
+    <v-card>
+      <v-card-title> Add Badge </v-card-title>
   <v-container>
     <v-form ref="badgeForm">
       <v-text-field v-model="badge.name" label="Name" required></v-text-field>
@@ -7,9 +10,16 @@
       <!-- Image Upload -->
       <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
 
-      <v-btn @click="addBadge" color="primary">Save</v-btn>
-    </v-form>
+      <v-card-actions>
+        <v-btn @click="emit('badgeAdded')" text color="secondary-button">Cancel</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn @click="addBadge" text color="blue darken-1">Save</v-btn>
+      </v-card-actions>
+      
+     </v-form>
   </v-container>
+</v-card>
+</v-dialog>
 </template>
 
 <script setup>
@@ -23,14 +33,29 @@ const badge = ref({
   desc: ''
 });
 
-const icon = ref(null);
-const emit = defineEmits(['close']);
+const icon = ref({
+  image: null,
+  forBadge: true,
+});
+
+const badgeForm = ref(null);
+
+const emit = defineEmits(['badgeAdded']);
+
 
 const addBadge = async () => {
   try {
-    if (!icon.value) {
+    if (!icon.value.image) {
       throw new Error('No image uploaded');
     }
+
+    const iconData = {
+      image: icon.value.image,
+      forBadge: icon.value.forBadge,
+    };
+
+    const iconResponse = await iconServices.addIcon(iconData);
+    console.log('Icon Response:', iconResponse);
 
     // Save badge first
     const badgeResponse = await badgeServices.addBadge({
@@ -40,14 +65,8 @@ const addBadge = async () => {
 
     console.log('Badge Saved:', badgeResponse);
 
-    // Save icon and link it to the badge
-    const iconData = { image: icon.value, forBadge: true };
-    await iconServices.addIcon(iconData);
-
-    console.log('Icon Uploaded');
-
-    // Close the component after saving
-    emit('close');
+    
+    emit('badgeAdded');
   } catch (error) {
     console.error('Error adding badge:', error);
   }
@@ -55,10 +74,18 @@ const addBadge = async () => {
 
 function handleImageUpload(event) {
   const files = event.target.files;
+
   if (!files || files.length === 0) {
     console.error('No files selected');
     return;
   }
-  icon.value = files[0];
+
+  const selectedImage = files[0];
+  console.log('Selected file:', selectedImage);
+
+  
+  icon.value.image = selectedImage;
+
+  console.log("Selected Image:", icon.value.image);
 }
 </script>

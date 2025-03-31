@@ -1,4 +1,7 @@
 <template>
+  <v-dialog max-width="500px">
+  <v-card>
+    <v-card-title> Add Reward </v-card-title>
   <v-container>
     <v-form ref="rewardForm">
       <v-text-field v-model="reward.name" label="Name" required></v-text-field>
@@ -9,9 +12,15 @@
       <!-- Image Upload -->
       <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
 
-      <v-btn @click="AddReward" color="primary">Save</v-btn>
+      <v-card-actions>
+        <v-btn @click="emit('rewardAdded')" text color="secondary-button">Cancel</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn @click="addReward" text color="blue darken-1">Save</v-btn>
+      </v-card-actions>
     </v-form>
   </v-container>
+</v-card>
+</v-dialog>
 </template>
 
 <script setup>
@@ -35,7 +44,7 @@ const rewardForm = ref(null);
 
 const emit = defineEmits(['rewardAdded']);
 
-const AddReward = async () => {
+const addReward = async () => {
   try {
     if (!icon.value.image) {
       throw new Error('No image uploaded');

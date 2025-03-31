@@ -17,7 +17,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="custom-btn" @click="editRewards">
+          <v-btn class="tertiary" @click="editRewards">
             Rewards
           </v-btn>
         </v-col>

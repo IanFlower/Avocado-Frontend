@@ -5,17 +5,12 @@ const badgeService = {
     return apiClient.get('/badge');
   },
 
-  getBadgeById(badgeId) {
+  getbadgeById(badgeId) {
     return apiClient.get(`/badge/${badgeId}`);
   },
 
   addBadge(badge) {
-    // Send the badge data along with the icon URL (which you will get from the icon upload)
-    return apiClient.post('/badge', {
-      name: badge.name,
-      desc: badge.desc,
-      iconUrl: badge.iconUrl,  
-    });
+    return apiClient.post('/badge', badge);
   },
 
   updateBadge(badge) {

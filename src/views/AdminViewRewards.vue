@@ -141,10 +141,10 @@ const initialize = async () => {
     rewards.value = [...response.data.map(reward => ({
       id: reward.id,
       name: reward.name,
+      image: reward.image,
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
       requiredPoints: reward.requiredPoints,
-      image: reward.image 
     }))];
   } catch (error) {
     console.error("Error fetching rewards:", error);

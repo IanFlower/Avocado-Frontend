@@ -143,7 +143,7 @@ onMounted(() => {
                     <v-btn variant="text">Profile</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Rewards</v-btn>
+                    <v-btn variant="text" to="/Shop">Rewards</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import NoImageAvailable from '../assets/No_Image_Found.png'
 import { useRouter } from 'vue-router';
-import Utils from '../config/utils';
 // Helper Refs
 const search = ref('');
 const item = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -34,7 +34,7 @@ const item = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
         <v-row>
           <v-col cols="3" v-for="item in 12" :key="item">
             <v-card height="35vh" width="15vw" class="secondary">
-              <v-img src="https://cdn.vuetifyjs.com/images/cards/sun.png"  cover crop height="28vh" width="15vw"></v-img>
+              <v-img :src="item.image ? item.image : NoImageAvailable"  cover crop height="28vh" width="15vw"></v-img>
               <v-spacer></v-spacer>
               <v-card-actions >
                 <v-row height="7vh" class="align-center mb-1 mx-auto">

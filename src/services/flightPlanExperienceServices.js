@@ -19,7 +19,7 @@ const flightPlanExperienceService = {
   
   // Get all flightPlanTasks for a specific user
   getAllPendingFlightPlanExperiences() {
-    return apiClient.get(`/flightPlanTask/pending/experiences`);
+    return apiClient.get(`/flightPlanExperience/pending/experiences`);
   },
   
    // Get a specific flightPlanExperience by userId

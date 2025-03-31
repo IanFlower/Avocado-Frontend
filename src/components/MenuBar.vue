@@ -185,8 +185,11 @@ onMounted(() => {
                 <v-list-item to="AdminBadge">
                     <v-btn variant="text">Badge Management</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/adminShop">Rewards</v-btn>
+                <v-list-item to="AdminShop">
+                    <v-btn variant="text">Purchase Rewards</v-btn>
+                </v-list-item>
+                <v-list-item to="viewRewards">
+                    <v-btn variant="text">Add Rewards</v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

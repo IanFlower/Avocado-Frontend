@@ -6,6 +6,7 @@ const prerequisite = ref(null)
 const docRequired = ref(false)
 const showUpload = ref(false)
 const upcomingEvents = ref([])
+const reflection = ref("")
 
 // Define emits for the component
 const emit = defineEmits("update:dialog", "update:experience");
@@ -119,6 +120,7 @@ function parseDate(date) {
                             </v-card>
                         </v-col>
                     </v-row>
+                    <v-row v-if="item.Experience.reflectionRequired == true"><v-textarea v-model="reflection" label="Enter reflection here"></v-textarea></v-row>
                 </v-container></v-card-text>
             <v-card-actions>
                 <v-container>

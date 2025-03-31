@@ -21,6 +21,8 @@
                                 class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.addTask" label="Task" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.addReward" label="Reward" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addNotification" label="Reward" class="mb-1"></v-checkbox>
+
                         </v-col>
                         <v-divider vertical class="full-height"></v-divider>
                         <v-col cols="5">
@@ -37,6 +39,7 @@
                                 @change="toggleFullPermission('addEvent', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addBadge" label="Event" class="mb-1"
                                 @change="toggleFullPermission('addBadge', $event)"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addNotification" label="Notification" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.changePermissions" label="Alter User Permissions"
                                 class="mb-1"></v-checkbox>
                         </v-col>
@@ -94,6 +97,7 @@ const localPermission = ref({
     removeEvent: false,
     addBadge: false,
     removeBadge: false,
+    addNotification: false,
     userId: null,
 });
 

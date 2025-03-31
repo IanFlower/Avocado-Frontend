@@ -34,7 +34,9 @@ function logout() {
 
 async function getNotifications() {
    let res = await Notification.getByUser()
-   notifications.value = res.data
+   if (res) {
+    notifications.value = res.data
+   } else {notifications.value = null}
 }
 
 async function deleteNotification(notification) {
@@ -74,19 +76,21 @@ onMounted(() => {
             <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props">
-                        <v-icon icon="mdi-bell" size="30"></v-icon>
+                        <v-icon v-if="notifications.length == 0" icon="mdi-bell" size="30"></v-icon>
+                        <v-icon v-if="notifications.length > 0" icon="mdi-bell-ring" size="30"></v-icon>
                     </v-btn>
                 </template> 
 
                 <!-- User menu content -->
                 <v-card class="pa-4">
                     <v-card-title class="mb-3">Notifications</v-card-title>
+                    <v-card-text class="text-center" v-if="notifications.length == 0">No notifications</v-card-text>
                     <v-card-text class="text-center">
                         <v-row v-for="n in notifications" :key="n" class="mb-3">
                                 <v-card class="w-100" variant="outlined" :color="n.goodNews ? 'green-lighten-2' : 'red-lighten-2'">
-                                    <v-row class="w-100 pl-2 pt-2" align="center" justify="space-between">
-                                        <v-card-title>{{ n.title }}</v-card-title>
-                                        <v-icon @click="deleteNotification(n)">mdi-close</v-icon>
+                                    <v-row class="w-100 mt-1 ml-1 overflow-y-visible">
+                                        <v-col class="ma-0 pa-0 pl-2 pt-2 overflow-y-visible text-h6" align="start">{{ n.title }}</v-col>
+                                        <v-col class="ma-0 pa-0 mr-1" align="end"><v-icon max-height="21" max-width="21" @click="deleteNotification(n)">mdi-close</v-icon></v-col>
                                     </v-row>
                                     <v-card-text class="text-left">{{ n.desc }}</v-card-text>
                                 </v-card>
@@ -150,6 +154,9 @@ onMounted(() => {
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>
+                </v-list-item>
+                <v-list-item>
+                    <v-btn variant="text"to="/RequestExperience">Request Experience</v-btn>
                 </v-list-item>
             </v-list>
             <v-list-item>

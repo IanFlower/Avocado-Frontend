@@ -13,8 +13,8 @@ const selectedUser = ref(null); // Stores the user to be approved
 
 const headers = ref([
   { title: "First Name", key: "fName" },
-  { title: "email", key: "email", sortable: false },
-  { title: "approve", key: "approve", sortable: false },
+  { title: "Email", key: "email", sortable: false },
+  { title: "Approve", key: "approve", sortable: false },
 ]);
 
 const showSnackbar = (message, color) => {
@@ -62,44 +62,49 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-spacer></v-spacer>
   <div>
-    <div class="pa-12">
-      <v-data-table
-        :headers="headers"
-        :items="users"
-        :search="search"
-        item-value="fName"
-      >
-        <template v-slot:item.approve="{ item }">
-          <v-icon
-            color="#004761"
-            size="large"
-            class="pa-6"
-            @click="confirmApproval(item)"
-          >
-            mdi-thumb-up
-          </v-icon>
-        </template>
-      </v-data-table>
+    <v-spacer></v-spacer>
+    <div>
+      <div class="pa-12">
+        <v-data-table
+          :headers="headers"
+          :items="users"
+          :search="search"
+          item-value="fName"
+        >
+          <template v-slot:item.approve="{ item }">
+            <v-icon
+              color="#004761"
+              size="large"
+              class="pa-6"
+              @click="confirmApproval(item)"
+            >
+              mdi-thumb-up
+            </v-icon>
+          </template>
+        </v-data-table>
+      </div>
     </div>
-  </div>
 
-  <!-- Confirmation Dialog ------------------------------------------------------->
-  <v-dialog v-model="dialog" max-width="400">
-    <v-card>
-      <v-card-title class="headline">Confirm Approval</v-card-title>
-      <v-card-text>
-        Are you sure you want to approve
-        <strong>{{ selectedUser?.fName }}</strong>?
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="dialog = false">Cancel</v-btn>
-        <v-btn color="green" text @click="approveUser">Approve</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <!-- Confirmation Dialog ------------------------------------------------------->
+    <v-dialog v-model="dialog" max-width="400">
+      <v-card>
+        <v-card-title class="headline">Confirm Approval</v-card-title>
+        <v-card-text>
+          Are you sure you want to approve
+          <strong>{{ selectedUser?.fName }}</strong>?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          
+          <v-row class="pa-0 ma-0 w-100">
+            <v-col align="start"><v-btn color="red darken-1" text @click="dialog = false">Deny</v-btn></v-col>
+            <v-col align="end"><v-btn color="blue darken-1" text @click="approveUser">Approve</v-btn></v-col>
+          </v-row>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <style scoped>

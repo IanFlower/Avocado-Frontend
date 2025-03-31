@@ -155,6 +155,9 @@ onMounted(() => {
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>
                 </v-list-item>
+                <v-list-item>
+                    <v-btn variant="text"to="/RequestExperience">Request Experience</v-btn>
+                </v-list-item>
             </v-list>
             <v-list-item>
                 <v-list-item-title style="text-align: center;">ADMIN</v-list-item-title>

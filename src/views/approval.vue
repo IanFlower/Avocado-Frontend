@@ -4,6 +4,7 @@ import ApprovalAdmin from "../components/ApprovalAdmin.vue";
 import ApprovalExperience from "../components/ApprovalExperience.vue";
 import ApprovalTask from "../components/ApprovalTask.vue"
 
+import ApprovalRequestExperience from "../components/ApprovalRequestExperience.vue";
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(''); // Message displayed in snackbar
@@ -117,7 +118,7 @@ onMounted(() => {
       <ApprovalAdmin/> 
     </div>
     <div v-else-if="selectedButton === 5">
-      <p>Requested Approval Component</p>
+      <ApprovalRequestExperience/>
     </div>
 </template>
 

@@ -1,22 +1,25 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { authorizeRoute, authorizeUser, ENUM } from "./auth/routeAuth";
+
+// Import views and components
 import Login from "./views/Login.vue";
 import StudentHome from "./views/StudentHome.vue";
 import Badges from "./views/Badges.vue";
 import Shop from "./views/Shop.vue";
 import Calendar from "./views/Calendar.vue";
-import leaderBoard from "./views/leaderBoard.vue";
+import LeaderBoard from "./views/leaderBoard.vue";
 import Unauthorized from "./views/Unauthorized.vue";
 import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue";
 import UserInfoDialog from "./components/UserInfoDialog.vue";
+import ManageUsers from "./views/ManageUsers.vue";
+import Approval from "./views/approval.vue";
+import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./views/PurchaseRewards.vue";
-import ManageUsers from "./views/ManageUsers.vue";
-import approval from "./views/approval.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,10 +48,10 @@ const router = createRouter({
       name: "ManageUsers",
       component: ManageUsers,
     },
-    { 
-      path: "/UserInfoDialog", 
+    {
+      path: "/UserInfoDialog",
       alias: "/UserInfoDialog",
-      name: "UserInfoDialog", 
+      name: "UserInfoDialog",
       component: UserInfoDialog,
     },
     {
@@ -63,78 +66,88 @@ const router = createRouter({
       name: "ManageExperiencesTasks",
       component: ManageExperiencesTasks,
       beforeEnter: async (to, from, next) => {
-        if (true !== (await authorizeRoute(ENUM.ADD_EXPERIENCE))) next({
-          name: 'unauthorized',
-        });
-        next();
+        if (true !== (await authorizeRoute(ENUM.ADD_EXPERIENCE))) {
+          next({ name: "unauthorized" });
+        } else {
+          next();
+        }
       },
     },
     {
       path: "/approval",
       alias: "/approval",
-      name: "approval",
-      component: approval,
+      name: "Approval",
+      component: Approval,
     },
     {
       path: "/badges",
       alias: "/BadgePage",
-      name: "badge",
+      name: "Badges",
       component: Badges,
     },
     {
       path: "/shop",
       alias: "/shopPoints",
-      name: "shop",
+      name: "Shop",
       component: Shop,
     },
     {
       path: "/calendar",
       alias: "/calendarPage",
-      name: "calendar",
+      name: "Calendar",
       component: Calendar,
     },
     {
       path: "/leaderboard",
       alias: "/leaderboardPage",
-      name: "leaderboard",
-      component: leaderBoard,
+      name: "LeaderBoard",
+      component: LeaderBoard,
     },
     {
       path: "/unauthorized",
       alias: "/unauthorizedPage",
-      name: "unauthorized",
+      name: "Unauthorized",
       component: Unauthorized,
     },
     {
-      path: '/Purchase/:userId',
-      alias: '/PurchaseRewards', // Both paths now match and use :userId
-      name: 'purchaseRewards',
+      path: "/RequestExperience",
+      alias: "/RequestExperience",
+      name: "RequestExperience",
+      component: RequestExperience,
+    },
+    {
+      path: "/Purchase/:userId",
+      alias: "/PurchaseRewards",
+      name: "PurchaseRewards",
       component: PurchaseRewards,
       props: true, // Pass the userId as a prop to the component
     },
     {
-      path: '/AdminShop',
-      alias: '/adminShop',
+      path: "/AdminShop",
+      alias: "/adminShop",
       name: "AdminShop",
       component: AdminShop,
     },
     {
-      path: '/ViewRewards',
-      alias: '/AdminViewRewards',
-      name: 'ViewRewards',
+      path: "/ViewRewards",
+      alias: "/AdminViewRewards",
+      name: "ViewRewards",
       component: AdminViewRewards,
     },
     {
-      path: '/AddReward',
-      alias: '/AddReward',
-      name: 'AddReward',
+      path: "/AddReward",
+      alias: "/AddReward",
+      name: "AddReward",
       component: AddReward,
-    }
+    },
   ],
 });
 
+// Global navigation guard to check user authorization
 router.beforeResolve(async (to, from) => {
-  if (true !== (await authorizeUser()) && to.name !== 'Login') return { name: 'Login' };
-})
+  if (true !== (await authorizeUser()) && to.name !== "Login") {
+    return { name: "Login" };
+  }
+});
 
 export default router;

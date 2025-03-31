@@ -21,6 +21,8 @@
                                 class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.addTask" label="Task" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.addReward" label="Reward" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addNotification" label="Reward" class="mb-1"></v-checkbox>
+
                         </v-col>
                         <v-divider vertical class="full-height"></v-divider>
                         <v-col cols="5">

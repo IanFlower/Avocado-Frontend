@@ -2,35 +2,55 @@
   <v-dialog max-width="500px">
     <v-card>
       <v-card-title> Add Badge </v-card-title>
-  <v-container>
-    <v-form ref="badgeForm">
-      <v-text-field v-model="badge.name" label="Name" required></v-text-field>
-      <v-textarea v-model="badge.desc" label="Description" required></v-textarea>
+      <v-container>
+        <v-form ref="badgeForm" v-model="formValid" lazy-validation>
+          <!-- Name Field -->
+          <v-text-field
+            v-model="badge.name"
+            label="Name"
+            :rules="[rules.required]"
+            required
+          ></v-text-field>
 
-      <!-- Image Upload -->
-      <v-file-upload label="Upload Image" @change="handleImageUpload" accept="image/*" required></v-file-upload>
+          <!-- Description Field -->
+          <v-textarea
+            v-model="badge.desc"
+            label="Description"
+            :rules="[rules.required]"
+            required
+          ></v-textarea>
 
-      <v-card-actions>
-        <v-btn @click="emit('badgeAdded')" text color="secondary-button">Cancel</v-btn>
-        <v-spacer></v-spacer>
-        <v-btn @click="addBadge" text color="blue darken-1">Save</v-btn>
-      </v-card-actions>
-      
-     </v-form>
-  </v-container>
-</v-card>
-</v-dialog>
+          <!-- Image Upload with Validation -->
+          <v-file-input
+            label="Upload Image"
+            accept="image/*"
+            @change="handleImageUpload"
+            :error-messages="imageError"
+            required
+          ></v-file-input>
+
+          <v-card-actions>
+            <v-btn @click="emit('badgeAdded')" text color="secondary-button">Cancel</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn @click="validateAndSubmit" text color="blue darken-1">Save</v-btn>
+          </v-card-actions>
+
+          <!-- General Error Message (if needed) -->
+          <v-alert v-if="errorMessage" type="error" class="mt-2" dense>{{ errorMessage }}</v-alert>
+        </v-form>
+      </v-container>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import badgeServices from '../services/badgeServices.js';
 import iconServices from '../services/iconServices.js';
-import { VFileUpload } from 'vuetify/labs/VFileUpload';
 
 const badge = ref({
   name: '',
-  desc: ''
+  desc: '',
 });
 
 const icon = ref({
@@ -39,16 +59,33 @@ const icon = ref({
 });
 
 const badgeForm = ref(null);
-
+const formValid = ref(false);
+const errorMessage = ref('');
+const imageError = ref('');
 const emit = defineEmits(['badgeAdded']);
 
+const rules = {
+  required: (value) => !!value || 'This field is required',
+};
 
-const addBadge = async () => {
+const validateAndSubmit = async () => {
+  // Validate text fields
+  const valid = await badgeForm.value.validate();
+
+  // Validate image upload separately
+  if (!icon.value.image) {
+    imageError.value = 'You must upload an image';
+  } else {
+    imageError.value = '';
+  }
+
+  // Stop if validation fails
+  if (!valid || !icon.value.image) {
+    errorMessage.value = 'Please fill in all fields correctly.';
+    return;
+  }
+
   try {
-    if (!icon.value.image) {
-      throw new Error('No image uploaded');
-    }
-
     const iconData = {
       image: icon.value.image,
       forBadge: icon.value.forBadge,
@@ -57,35 +94,25 @@ const addBadge = async () => {
     const iconResponse = await iconServices.addIcon(iconData);
     console.log('Icon Response:', iconResponse);
 
-    // Save badge first
     const badgeResponse = await badgeServices.addBadge({
       name: badge.value.name,
-      desc: badge.value.desc
+      desc: badge.value.desc,
     });
 
     console.log('Badge Saved:', badgeResponse);
 
-    
     emit('badgeAdded');
   } catch (error) {
     console.error('Error adding badge:', error);
+    errorMessage.value = 'An error occurred while adding the badge.';
   }
 };
 
 function handleImageUpload(event) {
-  const files = event.target.files;
-
-  if (!files || files.length === 0) {
-    console.error('No files selected');
-    return;
+  const file = event?.target?.files?.[0] || event;
+  if (file) {
+    icon.value.image = file;
+    imageError.value = ''; // Clear error when an image is selected
   }
-
-  const selectedImage = files[0];
-  console.log('Selected file:', selectedImage);
-
-  
-  icon.value.image = selectedImage;
-
-  console.log("Selected Image:", icon.value.image);
 }
 </script>

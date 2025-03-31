@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12 text-h3 font-weight-bold">Purchase Reward</p>
+  <p class="pa-12 text-h3">Purchase Reward</p>
 
   <v-container>
     <v-row>

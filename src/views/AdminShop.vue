@@ -16,6 +16,8 @@
             class="ma-2"
           ></v-text-field>
         </v-col>
+
+        <!-- Rewards Button in the Top-Right Corner -->
         <v-col cols="6" class="d-flex justify-end">
           <v-btn class="tertiary" @click="editRewards">
             Rewards
@@ -70,7 +72,6 @@ const initialize = async () => {
     const response = await userServices.getAllUsers();
     const usersData = response.data;
 
-    
     for (let user of usersData) {
       const studentInfo = await studentInfoServices.getStudentInfoById(user.id);
       user.currentPoints = studentInfo.data[0]?.currentPoints || 0; 
@@ -99,14 +100,3 @@ const editRewards = () => {
 
 onMounted(initialize);
 </script>
-
-<style scoped>
-.custom-btn {
-  background-color: #004761;
-  color: white;
-}
-
-.custom-btn:hover {
-  background-color: #003b4e;
-}
-</style>

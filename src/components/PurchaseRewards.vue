@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12 text-h3 font-weight-bold">Purchase Reward</p>
+  <p class="pa-12 text-h3">Purchase Reward</p>
 
   <v-container>
     <v-row>
@@ -124,11 +124,13 @@ const confirmPurchase = (reward) => {
   if (studentInfo.value.length === 0 || studentInfo.value[0].currentPoints < reward.requiredPoints) {
     return;
   }
+
   selectedReward.value = reward;
   dialog.value = true;
 };
 
 const purchaseReward = async () => {
+
   if (!selectedReward.value || !selectedReward.value.id) {
     return;
   }

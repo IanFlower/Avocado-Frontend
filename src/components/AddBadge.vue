@@ -1,30 +1,24 @@
 <template>
   <v-dialog max-width="500px">
     <v-card>
-      <v-card-title> Add Reward </v-card-title>
+      <v-card-title> Add Badge </v-card-title>
       <v-container>
-        <v-form ref="rewardForm" v-model="formValid" lazy-validation>
+        <v-form ref="badgeForm" v-model="formValid" lazy-validation>
+          <!-- Name Field -->
           <v-text-field
-            v-model="reward.name"
+            v-model="badge.name"
             label="Name"
             :rules="[rules.required]"
             required
           ></v-text-field>
 
+          <!-- Description Field -->
           <v-textarea
-            v-model="reward.desc"
+            v-model="badge.desc"
             label="Description"
             :rules="[rules.required]"
             required
           ></v-textarea>
-
-          <v-text-field
-            v-model.number="reward.requiredPoints"
-            label="Required Points"
-            type="number"
-            :rules="[rules.required, rules.number]"
-            required
-          ></v-text-field>
 
           <!-- Image Upload with Validation -->
           <v-file-input
@@ -36,7 +30,7 @@
           ></v-file-input>
 
           <v-card-actions>
-            <v-btn @click="emit('rewardAdded')" text color="secondary-button">Cancel</v-btn>
+            <v-btn @click="emit('badgeAdded')" text color="secondary-button">Cancel</v-btn>
             <v-spacer></v-spacer>
             <v-btn @click="validateAndSubmit" text color="blue darken-1">Save</v-btn>
           </v-card-actions>
@@ -51,40 +45,41 @@
 
 <script setup>
 import { ref } from 'vue';
-import rewardServices from '../services/rewardServices.js';
+import badgeServices from '../services/badgeServices.js';
 import iconServices from '../services/iconServices.js';
 
-const reward = ref({
+const badge = ref({
   name: '',
   desc: '',
-  requiredPoints: null,
 });
 
 const icon = ref({
   image: null,
-  forBadge: false,
+  forBadge: true,
 });
 
-const rewardForm = ref(null);
+const badgeForm = ref(null);
+const formValid = ref(false);
 const errorMessage = ref('');
 const imageError = ref('');
-const formValid = ref(false);
-const emit = defineEmits(['rewardAdded']);
+const emit = defineEmits(['badgeAdded']);
 
 const rules = {
   required: (value) => !!value || 'This field is required',
-  number: (value) => (!isNaN(value) && value > 0) || 'Must be a positive number',
 };
 
 const validateAndSubmit = async () => {
-  const valid = await rewardForm.value.validate(); // Validate form fields
+  // Validate text fields
+  const valid = await badgeForm.value.validate();
 
+  // Validate image upload separately
   if (!icon.value.image) {
     imageError.value = 'You must upload an image';
   } else {
     imageError.value = '';
   }
 
+  // Stop if validation fails
   if (!valid || !icon.value.image) {
     errorMessage.value = 'Please fill in all fields correctly.';
     return;
@@ -99,17 +94,17 @@ const validateAndSubmit = async () => {
     const iconResponse = await iconServices.addIcon(iconData);
     console.log('Icon Response:', iconResponse);
 
-    const rewardResponse = await rewardServices.addReward({
-      name: reward.value.name,
-      desc: reward.value.desc,
-      requiredPoints: reward.value.requiredPoints,
+    const badgeResponse = await badgeServices.addBadge({
+      name: badge.value.name,
+      desc: badge.value.desc,
     });
-    console.log('Reward Response:', rewardResponse);
 
-    emit('rewardAdded');
+    console.log('Badge Saved:', badgeResponse);
+
+    emit('badgeAdded');
   } catch (error) {
-    console.error('Error adding reward:', error);
-    errorMessage.value = 'An error occurred while adding the reward.';
+    console.error('Error adding badge:', error);
+    errorMessage.value = 'An error occurred while adding the badge.';
   }
 };
 

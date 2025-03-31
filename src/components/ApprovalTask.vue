@@ -157,7 +157,7 @@ onMounted(() => {
     </div>
 
     <!-- Confirmation Dialog ------------------------------------------------------->
-    <v-dialog v-model="dialog" max-width="400">
+    <v-dialog v-model="dialog" max-width="600">
       <v-card>
         <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>

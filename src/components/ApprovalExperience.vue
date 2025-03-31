@@ -45,7 +45,7 @@ const approveExperience = async (approval) => {
   }
 
   if (approval) {
-    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
+    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
     notification = {
       userId: selectedExperience.value.userId, 
       title: `${selectedExperience.value.experienceName} Approval`,
@@ -120,7 +120,8 @@ async function fetchExperiences() {
         userId: userId,
         experiencePoints: experiencePoints,
         currPoints: currPoints,
-        earnedPoints: earnedPoints
+        earnedPoints: earnedPoints,
+        reflection: fpExperience.reflection
       };
     })
   );
@@ -157,7 +158,7 @@ onMounted(() => {
     </div>
 
     <!-- Confirmation Dialog ------------------------------------------------------->
-    <v-dialog v-model="dialog" max-width="400">
+    <v-dialog v-model="dialog" max-width="600">
       <v-card>
         <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>
@@ -165,7 +166,7 @@ onMounted(() => {
           <strong>{{ selectedExperience?.experienceName }}</strong> for 
           <strong>{{ selectedExperience?.studentName }}</strong>?
         </v-card-text>
-        <v-card-text>DOCUMENT HERE</v-card-text>
+        <v-card-text><v-container max-height=200px class="overflow-y-auto w-100"><v-row max-height=100px class="overflow-y-auto w-100"><v-col class="overflow-y-auto"><strong>Student's Reflection: </strong> {{ selectedExperience.reflection }}</v-col></v-row></v-container></v-card-text>
         <v-textarea class="px-3" label="Enter a comment if desired:" v-model="comment"></v-textarea>
         <v-card-actions>
           <v-spacer></v-spacer>

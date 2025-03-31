@@ -90,6 +90,16 @@ function parseDate(date) {
   }
   return parsedDate;
 }
+
+async function save() {
+    let subtext = ""
+    if (item.value.flightPlanExperience.attended) {subtext = "Pending Approval"}
+    else {subtext = "Pending Event Attendance"} 
+    await flightPlanExperienceService.updateFlightPlanExperience(item.value.flightPlanExperience.id, {reflection: reflection.value, pending: 1, subtext: subtext})
+    reflection.value = null
+    emit("update:experience", true);  
+    closeDialog()
+}
 </script>
 
 <template>
@@ -124,8 +134,9 @@ function parseDate(date) {
                 </v-container></v-card-text>
             <v-card-actions>
                 <v-container>
-                    <v-row align="center">
-                        <v-col align="center"><v-btn class="secondary" @click="closeDialog()">Close</v-btn></v-col>
+                    <v-row class="pa-0 ma-0 w-100">
+                        <v-col align="start"><v-btn color="red darken-1" text @click="closeDialog()">Cancel</v-btn></v-col>
+                        <v-col align="end"><v-btn color="blue darken-1" text @click="save">Submit</v-btn></v-col>
                     </v-row>
                 </v-container>
             </v-card-actions>

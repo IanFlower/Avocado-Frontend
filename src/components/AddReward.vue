@@ -98,10 +98,11 @@ const validateAndSubmit = async () => {
 
     const iconResponse = await iconServices.addIcon(iconData);
     console.log('Icon Response:', iconResponse);
-
+    const imageUrl = iconResponse.imageUrl.replace('/uploads/', '');
     const rewardResponse = await rewardServices.addReward({
       name: reward.value.name,
       desc: reward.value.desc,
+      image: imageUrl,
       requiredPoints: reward.value.requiredPoints,
     });
     console.log('Reward Response:', rewardResponse);

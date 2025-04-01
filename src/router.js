@@ -20,7 +20,7 @@ import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./components/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
-import AdminBadge from "./views/AdminBadges.vue";
+import AdminBadges from "./views/AdminBadges.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -133,7 +133,7 @@ const router = createRouter({
       path: '/AdminBadge',
       alias: '/adminBadge',
       name: "AdminBadge",
-      component: AdminBadge,
+      component: AdminBadges,
     },
     {
       path: "/ViewRewards",

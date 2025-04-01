@@ -20,8 +20,7 @@ import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./components/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
-import approval from "./views/approval.vue";
-import AdminBadge from "./store/AdminBadge.vue";
+import AdminBadge from "./views/AdminBadges.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

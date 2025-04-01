@@ -131,6 +131,12 @@ const router = createRouter({
       component: AdminShop,
     },
     {
+      path: "/AdminAddBadge",
+      alias: "/adminAddBadge",
+      name: "AddBadge",
+      component: AddBadge
+    },
+    {
       path: '/AdminBadge',
       alias: '/adminBadge',
       name: "AdminBadge",

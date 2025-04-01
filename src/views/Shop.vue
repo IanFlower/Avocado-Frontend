@@ -6,6 +6,9 @@ import rewardServices from '../services/rewardServices.js';
 import { useRouter } from 'vue-router';
 // Helper Refs
 const search = ref('');
+const modal = ref(false);
+const selectedReward = ref(null);
+// Data Refs
 const rewardsList = computed(() => rewards.value.filter(reward => { if(search.value == '') return true; return reward.name.toLowerCase().includes(search.value.toLowerCase())}));
 const rewards = ref([]);
 
@@ -56,7 +59,7 @@ onMounted(async () => {
       <v-col cols="10" offset="1">
         <v-row>
           <v-col cols="3" v-for="reward in rewardsList" :key="reward">
-            <v-card height="35vh" width="15vw" class="secondary">
+            <v-card height="35vh" width="15vw" class="secondary" @click="selectedReward = reward, modal = true">
               <v-img :src="reward.image_file ? `data:image/*;base64,${reward.image_file}` : NoImageAvailable"  cover crop height="28vh" width="15vw"></v-img>
               <v-spacer></v-spacer>
               <v-card-actions >
@@ -76,8 +79,21 @@ onMounted(async () => {
         </v-row>
       </v-col>
     </v-row>
+    <v-dialog v-model="modal" width="30vw" max-height="30vh" >
+      <v-card>
+        <v-card-text>
+          Description:  {{ selectedReward.desc }}
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="secondary-button" text @click="modal = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
+
 
 <style scoped>
 .disable-events {

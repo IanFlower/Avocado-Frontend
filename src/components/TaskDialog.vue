@@ -86,7 +86,9 @@ function upload() {
             </v-card-title>
             <v-card-text class="text-center">
                 <v-container>
-                    <v-row>{{ item.task.desc }}</v-row>
+                    <v-row class="text-left">{{ item.task.desc }}</v-row>
+                    <v-row v-if="item.flightPlanTask.comment" class="py-3"><v-divider/></v-row>
+                    <v-row v-if="item.flightPlanTask.comment" class="text-h6 text-left">Comment from approver: {{ item.flightPlanTask.comment }}</v-row>
                     <v-row v-if="prerequisite" align="center"><v-col class="text-center font-weight-bold">Prerequisites</v-col></v-row>
                     <v-row v-for="p in prerequisite" :key="p">
                         <v-card 

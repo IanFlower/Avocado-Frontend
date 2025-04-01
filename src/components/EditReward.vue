@@ -22,7 +22,11 @@
         class="mt-3"
       ></v-file-upload>
 
-      <v-btn @click="updateReward" color="primary">Save</v-btn>
+      <v-card-actions>
+        <v-btn @click="emit('rewardUpdated')" text color="secondary-button">Cancel</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn @click="updateReward" text color="blue darken-1">Save</v-btn>
+      </v-card-actions>
     </v-form>
   </v-container>
 </template>

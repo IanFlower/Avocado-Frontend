@@ -143,7 +143,7 @@ onMounted(() => {
                 <v-list-item to="StudentHome">
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item to="ProfilePage">
                     <v-btn variant="text">Profile</v-btn>
                 </v-list-item>
                 <v-list-item>

@@ -16,13 +16,6 @@
             class="ma-2"
           ></v-text-field>
         </v-col>
-
-        <!-- Rewards Button in the Top-Right Corner -->
-        <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="tertiary" @click="editRewards">
-            Rewards
-          </v-btn>
-        </v-col>
       </v-row>
 
       <v-data-table 
@@ -93,10 +86,6 @@ const goToRedeemPoints = (id) => {
   router.push({ name: "purchaseRewards", params: { userId: id } });
 };
 
-const editRewards = () => {
-  router.push({ name: "ViewRewards" });
-  console.log("Edit Rewards Clicked");
-};
 
 onMounted(initialize);
 </script>

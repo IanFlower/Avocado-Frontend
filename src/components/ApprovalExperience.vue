@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import userSerices from "../services/userServices";
-import flightPlanTaskService from "../services/flightPlanTaskServices";
+import flightPlanExperienceService from "../services/flightPlanExperienceServices";
 import studentInfoServices from "../services/studentInfoServices";
 import flightPlanServices from "../services/flightPlanServices";
 import userServices from "../services/userServices";
-import taskService from "../services/tasksServices";
-import taskMajorService from "../services/taskMajorServices";
+import experienceService from "../services/experiencesServices";
+import experienceMajorService from "../services/experienceMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
 
@@ -15,13 +15,13 @@ const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
 const dialog = ref(false); // Controls the confirmation dialog visibility
-const selectedTask = ref(null); // Stores the task to be approved
-const flightPlanTasks = ref([])
+const selectedExperience = ref(null); // Stores the experience to be approved
+const flightPlanExperiences = ref([])
 const listItems = ref([])
 const comment = ref("")
 
 const headers = ref([
-  { title: "Task Name", key: "taskName" },
+  { title: "Experience Name", key: "experienceName" },
   { title: "Semesters From Graduation", key: "semestersFromGraduation", sortable: false },
   { title: "Major", key: "major" },
   { title: "Student Name", key: "studentName", sortable: false },
@@ -37,7 +37,7 @@ const showSnackbar = (message, color) => {
   }, 3000);
 };
 
-const approveTask = async (approval) => {
+const approveExperience = async (approval) => {
   let notification = null
   let notificationComment = null
   if (comment.value) {
@@ -45,53 +45,53 @@ const approveTask = async (approval) => {
   }
 
   if (approval) {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
+    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
     notification = {
-      userId: selectedTask.value.userId, 
-      title: `${selectedTask.value.taskName} Approval`,
-      desc: `Your ${selectedTask.value.taskName} task has been approved!${notificationComment}`,
+      userId: selectedExperience.value.userId, 
+      title: `${selectedExperience.value.experienceName} Approval`,
+      desc: `Your ${selectedExperience.value.experienceName} experience has been approved!${notificationComment}`,
       goodNews: 1
     }
     await notificationService.createNotification(notification)
-    let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
-    let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
-    await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
+    let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
+    await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
   } else {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
+    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {
-      userId: selectedTask.value.userId, 
-      title: `${selectedTask.value.taskName} Denial`,
-      desc: `Your ${selectedTask.value.taskName} task has been denied.${notificationComment}`,
+      userId: selectedExperience.value.userId, 
+      title: `${selectedExperience.value.experienceName} Denial`,
+      desc: `Your ${selectedExperience.value.experienceName} experience has been denied.${notificationComment}`,
       goodNews: 0
     }
     await notificationService.createNotification(notification)
   }
   dialog.value = false;
-  fetchTasks()
+  fetchExperiences()
   comment.value = null;
 };
 
-const confirmApproval = (task) => {
-  selectedTask.value = task; 
+const confirmApproval = (experience) => {
+  selectedExperience.value = experience; 
   dialog.value = true; 
 };
 
-async function fetchTasks() {
-  // Fetch pending tasks
-  flightPlanTasks.value = await flightPlanTaskService.getAllPendingFlightPlanTasks();
+async function fetchExperiences() {
+  // Fetch pending experiences
+  flightPlanExperiences.value = await flightPlanExperienceService.getAllPendingFlightPlanExperiences();
 
   // Wait for all mapped promises to resolve
   listItems.value = await Promise.all(
-    flightPlanTasks.value.data.map(async (fpTask) => {
-      // Get task
-      let task = await taskService.getById(fpTask.taskId);
+    flightPlanExperiences.value.data.map(async (fpExperience) => {
+      // Get experience
+      let experience = await experienceService.getById(fpExperience.experienceId);
 
-      let taskPoints = task.data.points;
+      let experiencePoints = experience.data.points;
       // Get majors
-      let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
+      let experienceMajors = await experienceMajorService.getAllForExperienceId(experience.data.id);
 
       let majors = await Promise.all( 
-        taskMajors.data.map( async (tm) => {
+        experienceMajors.data.map( async (tm) => {
           let currMajor = await majorService.getMajorById(tm.majorId)
           return currMajor.data.name
         })
@@ -102,7 +102,7 @@ async function fetchTasks() {
       
       
       // Get student name
-      let flightPlan = await flightPlanServices.getFlightPlanById(fpTask.flightPlanId);
+      let flightPlan = await flightPlanServices.getFlightPlanById(fpExperience.flightPlanId);
       let studentInfo = await studentInfoServices.getStudentInfoById(flightPlan.data.studentInfoId);
       let userId = studentInfo.data[0].userId
       let user = await userServices.getUserById(userId);
@@ -112,15 +112,16 @@ async function fetchTasks() {
 
       // Construct list item
       return {
-        taskName: task.data.name,
-        semestersFromGraduation: task.data.semestersFromGraduation,
+        experienceName: experience.data.name,
+        semestersFromGraduation: experience.data.semestersFromGraduation,
         major: allMajors,
         studentName: name,
-        fpTaskId: fpTask.id,
+        fpExperienceId: fpExperience.id,
         userId: userId,
-        taskPoints: taskPoints,
+        experiencePoints: experiencePoints,
         currPoints: currPoints,
-        earnedPoints: earnedPoints
+        earnedPoints: earnedPoints,
+        reflection: fpExperience.reflection
       };
     })
   );
@@ -128,7 +129,7 @@ async function fetchTasks() {
 
 
 onMounted(() => {
-  fetchTasks();
+  fetchExperiences();
 });
 </script>
 
@@ -162,16 +163,16 @@ onMounted(() => {
         <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>
           Are you sure you want to approve
-          <strong>{{ selectedTask?.taskName }}</strong> for 
-          <strong>{{ selectedTask?.studentName }}</strong>?
+          <strong>{{ selectedExperience?.experienceName }}</strong> for 
+          <strong>{{ selectedExperience?.studentName }}</strong>?
         </v-card-text>
-        <v-card-text>DOCUMENT HERE</v-card-text>
+        <v-card-text><v-container max-height=200px class="overflow-y-auto w-100"><v-row max-height=100px class="overflow-y-auto w-100"><v-col class="overflow-y-auto"><strong>Student's Reflection: </strong> {{ selectedExperience.reflection }}</v-col></v-row></v-container></v-card-text>
         <v-textarea class="px-3" label="Enter a comment if desired:" v-model="comment"></v-textarea>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-row class="pa-0 ma-0 w-100">
-            <v-col align="start"><v-btn color="red darken-1" text @click="approveTask(false)">Deny</v-btn></v-col>
-            <v-col align="end"><v-btn color="blue darken-1" text @click="approveTask(true)">Approve</v-btn></v-col>
+            <v-col align="start"><v-btn color="red darken-1" text @click="approveExperience(false)">Deny</v-btn></v-col>
+            <v-col align="end"><v-btn color="blue darken-1" text @click="approveExperience(true)">Approve</v-btn></v-col>
           </v-row>
         </v-card-actions>
       </v-card>

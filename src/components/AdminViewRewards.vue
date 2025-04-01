@@ -3,14 +3,6 @@
   
     <v-spacer></v-spacer>
     <div class="pa-12">
-      <!-- Using Vuetify layout for top-right positioning -->
-      <v-row>
-        <v-col class="d-flex justify-end" cols="12">
-          <v-btn @click="goBack" color="primary">
-            Back to Admin Shop
-          </v-btn>
-        </v-col>
-      </v-row>
   
       <v-row>
         <v-col cols="6">
@@ -183,11 +175,6 @@
   
   const closeImageDialog = () => {
     imageDialog.value = false;
-  };
-  
-  // Navigate back to the Admin Shop page
-  const goBack = () => {
-    router.push({ name: 'AdminShop' }); 
   };
   
   onMounted(initialize);

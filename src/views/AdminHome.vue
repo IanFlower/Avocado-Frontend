@@ -221,7 +221,7 @@
                     </v-container>
                 </v-card>
             </v-col>
-            <v-col align="center" class="mr-4">
+            <v-col align="center" class="ml-4">
                 <v-card class="secondary" to="AdminViewRewards" link>
                     <v-container align="left">
                         <v-row>

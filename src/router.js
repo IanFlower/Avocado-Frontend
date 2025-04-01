@@ -22,6 +22,7 @@ import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
 import approval from "./views/approval.vue";
 import AdminBadge from "./views/AdminBadge.vue";
+import AddBadge from "./components/Addbadge.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -130,6 +131,12 @@ const router = createRouter({
       name: "AdminShop",
       component: AdminShop,
     },
+    {
+      path: "/AdminAddBadge",
+      alias: "/adminAddBadge",
+      name: "AddBadge",
+      component: AddBadge
+    }
     {
       path: '/AdminBadge',
       alias: '/adminBadge',

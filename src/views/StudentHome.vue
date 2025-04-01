@@ -96,6 +96,7 @@
                     <v-row class="pa-0 ma-0" height="60">
                       <v-col class="ml-4 mt-1">
                         <v-row>{{ ex.Experience.name }}</v-row>
+                        <v-row v-if="ex.flightPlanExperience.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{ex.flightPlanExperience.subtext}}</v-row>
                       </v-col>
                       <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">Completed</v-col>
                       <v-col align="end" class="text-end">{{ ex.Experience.points }}</v-col>
@@ -185,7 +186,7 @@
       :item="currentExperience"
       :refresh="refresh"
       @update:dialog="showExperience = $event"
-      @update:experience="changeExperience($event)"/>
+      @update:experience="changeExperience()"/>
   </v-container>
 </template>
 
@@ -267,10 +268,8 @@ function changeTask(task) {
 }
 
 
-function changeExperience(experience) {
-  currentExperience.value = experience;
-  refresh.value = true;
-  showExperience.value = true;
+function changeExperience() {
+  getExperiences()
 }
 
 function getUpcomingEvents() {

@@ -1,11 +1,14 @@
 <script setup>
 import PrerequisiteServices from "../services/prerequisiteServices";
-import documentService from "../services/documentService"; // Ensure this handles file uploads
+import documentService from "../services/documentService"; 
 import { ref, computed, onMounted, watch } from "vue";
 
 const prerequisite = ref(null);
 const docRequired = ref(false);
-const file = ref(null); 
+const file = ref({
+    file: null, // Initialize file as null
+    name: null, // Initialize name as null
+}); 
 
 const emit = defineEmits(["update:dialog", "update:task"]);
 
@@ -43,7 +46,7 @@ function initialize() {
     }
 }
 
-watch(() => props.item, (currItem) => {
+watch(() => props.item, (currItem) => {   
     if (currItem) {
         initialize();
     }
@@ -79,49 +82,24 @@ function openPrerequisite(prerequisite) {
 function handleFileUpload(event) {
     const selectedFile = event.target.files[0];
     if (!selectedFile) {
-        alert("No file selected.");
+        console.error("No file selected");
         return;
     }
-
-    // Validate file type (e.g., only allow PDFs or images)
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
-    if (!allowedTypes.includes(selectedFile.type)) {
-        alert("Invalid file type. Please upload a PDF or image file.");
-        return;
-    }
-
-    // Validate file size (e.g., max 5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (selectedFile.size > maxSize) {
-        alert("File size exceeds the 5MB limit. Please upload a smaller file.");
-        return;
-    }
-
-    // Update the file ref
     file.value = selectedFile;
-    console.log("File selected:", file.value); // Debugging log
 }
 
 // Upload the file to the backend
-async function upload() {
-    if (!file.value) {
-        alert("Please select a file to upload.");
-        return;
-    }
-
+ function upload() {
     const formData = new FormData();
-    formData.append("file", file.value);
-    console.log("Uploading file:", file.value); 
+    formData.append("file", file.value); 
+    console.log("File to upload:", formData.get("file")); 
 
-    try {
-        const response = await documentService.uploadDocument(formData);
-        console.log("Upload successful:", response.data);
-        alert("File uploaded successfully!");
-        file.value = null;
-    } catch (error) {
-        console.error("Upload failed:", error);
-        alert("File upload failed. Please try again later.");
-    }
+    documentService.uploadDocument(formData)
+    .then((response) => {
+        console.log("File uploaded successfully:", response.data);
+        closeDialog();
+    })
+
 }
 </script>
 
@@ -149,16 +127,18 @@ async function upload() {
                         <v-col>
                             <v-file-input 
                             label="Upload Document"
-                            accept=".pdf,.jpg,.jpeg,.png"
+                            accept=".pdf,.jpg,.jpeg,.png" 
                             @change="handleFileUpload"
                             />                        
                         </v-col>
                     </v-row>
+
                 </v-container>
             </v-card-text>
             <v-card-actions>
                 <v-btn v-if="docRequired" class="secondary-button" text @click="closeDialog()">Cancel</v-btn>
-                <v-btn v-if="docRequired" color="blue darken-1" text @click="upload()">Upload</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn v-if="docRequired" color="blue darken-1" text @click="upload()">Save</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

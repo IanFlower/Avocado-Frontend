@@ -29,6 +29,7 @@ const documentService = {
   // Upload a Document (with file upload)
   uploadDocument(fileData) {
     return apiClient.post('/documents/upload', fileData,  {
+
     });
   },
 };

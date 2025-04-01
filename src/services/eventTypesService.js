@@ -1,5 +1,5 @@
 // eventService.js
-import apiClient from './services';
+import { apiClient } from './services.js';
 
 const eventTypeService = {
   // Get all events type for a specific user

@@ -17,17 +17,17 @@ const emptyItem = {
         </v-col>
         <v-col cols="8">
             <v-row align="center" justify="center">
-                <v-col cols="auto">
+                <v-col cols="2">
                 <v-btn variant="text" rounded="lg" class="mx-1" 
                     @click="tableOverLayRefs.selectedSemester > 0 ? tableOverLayRefs.selectedSemester-- : tableOverLayRefs.selectedSemester = 0">Previous</v-btn>
                 </v-col>
-                <v-col cols="auto">
-                <v-btn-toggle v-model="tableOverLayRefs.selectedSemester" mandatory>
-                    <v-btn variant="tonal" class=" secondary-button mx-1" v-for="numbers in 8" :key="numbers">{{ numbers
+                <v-col cols="8">
+                <v-btn-toggle v-model="tableOverLayRefs.selectedSemester" mandatory  class="flex-wrap: wrap;">
+                    <v-btn  rounded="lg" variant="tonal" class="secondary-button mx-1 mb-1"  v-for="numbers in 8" :key="numbers">{{ numbers
                         }}</v-btn>
                 </v-btn-toggle>
                 </v-col>
-                <v-col cols="auto">
+                <v-col cols="2">
                 <v-btn variant="text" rounded="lg" class="mx-1"
                     @click="tableOverLayRefs.selectedSemester == 7 ? tableOverLayRefs.selectedSemester = 7 : tableOverLayRefs.selectedSemester++">Next</v-btn>
                 </v-col>
@@ -52,5 +52,8 @@ const emptyItem = {
 }
 :deep(.v-btn__content) {
     white-space: pre-wrap;
+}
+:deep(.v-btn-toggle) {
+    flex-wrap: wrap;
 }
 </style>

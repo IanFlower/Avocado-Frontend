@@ -1,5 +1,5 @@
 // cliftonStrengthService.js
-import apiClient from './services';
+import { apiClient } from './services.js';
 
 const cliftonStrengthService = {
   // Get all clifton strengths for a specific user

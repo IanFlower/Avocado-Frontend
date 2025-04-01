@@ -1,5 +1,5 @@
 // experienceService.js
-import apiClient from './services';
+import { apiClient } from './services.js';
 
 const experienceEventTypeService = {
   // Get all experiences for a specific user

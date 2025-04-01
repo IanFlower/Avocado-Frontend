@@ -14,7 +14,7 @@
                             <v-checkbox v-model="localPermission.readStudentInfo" label="Student Info"
                                 class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.readStrengths" label="Strength"
-                                class="mb-1"></v-checkbox> 
+                                class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.readLogs" label="Logs" class="mb-1"></v-checkbox>
                             <p class="font-weight-bold" align="center">Add Only Permissions</p>
                             <v-checkbox v-model="localPermission.addExperience" label="Experience"
@@ -37,6 +37,8 @@
                                 @change="toggleFullPermission('addReward', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addEvent" label="Event" class="mb-1"
                                 @change="toggleFullPermission('addEvent', $event)"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addBadge" label="Event" class="mb-1"
+                                @change="toggleFullPermission('addBadge', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addNotification" label="Notification" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.changePermissions" label="Alter User Permissions"
                                 class="mb-1"></v-checkbox>
@@ -93,6 +95,8 @@ const localPermission = ref({
     addEvent: false,
     changeEvent: false,
     removeEvent: false,
+    addBadge: false,
+    removeBadge: false,
     addNotification: false,
     userId: null,
 });
@@ -174,7 +178,11 @@ const toggleFullPermission = (permissionKey, event) => {
         localPermission.value.addEvent = value;
         localPermission.value.changeEvent = value;
         localPermission.value.removeEvent = value;
+    } else if (permissionKey === 'addBadge') {
+        localPermission.value.removeBadge = value;
+        localPermission.value.addBadge = value;
     }
+
 };
 </script>
 

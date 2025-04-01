@@ -13,13 +13,15 @@ import AdminHome from "./views/AdminHome.vue";
 import AdminManageEvents from "./views/AdminManageEvents.vue";
 import ManageExperiencesTasks from "./views/ManageExperiencesTasks.vue";
 import UserInfoDialog from "./components/UserInfoDialog.vue";
-import ManageUsers from "./views/ManageUsers.vue";
 import Approval from "./views/approval.vue";
 import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
-import AdminViewRewards from "./views/AdminViewRewards.vue";
-import PurchaseRewards from "./views/PurchaseRewards.vue";
+import AdminViewRewards from "./components/AdminViewRewards.vue";
+import PurchaseRewards from "./components/PurchaseRewards.vue";
+import ManageUsers from "./views/ManageUsers.vue"
+import approval from "./views/approval.vue";
+import AdminBadge from "./views/AdminBadge.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -127,6 +129,12 @@ const router = createRouter({
       alias: "/adminShop",
       name: "AdminShop",
       component: AdminShop,
+    },
+    {
+      path: '/AdminBadge',
+      alias: '/adminBadge',
+      name: "AdminBadge",
+      component: AdminBadge,
     },
     {
       path: "/ViewRewards",

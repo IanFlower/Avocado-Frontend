@@ -147,7 +147,7 @@ onMounted(() => {
                     <v-btn variant="text">Profile</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text">Rewards</v-btn>
+                    <v-btn variant="text" to="/Shop">Rewards</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
@@ -182,11 +182,14 @@ onMounted(() => {
                 <v-list-item to="ManageExperiencesTasks">
                     <v-btn variant="text">Tasks/Experiences</v-btn>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item to="AdminBadge">
                     <v-btn variant="text">Badge Management</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/adminShop">Rewards</v-btn>
+                <v-list-item to="AdminViewRewards">
+                    <v-btn variant="text">Add Rewards</v-btn>
+                </v-list-item>
+                <v-list-item to="AdminShop">
+                    <v-btn variant="text">Purchase Rewards</v-btn>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

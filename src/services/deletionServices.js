@@ -1,5 +1,5 @@
 // eventService.js
-import apiClient from './services.js';
+import { apiClient } from './services.js';
 
 const deletionServices = {
     deleteItem(category, item) {

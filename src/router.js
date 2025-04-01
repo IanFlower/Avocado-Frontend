@@ -21,7 +21,7 @@ import AdminViewRewards from "./components/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
 import approval from "./views/approval.vue";
-import AdminBadge from "./views/AdminBadge.vue";
+import AdminBadges from "./views/AdminBadge.vue";
 import profilePage from "./views/ProfilePage.vue";
 
 const router = createRouter({
@@ -135,7 +135,7 @@ const router = createRouter({
       path: '/AdminBadge',
       alias: '/adminBadge',
       name: "AdminBadge",
-      component: AdminBadge,
+      component: AdminBadges,
     },
     {
       path: "/ViewRewards",

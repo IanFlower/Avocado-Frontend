@@ -1,5 +1,5 @@
 // categoryService.js
-import apiClient from './services';
+import { apiClient } from './services.js';
 
 const categoryService = {
   // Get all categorys for a specific user

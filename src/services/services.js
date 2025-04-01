@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Buffer } from 'buffer';
 import Utils from "../config/utils.js";
 import AuthServices from "./authServices.js";
 import Router from "../router.js";
@@ -9,6 +10,39 @@ if (import.meta.env.DEV) {
 } else {
   baseurl = "/flight-plan-t2/";
 }
+
+const apiImageClient = axios.create({
+  baseURL: baseurl,
+  responseType: "arraybuffer",
+  headers: {
+    Accept: "image/*",
+    "Content-Type": "multipart/form-data",
+    "Access-Control-Allow-Origin": "*",
+    crossDomain: true,
+  },
+  transformRequest: (data, headers) => {
+    let user = Utils.getStore("user");
+    if (user != null) {
+      let token = user.token;
+      let authHeader = "";
+      if (token != null && token != "") authHeader = "Bearer " + token;
+      headers["Authorization"] = authHeader;
+    }
+    return JSON.stringify(data);
+  },
+  transformResponse: function (data) {
+    try {
+      if (data) {
+        const buffer = Buffer.from(data, 'binary');
+        const base64 = buffer.toString('base64');
+        return base64;
+      }
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  },
+});
 
 const apiClient = axios.create({
   baseURL: baseurl,
@@ -52,3 +86,4 @@ const apiClient = axios.create({
 });
 
 export default apiClient;
+export { apiClient, apiImageClient };

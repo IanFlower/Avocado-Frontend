@@ -47,7 +47,11 @@ document.documentElement.setAttribute('data-theme', 'light');
   color: black !important;
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
-
+.accent-button {
+  background-color: var(--accent) !important;
+  color: black !important;
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
 /*For tertiary buttons on a page ex: add*/
 .tertiary-button {
   background-color: var(--tertiary) !important;

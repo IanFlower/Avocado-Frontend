@@ -136,7 +136,7 @@ const router = createRouter({
       alias: "/adminAddBadge",
       name: "AddBadge",
       component: AddBadge
-    }
+    },
     {
       path: '/AdminBadge',
       alias: '/adminBadge',

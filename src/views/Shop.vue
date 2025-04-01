@@ -1,10 +1,33 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import NoImageAvailable from '../assets/No_Image_Found.png'
+import iconServices from '../services/iconServices.js';
+import rewardServices from '../services/rewardServices.js';
 import { useRouter } from 'vue-router';
 // Helper Refs
 const search = ref('');
-const item = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+const rewardsList = computed(() => rewards.value.filter(reward => { if(search.value == '') return true; return reward.name.toLowerCase().includes(search.value.toLowerCase())}));
+const rewards = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await rewardServices.getAllRewards();
+    rewards.value = response.data;
+    rewards.value.forEach(reward => {
+      reward.image_file = null;
+      if (reward.image) {
+        iconServices.getIconByFile(reward.image).then(icon => {
+          if(icon.data){
+            reward.image_file = icon.data;
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching rewards:', error);
+  }
+});
+
 </script>
 
 <template>
@@ -32,18 +55,18 @@ const item = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     <v-row style="overflow-y: auto; max-height: 70vh;">
       <v-col cols="10" offset="1">
         <v-row>
-          <v-col cols="3" v-for="item in 12" :key="item">
+          <v-col cols="3" v-for="reward in rewardsList" :key="reward">
             <v-card height="35vh" width="15vw" class="secondary">
-              <v-img :src="item.image ? item.image : NoImageAvailable"  cover crop height="28vh" width="15vw"></v-img>
+              <v-img :src="reward.image_file ? `data:image/*;base64,${reward.image_file}` : NoImageAvailable"  cover crop height="28vh" width="15vw"></v-img>
               <v-spacer></v-spacer>
               <v-card-actions >
                 <v-row height="7vh" class="align-center mb-1 mx-auto">
                   <v-col cols="8">
-                    <span class="text-h6">{{ item }}</span>
+                    <span class="text-h6">{{ reward.name }}</span>
                   </v-col>
                   <v-col cols="4">
-                    <v-btn :icon="`mdi-numeric-${100}`" width="2.8vw" height="2.8vw" class="accent-button">
-                      100
+                    <v-btn :icon="`mdi-numeric-${reward.requiredPoints}`" width="2.8vw" height="2.8vw" class="accent-button disable-events">
+                      {{ reward.requiredPoints }}
                     </v-btn>
                   </v-col>
                 </v-row>

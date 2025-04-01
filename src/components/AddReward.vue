@@ -23,7 +23,6 @@ import { VFileUpload } from 'vuetify/labs/VFileUpload';
 const reward = ref({
   name: '',
   desc: '',
-  image: null,
   requiredPoints: null,
 });
 
@@ -49,11 +48,11 @@ const AddReward = async () => {
 
     const iconResponse = await iconServices.addIcon(iconData);
     console.log('Icon Response:', iconResponse);
-
+    const imageUrl = iconResponse.imageUrl.replace('/uploads/', '');
     const rewardResponse = await rewardServices.addReward({
       name: reward.value.name,
       desc: reward.value.desc,
-      image: reward.value.image,
+      image: imageUrl,
       requiredPoints: reward.value.requiredPoints,
     });
     console.log('Reward Response:', rewardResponse);
@@ -66,7 +65,6 @@ const AddReward = async () => {
 
 
 function handleImageUpload(event) {
-  try {
   const files = event.target.files;
 
   if (!files || files.length === 0) {
@@ -75,13 +73,11 @@ function handleImageUpload(event) {
   }
 
   const selectedImage = files[0];
+  console.log('Selected file:', selectedImage);
 
   // Store the file object in the icon ref
-  reward.value.image = selectedImage.name;
   icon.value.image = selectedImage;
 
-  } catch (error) {
-    console.error('Error uploading image:', error);
-  }
+  console.log("Selected Image:", icon.value.image);
 }
 </script>

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ApprovalAdmin from "../components/ApprovalAdmin.vue";
+import ApprovalExperience from "../components/ApprovalExperience.vue";
 import ApprovalTask from "../components/ApprovalTask.vue"
 
 import ApprovalRequestExperience from "../components/ApprovalRequestExperience.vue";
@@ -111,7 +112,7 @@ onMounted(() => {
       <ApprovalTask/> 
     </div>
     <div v-else-if="selectedButton === 3">
-      <p>Experiences Component</p>
+      <ApprovalExperience/>
     </div>
     <div v-else-if="selectedButton === 4">
       <ApprovalAdmin/> 

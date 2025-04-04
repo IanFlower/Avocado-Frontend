@@ -124,16 +124,22 @@ watch(() => showAddbadgeDialog.value, (newValue) => {
           <v-divider vertical inset></v-divider>
           <v-col cols="6">
             <h3>Prerequisites</h3>
-            <v-row>
-              <v-col cols="6">
-                <v-number-input v-model="badge.allCount" label="All Count" controlVariant="stacked"></v-number-input>
+            <v-divider inset ></v-divider>
+            <v-row class="pt-2">
+              <v-col cols="10">
+                <h4>Number of flight plan items need to be completed</h4>
+              </v-col>
+              <v-col cols="2">
+                <v-btn size="small">mdi-help</v-btn>
               </v-col>
               <v-col cols="6">
-                <v-number-input v-model="badge.taskCount" label="Task Count" controlVariant="stacked"></v-number-input>
+                <v-number-input v-model="badge.allCount" label="Any item" controlVariant="stacked"></v-number-input>
               </v-col>
               <v-col cols="6">
-                <v-number-input v-model="badge.experienceCount" label="Experience Count"
-                  controlVariant="stacked"></v-number-input>
+                <v-number-input v-model="badge.taskCount" label="Task" controlVariant="stacked"></v-number-input>
+              </v-col>
+              <v-col cols="6">
+                <v-number-input v-model="badge.experienceCount" label="Experience" controlVariant="stacked"></v-number-input>
               </v-col>
             </v-row>
           </v-col>

@@ -5,17 +5,20 @@ import AddBadge from "../components/AddBadge.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
 // Default constants
 const emptyBadgePrerequisites = {
-  allCount: 0,
-  taskCount: 0,
-  experienceCount: 0,
+
   awardSpecificTaskAND: false,
   awardSpecificExperienceAND: false,
   awardSpecificExperience: [],
   awardSpecificTask: []
 };
 const emptyBadge = {
+  id: '',
   name: '',
   desc: '',
+  image: '',
+  allCount: 0,
+  taskCount: 0,
+  experienceCount: 0,
 };
 // Helper refs
 const deletebadgeDialogBox = ref(false);
@@ -49,7 +52,8 @@ const initialize = async () => {
     badges.value = response.data.map(badge => ({
       id: badge.id,
       name: badge.name,
-      desc: badge.desc
+      desc: badge.desc,
+      image: badge.image
     }));
   } catch (error) {
     console.error("Error fetching badges:", error.message);
@@ -64,8 +68,7 @@ const deleteItem = (item) => {
 };
 
 const openAddbadgeDialog = () => {
-  selectedbadge.value = emptyBadge;
-  selectedBadgePrerequisites.value = emptyBadgePrerequisites;
+  selectedbadge.value = JSON.parse(JSON.stringify(emptyBadge));
   showAddbadgeDialog.value = true;
 };
 
@@ -80,11 +83,8 @@ const openEditbadgeDialog = (badge) => {
     console.error("Invalid badge data:", badge);
     return;
   }
-  selectedbadge.value = badge;
-  selectedBadgePrerequisites.value = {
-    ...emptyBadgePrerequisites,
-    badge: badge.id
-  };
+  selectedbadge.value = JSON.parse(JSON.stringify(badge));
+  //selectedBadgePrerequisites.value = JSON.parse(JSON.stringify(emptyBadgePrerequisites));
   showAddbadgeDialog.value = true;
 };
 
@@ -102,7 +102,6 @@ onMounted(initialize);
 
 <template>
   <p class="pa-12" style="font-size: 50px;">Admin Badges</p>
-
   <v-spacer></v-spacer>
   <div>
     <div class="pa-12">

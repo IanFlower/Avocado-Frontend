@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import userSerices from "../services/userServices";
 import flightPlanExperienceService from "../services/flightPlanExperienceServices";
 import studentInfoServices from "../services/studentInfoServices";
 import flightPlanServices from "../services/flightPlanServices";

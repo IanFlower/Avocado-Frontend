@@ -89,8 +89,10 @@ function handleImageUpload(event) {
   }
 }
 watch(() => showAddbadgeDialog.value, (newValue) => {
-  if(newValue == false) icon.value.image == null;
-  
+  if(newValue == false){
+    icon.value.image = null;
+    errorMessage.value = '';
+  }
 });
 </script>
 

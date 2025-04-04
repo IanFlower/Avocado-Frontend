@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import userSerices from "../services/userServices";
+import userServices from "../services/userServices";
 import flightPlanTaskService from "../services/flightPlanTaskServices";
 import studentInfoServices from "../services/studentInfoServices";
 import flightPlanServices from "../services/flightPlanServices";
-import userServices from "../services/userServices";
 import taskService from "../services/tasksServices";
 import taskMajorService from "../services/taskMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
+import checkBadgeCompletion from "../services/badgeCheckUserService";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -46,6 +46,7 @@ const approveTask = async (approval) => {
 
   if (approval) {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
+    // Add notification
     notification = {
       userId: selectedTask.value.userId, 
       title: `${selectedTask.value.taskName} Approval`,
@@ -53,9 +54,12 @@ const approveTask = async (approval) => {
       goodNews: 1
     }
     await notificationService.createNotification(notification)
+    // Update student points
     let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
     let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
     await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    // Check if user earned badges
+    checkBadgeCompletion(selectedTask.value.userId)
   } else {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {
@@ -79,7 +83,6 @@ const confirmApproval = (task) => {
 async function fetchTasks() {
   // Fetch pending tasks
   flightPlanTasks.value = await flightPlanTaskService.getAllPendingFlightPlanTasks();
-
   // Wait for all mapped promises to resolve
   listItems.value = await Promise.all(
     flightPlanTasks.value.data.map(async (fpTask) => {
@@ -125,7 +128,6 @@ async function fetchTasks() {
     })
   );
 }
-
 
 onMounted(() => {
   fetchTasks();

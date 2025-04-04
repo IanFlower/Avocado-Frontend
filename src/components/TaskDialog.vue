@@ -1,13 +1,19 @@
 <script setup>
 import PrerequisiteServices from "../services/prerequisiteServices";
 import documentService from "../services/documentService"; 
+import studentInfoServices from "../services/studentInfoServices";
 import { ref, computed, onMounted, watch } from "vue";
+import Utils from "../config/utils";
+import flightPlanTaskService from "../services/flightPlanTaskServices";
 
+const user = Utils.getStore("user");
 const prerequisite = ref(null);
+const documentName = ref(null);
+
 const docRequired = ref(false);
 const file = ref({
-    file: null, // Initialize file as null
-    name: null, // Initialize name as null
+    file: null, 
+    taskId: null,
 }); 
 
 const emit = defineEmits(["update:dialog", "update:task"]);
@@ -44,6 +50,7 @@ function initialize() {
     } catch (e) {
         console.error(e);
     }
+
 }
 
 watch(() => props.item, (currItem) => {   
@@ -89,18 +96,38 @@ function handleFileUpload(event) {
 }
 
 // Upload the file to the backend
- function upload() {
-    const formData = new FormData();
-    formData.append("file", file.value); 
-    console.log("File to upload:", formData.get("file")); 
+async function upload() {
+    const fileData = {
+        file: file.value,
+        flightPlanTaskId: item.value.flightPlanTask.id,
+    };
 
-    documentService.uploadDocument(formData)
-    .then((response) => {
+    try {
+        const response = await documentService.uploadDocument(fileData); 
+        documentName.value = response.data.filePath;
         console.log("File uploaded successfully:", response.data);
         closeDialog();
-    })
+    } catch (error) {
+        console.error("File upload failed:", error);
+    }
 
+    flightPlanTaskService.updateFlightPlanTask(
+        item.value.flightPlanTask.id,
+        {
+            documentName: documentName.value,
+            pending : true,
+        }
+    )
+        .then((res) => {
+            console.log("Flight plan task updated successfully:", res.data);
+            closeDialog();
+        })
+        .catch((error) => { 
+            console.error("Error updating flight plan task:", error);
+        });
 }
+
+
 </script>
 
 <template>

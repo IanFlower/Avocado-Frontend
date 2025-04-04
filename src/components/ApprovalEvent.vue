@@ -75,7 +75,7 @@ function parseDate(date) {
 
 function closeDialog() {
   dialog.value = false;
-  csvData.value = false;
+  csvFile.value = false;
   fetchEvents()
 }
 

@@ -2,6 +2,7 @@
 import { ref, defineModel, watch } from 'vue';
 import badgeServices from '../services/badgeServices.js';
 import iconServices from '../services/iconServices.js';
+import badgeService from '../services/badgeServices.js';
 
 // Data refs
 const badge = defineModel("selectedbadge");
@@ -23,6 +24,8 @@ const rules = {
   required: (value) => !!value || 'This field is required',
 };
 
+const requiredIMG = (value) => { if(value || badge.value.id >= 0) return true; return 'This field is required'; }
+
 const validateAndSubmit = async () => {
   // Validate text fields
   const valid = await badgeForm.value.validate();
@@ -35,14 +38,26 @@ const validateAndSubmit = async () => {
   }
 
   // Stop if validation fails
-  if (!valid || !icon.value.image) {
+  if (!valid || (!icon.value.image && badge.value.id == 0 )) {
     errorMessage.value = 'Please fill in all fields correctly.';
     return;
   }
 
   try {
     if (badge.value.id > 0) {
-      iconData.id = badge.value.id;
+      if(icon.value.image != null){
+        const iconData = {
+          image: icon.value.image,
+          forBadge: icon.value.forBadge,
+        };
+        const iconResponse = await iconServices.addIcon(iconData);
+        console.log('Icon Response:', iconResponse);
+        if (!iconResponse) {
+          throw new Error('Failed to add icon');
+        }
+        badge.value.image = iconResponse.imageUrl.replace('/uploads/', '');
+      }
+      await badgeService.updateBadge(badge.value)
     }
     else {
       const iconData = {
@@ -55,7 +70,7 @@ const validateAndSubmit = async () => {
         throw new Error('Failed to add icon');
       }
       badge.value.image = iconResponse.imageUrl.replace('/uploads/', '');
-      const badgeResponse = await badgeServices.addBadge(badge);
+      const badgeResponse = await badgeServices.addBadge(badge.value);
       console.log('Badge Saved:', badgeResponse);
     }
 
@@ -74,6 +89,8 @@ function handleImageUpload(event) {
   }
 }
 watch(() => showAddbadgeDialog.value, (newValue) => {
+  if(newValue == false) icon.value.image == null;
+  
 });
 </script>
 
@@ -98,7 +115,7 @@ watch(() => showAddbadgeDialog.value, (newValue) => {
               <v-col cols="12">
                 <!-- Image Upload with Validation -->
                 <v-file-input label="Upload Image" accept="image/*" @change="handleImageUpload"
-                  :error-messages="imageError" required></v-file-input>
+                  :error-messages="imageError" :rules="[requiredIMG]" required></v-file-input>
               </v-col>
             </v-row>
           </v-col>

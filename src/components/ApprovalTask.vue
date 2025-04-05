@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted,watch  } from "vue";
 import userSerices from "../services/userServices";
 import flightPlanTaskService from "../services/flightPlanTaskServices";
 import studentInfoServices from "../services/studentInfoServices";
@@ -9,6 +9,9 @@ import taskService from "../services/tasksServices";
 import taskMajorService from "../services/taskMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
+import documentService from "../services/documentService";
+import PDF from "pdf-vue3";
+
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -19,6 +22,9 @@ const selectedTask = ref(null); // Stores the task to be approved
 const flightPlanTasks = ref([])
 const listItems = ref([])
 const comment = ref("")
+const file = ref(null); 
+const document = ref(false);
+
 
 const headers = ref([
   { title: "Task Name", key: "taskName" },
@@ -125,10 +131,28 @@ async function fetchTasks() {
     })
   );
 }
+function viewDocument() {
+  const flightPlanId = selectedTask.value.fpTaskId;
 
+  documentService.getDocumentByFlightPlanTaskId(flightPlanId)
+    .then((res) => {
+      file.value = `data:application/pdf;base64,${res.data}`;
+      document.value = true;
+    })
+    .catch((error) => {
+      console.error("Error fetching document:", error);
+    });
+
+}
+watch(dialog, (val) => {
+  if (val && selectedTask.value) {
+    viewDocument();
+  }
+});
 
 onMounted(() => {
   fetchTasks();
+  
 });
 </script>
 
@@ -157,7 +181,7 @@ onMounted(() => {
     </div>
 
     <!-- Confirmation Dialog ------------------------------------------------------->
-    <v-dialog v-model="dialog" max-width="600">
+    <v-dialog v-model="dialog" max-width="900">
       <v-card>
         <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>
@@ -165,7 +189,12 @@ onMounted(() => {
           <strong>{{ selectedTask?.taskName }}</strong> for 
           <strong>{{ selectedTask?.studentName }}</strong>?
         </v-card-text>
-        <v-card-text>DOCUMENT HERE</v-card-text>
+        <v-card-text>
+
+            <PDF v-if="document" :src="file" style="height: 600px;" />
+
+
+        </v-card-text>
         <v-textarea class="px-3" label="Enter a comment if desired:" v-model="comment"></v-textarea>
         <v-card-actions>
           <v-spacer></v-spacer>

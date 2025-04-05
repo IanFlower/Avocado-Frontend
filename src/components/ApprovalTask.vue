@@ -8,7 +8,7 @@ import taskService from "../services/tasksServices";
 import taskMajorService from "../services/taskMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
-import checkBadgeCompletion from "../services/badgeCheckUserService";
+import userBadgesServices from "../services/userBadgesServices";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -57,9 +57,9 @@ const approveTask = async (approval) => {
     // Update student points
     let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
     let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
-    await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
     // Check if user earned badges
-    checkBadgeCompletion(selectedTask.value.userId)
+    userBadgesServices.checkUserBadges(studentId)
   } else {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

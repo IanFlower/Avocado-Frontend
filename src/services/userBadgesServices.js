@@ -6,7 +6,9 @@ const userBadgesServices = {
   getAll() {
     return apiClient.get('/studentInfoBadge');
   },
-
+  checkUserBadges(studentInfo) {
+    return apiClient.get(`/studentInfoBadge/checkUserBadges/${studentInfo}`);
+  },
   // Get a specific userBadge by ID
   getByStudentId(studentInfoId) {
     return apiClient.get(`/studentInfoBadge/${studentInfoId}`);

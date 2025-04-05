@@ -130,7 +130,7 @@ watch(() => showAddbadgeDialog.value, (newValue) => {
                 <h4>Number of flight plan items need to be completed</h4>
               </v-col>
               <v-col cols="2">
-                <v-btn size="small">mdi-help</v-btn>
+                <!-- <v-btn size="small">mdi-help</v-btn> -->
               </v-col>
               <v-col cols="6">
                 <v-number-input v-model="badge.allCount" label="Any item" controlVariant="stacked"></v-number-input>

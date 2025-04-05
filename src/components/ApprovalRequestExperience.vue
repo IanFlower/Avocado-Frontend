@@ -68,6 +68,7 @@ const approveUser = async () => {
       approved: true,
       requestedByStudent: false,
       subtext: "approved",
+      pastRequested: true,
       points: selectedRequest.value.points,
       userId: selectedRequest.value.userId,
     });
@@ -97,6 +98,7 @@ const denyUser = async () => {
     await experienceService.update(selectedRequest.value.id, {
       denied: true,
       requestedByStudent: false,
+      pastRequested: true,
       subtext: "denied", 
     });
 
@@ -108,12 +110,12 @@ const denyUser = async () => {
     });
 
     fetchUsers(); 
-    users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
+    users.value = users.value.filter((user) => user.id !== selectedRequest.value.id); 
 
     showSnackbar("Request denied successfully", "success");
   } catch (error) {
     console.error("Error denying request:", error);
-    showSnackbar("Failed to deny request", "error");
+    showSnackbar("Failed to deny request", "error"); 
   }
 };
 

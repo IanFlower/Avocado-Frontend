@@ -1,88 +1,9 @@
-<template>
-  <p class="pa-12" style="font-size: 50px;">Admin Badges</p>
-
-  <v-spacer></v-spacer>
-  <div>
-    <div class="pa-12">
-      <v-row>
-        <v-col cols="6">
-          <v-text-field 
-            v-model="searchQuery" 
-            label="Search" 
-            prepend-inner-icon="mdi-magnify" 
-            variant="outlined" 
-            hide-details 
-            single-line 
-            class="ma-2"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="tertiary" @click="openAddbadgeDialog">
-            Add Badge
-          </v-btn>
-        </v-col>
-      </v-row>
-
-      <v-data-table 
-        :headers="headers" 
-        :items="badges" 
-        :search="searchQuery" 
-        item-value="name"
-        class="elevation-1"
-      >
-        <template v-slot:item.name="{ item }">
-          <span>{{ item.name }}</span>
-        </template>
-
-        <template v-slot:item.desc="{ item }">
-          <span>{{ item.desc }}</span>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-      
-            <v-icon color="#004761" class="pr-3" @click="openEditbadgeDialog(item)" size="large">mdi-pencil</v-icon>
-
-
-          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-        </template>
-      </v-data-table>
-    </div>
-  </div>
-
-  <Addbadge @badgeAdded="closeAddbadgeDialog" v-model="showAddbadgeDialog"/>
-
-  <!-- Edit badge Dialog -->
-  <v-dialog v-model="editbadgeDialogBox" max-width="500px">
-    <v-card>
-      <v-card-title>Edit Badge</v-card-title>
-      <v-card-text>
-        <Editbadge 
-          v-if="selectedbadge" 
-          :badgeId="selectedbadge.id" 
-          @badgeUpdated="refreshbadges" 
-          @close="closeEditbadgeDialog" 
-        />
-        <div v-else>
-          <p>Loading badge...</p>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
-
-  <DeleteDialog 
-    :dialog="deleteDialog"
-    :item="currentItem" 
-    :category="category"
-    @update:dialog="deleteDialog = $event"
-    @delete="refreshDeleteBadges()"
-  />
-</template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import badgeServices from "../services/badgeServices.js";
-import Addbadge from "../components/Addbadge.vue";
-import Editbadge from "../components/Editbadge.vue";
+import AddBadge from "../components/AddBadge.vue";
+import EditBadge from "../components/EditBadge.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
 
 const editbadgeDialogBox = ref(false);
@@ -170,3 +91,84 @@ const closeDeletebadgeDialog = () => {
 
 onMounted(initialize);
 </script>
+
+<template>
+  <p class="pa-12" style="font-size: 50px;">Admin Badges</p>
+
+  <v-spacer></v-spacer>
+  <div>
+    <div class="pa-12">
+      <v-row>
+        <v-col cols="6">
+          <v-text-field 
+            v-model="searchQuery" 
+            label="Search" 
+            prepend-inner-icon="mdi-magnify" 
+            variant="outlined" 
+            hide-details 
+            single-line 
+            class="ma-2"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="6" class="d-flex justify-end">
+          <v-btn class="tertiary" @click="openAddbadgeDialog">
+            Add Badge
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-data-table 
+        :headers="headers" 
+        :items="badges" 
+        :search="searchQuery" 
+        item-value="name"
+        class="elevation-1"
+      >
+        <template v-slot:item.name="{ item }">
+          <span>{{ item.name }}</span>
+        </template>
+
+        <template v-slot:item.desc="{ item }">
+          <span>{{ item.desc }}</span>
+        </template>
+
+        <template v-slot:item.actions="{ item }">
+      
+            <v-icon color="#004761" class="pr-3" @click="openEditbadgeDialog(item)" size="large">mdi-pencil</v-icon>
+
+
+          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
+        </template>
+      </v-data-table>
+    </div>
+  </div>
+
+  <AddBadge @badgeAdded="closeAddbadgeDialog" v-model="showAddbadgeDialog"/>
+
+  <!-- Edit badge Dialog -->
+  <v-dialog v-model="editbadgeDialogBox" max-width="500px">
+    <v-card>
+      <v-card-title>Edit Badge</v-card-title>
+      <v-card-text>
+        <EditBadge 
+          v-if="selectedbadge" 
+          :badgeId="selectedbadge.id" 
+          @badgeUpdated="refreshbadges" 
+          @close="closeEditbadgeDialog" 
+        />
+        <div v-else>
+          <p>Loading badge...</p>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+  <DeleteDialog 
+    :dialog="deleteDialog"
+    :item="currentItem" 
+    :category="category"
+    @update:dialog="deleteDialog = $event"
+    @delete="refreshDeleteBadges()"
+  />
+</template>
+

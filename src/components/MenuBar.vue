@@ -147,6 +147,9 @@ onMounted(() => {
                     <v-btn variant="text">Profile</v-btn>
                 </v-list-item>
                 <v-list-item>
+                    <v-btn variant="text" to="/Badges">Badges</v-btn>
+                </v-list-item>
+                <v-list-item>
                     <v-btn variant="text" to="/Shop">Rewards</v-btn>
                 </v-list-item>
                 <v-list-item>
@@ -156,7 +159,7 @@ onMounted(() => {
                     <v-btn variant="text">Calender</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text"to="/RequestExperience">Request Experience</v-btn>
+                    <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
                 </v-list-item>
             </v-list>
             <v-list-item>
@@ -174,7 +177,7 @@ onMounted(() => {
                     <v-btn variant="text">Comments</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text"to="/approval">Student Approval</v-btn>
+                    <v-btn variant="text" to="/approval">Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item to="AdminManageEvents">
                     <v-btn variant="text">Manage Events</v-btn>

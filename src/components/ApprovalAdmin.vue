@@ -35,7 +35,7 @@ const fetchUsers = async () => {
 const approveUser = async () => {
   const roleId = 3;
   if (!selectedUser.value) return;
-
+  
   roleUserServices
     .updateUserRole(selectedUser.value.id, roleId)
     .then((response) => {

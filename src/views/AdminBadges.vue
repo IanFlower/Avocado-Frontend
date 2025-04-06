@@ -1,13 +1,28 @@
-
 <script setup>
 import { ref, onMounted } from "vue";
 import badgeServices from "../services/badgeServices.js";
 import AddBadge from "../components/AddBadge.vue";
-import EditBadge from "../components/EditBadge.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
+// Default constants
+const emptyBadgePrerequisites = {
 
-const editbadgeDialogBox = ref(false);
+  awardSpecificTaskAND: false,
+  awardSpecificExperienceAND: false,
+  awardSpecificExperience: [],
+  awardSpecificTask: []
+};
+const emptyBadge = {
+  id: '',
+  name: '',
+  desc: '',
+  image: '',
+  allCount: 0,
+  taskCount: 0,
+  experienceCount: 0,
+};
+// Helper refs
 const deletebadgeDialogBox = ref(false);
+const selectedBadgePrerequisites = ref(emptyBadgePrerequisites);
 const selectedbadge = ref(null);
 
 const deleteDialog = ref(false);
@@ -37,7 +52,8 @@ const initialize = async () => {
     badges.value = response.data.map(badge => ({
       id: badge.id,
       name: badge.name,
-      desc: badge.desc
+      desc: badge.desc,
+      image: badge.image
     }));
   } catch (error) {
     console.error("Error fetching badges:", error.message);
@@ -52,6 +68,7 @@ const deleteItem = (item) => {
 };
 
 const openAddbadgeDialog = () => {
+  selectedbadge.value = JSON.parse(JSON.stringify(emptyBadge));
   showAddbadgeDialog.value = true;
 };
 
@@ -66,23 +83,14 @@ const openEditbadgeDialog = (badge) => {
     console.error("Invalid badge data:", badge);
     return;
   }
-  selectedbadge.value = badge;
-  editbadgeDialogBox.value = true;
-};
-
-const refreshbadges = async () => {
-  await initialize();
-  closeEditbadgeDialog();
+  selectedbadge.value = JSON.parse(JSON.stringify(badge));
+  //selectedBadgePrerequisites.value = JSON.parse(JSON.stringify(emptyBadgePrerequisites));
+  showAddbadgeDialog.value = true;
 };
 
 const refreshDeleteBadges = async () => {
   await initialize();
   closeDeletebadgeDialog();
-};
-
-const closeEditbadgeDialog = () => {
-  editbadgeDialogBox.value = false;
-  selectedbadge.value = null;
 };
 
 const closeDeletebadgeDialog = () => {
@@ -94,7 +102,6 @@ onMounted(initialize);
 
 <template>
   <p class="pa-12" style="font-size: 50px;">Admin Badges</p>
-
   <v-spacer></v-spacer>
   <div>
     <div class="pa-12">
@@ -136,32 +143,13 @@ onMounted(initialize);
       
             <v-icon color="#004761" class="pr-3" @click="openEditbadgeDialog(item)" size="large">mdi-pencil</v-icon>
 
-
           <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </div>
   </div>
 
-  <AddBadge @badgeAdded="closeAddbadgeDialog" v-model="showAddbadgeDialog"/>
-
-  <!-- Edit badge Dialog -->
-  <v-dialog v-model="editbadgeDialogBox" max-width="500px">
-    <v-card>
-      <v-card-title>Edit Badge</v-card-title>
-      <v-card-text>
-        <EditBadge 
-          v-if="selectedbadge" 
-          :badgeId="selectedbadge.id" 
-          @badgeUpdated="refreshbadges" 
-          @close="closeEditbadgeDialog" 
-        />
-        <div v-else>
-          <p>Loading badge...</p>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+  <AddBadge @badgeAdded="closeAddbadgeDialog" :showAddbadgeDialog="showAddbadgeDialog" :selectedbadge="selectedbadge" :selectedBadgePrerequisites="selectedBadgePrerequisites"/>
 
   <DeleteDialog 
     :dialog="deleteDialog"

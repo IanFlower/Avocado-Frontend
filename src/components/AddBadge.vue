@@ -14,6 +14,8 @@ const icon = ref({
 
 // Helper refs
 const badgeForm = ref(null);
+const taskPrerequisites = ref([]);
+const experiencePrerequisites = ref([]);
 const showAddbadgeDialog = defineModel("showAddbadgeDialog");
 const formValid = ref(false);
 const errorMessage = ref('');
@@ -24,7 +26,7 @@ const rules = {
   required: (value) => !!value || 'This field is required',
 };
 
-const requiredIMG = (value) => { if(value || badge.value.id >= 0) return true; return 'This field is required'; }
+const requiredIMG = (value) => { if (value || badge.value.id >= 0) return true; return 'This field is required'; }
 
 const validateAndSubmit = async () => {
   // Validate text fields
@@ -38,14 +40,14 @@ const validateAndSubmit = async () => {
   }
 
   // Stop if validation fails
-  if (!valid || (!icon.value.image && badge.value.id == 0 )) {
+  if (!valid || (!icon.value.image && badge.value.id == 0)) {
     errorMessage.value = 'Please fill in all fields correctly.';
     return;
   }
 
   try {
     if (badge.value.id > 0) {
-      if(icon.value.image != null){
+      if (icon.value.image != null) {
         const iconData = {
           image: icon.value.image,
           forBadge: icon.value.forBadge,
@@ -89,7 +91,7 @@ function handleImageUpload(event) {
   }
 }
 watch(() => showAddbadgeDialog.value, (newValue) => {
-  if(newValue == false){
+  if (newValue == false) {
     icon.value.image = null;
     errorMessage.value = '';
   }
@@ -124,23 +126,33 @@ watch(() => showAddbadgeDialog.value, (newValue) => {
           <v-divider vertical inset></v-divider>
           <v-col cols="6">
             <h3>Prerequisites</h3>
-            <v-divider inset ></v-divider>
-            <v-row class="pt-2">
-              <v-col cols="10">
+            <v-divider inset></v-divider>
+            <v-row class="pt-2 overflow-y-auto">
+              <v-col cols="12">
                 <h4>Number of flight plan items need to be completed</h4>
               </v-col>
+              <v-col cols="4">
+                <v-text-field v-model="badge.allCount" label="Any item" type="number"></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field v-model="badge.taskCount" label="Tasks" type="number"></v-text-field>
+              </v-col>
+              <v-col cols="4">
+                <v-text-field v-model="badge.experienceCount" label="Experience" type="number"></v-text-field>
+              </v-col>
+              <!-- <v-col cols="2">
+                <v-switch color="#004761" :label="badge.badgeSpecificTaskAND ? 'All' : 'Any'" v-model="badge.badgeSpecificTaskAND"></v-switch>
+              </v-col>
+              <v-col cols="10">
+                <v-select clearable multiple chips>
+                </v-select>
+                </v-col>
               <v-col cols="2">
-                <!-- <v-btn size="small">mdi-help</v-btn> -->
               </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.allCount" label="Any item" controlVariant="stacked"></v-number-input>
-              </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.taskCount" label="Task" controlVariant="stacked"></v-number-input>
-              </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.experienceCount" label="Experience" controlVariant="stacked"></v-number-input>
-              </v-col>
+              <v-col cols="10">
+                <v-select clearable multiple chips>
+                </v-select>
+                </v-col> -->
             </v-row>
           </v-col>
         </v-row>

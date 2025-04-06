@@ -6,8 +6,8 @@ import DeleteDialog from "../components/DeleteDialog.vue";
 // Default constants
 const emptyBadgePrerequisites = {
 
-  awardSpecificTaskAND: false,
-  awardSpecificExperienceAND: false,
+  awardSpecificTaskAND: true,
+  awardSpecificExperienceAND: true,
   awardSpecificExperience: [],
   awardSpecificTask: []
 };

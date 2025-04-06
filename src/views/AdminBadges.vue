@@ -5,9 +5,6 @@ import AddBadge from "../components/AddBadge.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
 // Default constants
 const emptyBadgePrerequisites = {
-
-  awardSpecificTaskAND: true,
-  awardSpecificExperienceAND: true,
   awardSpecificExperience: [],
   awardSpecificTask: []
 };
@@ -19,6 +16,8 @@ const emptyBadge = {
   allCount: 0,
   taskCount: 0,
   experienceCount: 0,
+  badgeSpecificTaskAND: true,
+  badgeSpecificExperiencesAND: true,
 };
 // Helper refs
 const deletebadgeDialogBox = ref(false);

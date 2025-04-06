@@ -132,14 +132,14 @@ watch(() => showAddbadgeDialog.value, (newValue) => {
               <v-col cols="2">
                 <!-- <v-btn size="small">mdi-help</v-btn> -->
               </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.allCount" label="Any item" controlVariant="stacked"></v-number-input>
+              <v-col cols="4">
+                <v-text-field v-model="badge.allCount" label="Any item" type="number"></v-text-field>
               </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.taskCount" label="Task" controlVariant="stacked"></v-number-input>
+              <v-col cols="4">
+                <v-text-field v-model="badge.taskCount" label="Tasks" type="number"></v-text-field>
               </v-col>
-              <v-col cols="6">
-                <v-number-input v-model="badge.experienceCount" label="Experience" controlVariant="stacked"></v-number-input>
+              <v-col cols="4">
+                <v-text-field v-model="badge.experienceCount" label="Experience" type="number"></v-text-field>
               </v-col>
             </v-row>
           </v-col>

@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import ApprovalAdmin from "../components/ApprovalAdmin.vue";
 import ApprovalExperience from "../components/ApprovalExperience.vue";
 import ApprovalTask from "../components/ApprovalTask.vue"
+import ApprovalEvent from "../components/ApprovalEvent.vue"
 
 import ApprovalRequestExperience from "../components/ApprovalRequestExperience.vue";
 const search = ref(''); // Search query input
@@ -38,88 +39,100 @@ onMounted(() => {
 </script>
 
 <template>
-  <p class="pa-12" style="font-size: 50px;">Approval</p>
-  <!-- Button Section -->
-  <v-spacer></v-spacer>
   <div>
-    <div class="pa-12">
-      <v-row class="pb-0">
-        <v-col cols="8"> 
-          <v-btn
-            class="secondary"
-            size="x-large"
-            :class="{ 'active-button': selectedButton === 1 }"
-            @click="toggleActive(1)"
-          >
-            Students
-          </v-btn>
-          <v-btn
-            class="secondary"
-            size="x-large"
-            :class="{ 'active-button': selectedButton === 2 }"
-            @click="toggleActive(2)"
-          >
-            Tasks
-          </v-btn>
-          <v-btn
-            class="secondary"
-            size="x-large"
-            :class="{ 'active-button': selectedButton === 3 }"
-            @click="toggleActive(3)"
-          >
-            Experiences
-          </v-btn>
-          <v-btn
-            class="secondary"
-            size="x-large"
-            :class="{ 'active-button': selectedButton === 4 }"
-            @click="toggleActive(4)"
-          >
-            Admin Approval
-          </v-btn>
-          <v-btn
-            class="secondary"
-            size="x-large"
-            :class="{ 'active-button': selectedButton === 5 }"
-            @click="toggleActive(5)"
-          >
-            Requested Approval
-          </v-btn>
-        </v-col> 
-        <v-spacer></v-spacer>
-        <v-col cols="4">
-          <v-text-field 
-            v-model="search"
-            label="Search"
-            prepend-inner-icon="mdi-magnify" 
-            variant="outlined"
-            hide-details
-            single-line
-            class="ma-2"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-      
+    <p class="pa-12" style="font-size: 50px;">Approval</p>
+    <!-- Button Section -->
+    <v-spacer></v-spacer>
+    <div>
+      <div class="pa-12">
+        <v-row class="pb-0">
+          <v-col> 
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 1 }"
+              @click="toggleActive(1)"
+            >
+              Students
+            </v-btn>
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 2 }"
+              @click="toggleActive(2)"
+            >
+              Tasks
+            </v-btn>
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 3 }"
+              @click="toggleActive(3)"
+            >
+              Experiences
+            </v-btn>
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 4 }"
+              @click="toggleActive(4)"
+            >
+              Admin Approval
+            </v-btn>
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 5 }"
+              @click="toggleActive(5)"
+            >
+              Requested Experiences
+            </v-btn>
+            <v-btn
+              class="secondary"
+              size="x-large"
+              :class="{ 'active-button': selectedButton === 6 }"
+              @click="toggleActive(6)"
+            >
+              Events
+            </v-btn>
+          </v-col> 
+          <v-col cols="3">
+            <v-text-field 
+              v-model="search"
+              label="Search"
+              prepend-inner-icon="mdi-magnify" 
+              variant="outlined"
+              hide-details
+              single-line
+              class="ma-2"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        
+      </div>
     </div>
+
+    <!-- Conditional Rendering Section -->
+      <div v-if="selectedButton === 1">
+        <p>Students Component</p>
+
+      </div>
+      <div v-else-if="selectedButton === 2">
+        <ApprovalTask/> 
+      </div>
+      <div v-else-if="selectedButton === 3">
+        <ApprovalExperience/>
+      </div>
+      <div v-else-if="selectedButton === 4">
+        <ApprovalAdmin/> 
+      </div>
+      <div v-else-if="selectedButton === 5">
+        <ApprovalRequestExperience/>
+      </div>
+      <div v-else-if="selectedButton === 6">
+        <ApprovalEvent/>
+      </div>
   </div>
-
-  <!-- Conditional Rendering Section -->
-    <div v-if="selectedButton === 1">
-      <p>Students Component</p>
-
-    </div>
-    <div v-else-if="selectedButton === 2">
-      <ApprovalTask/> 
-    </div>
-    <div v-else-if="selectedButton === 3">
-      <ApprovalExperience/>
-    </div>
-    <div v-else-if="selectedButton === 4">
-      <ApprovalAdmin/> 
-    </div>
-    <div v-else-if="selectedButton === 5">
-      <ApprovalRequestExperience/>
-    </div>
 </template>
 
 <style scoped>

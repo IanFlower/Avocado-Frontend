@@ -29,6 +29,14 @@ const resetMenu = () => {
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
         name.value = storedUser.fName + " " + storedUser.lName; // Concatenate full name
     }
+    roleUserServices.getRoleByUserId(user.value.id).then((res) => {
+        const roleId = res.data.roleId; // Get the role ID from the response
+        roleServices.getRoleById(roleId).then((res) => { 
+            role.value = res.data.name; 
+        });
+    }).catch((err) => { 
+        console.error("Error fetching user role:", err); // Log any errors
+    });
 };
 
 function logout() {
@@ -50,17 +58,11 @@ async function deleteNotification(notification) {
 
 // Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
+    getNotifications();
+
     logoURL.value = ocLogo; // Set logo URL
     resetMenu(); // Initialize user data
-    getNotifications();
-    roleUserServices.getRoleByUserId(user.value.id).then((res) => {
-        const roleId = res.data.roleId; // Get the role ID from the response
-        roleServices.getRoleById(roleId).then((res) => {
-            role.value = res.data.name; // Get the role name from the response
-        });
-    }).catch((err) => { 
-        console.error("Error fetching user role:", err); // Log any errors
-    });
+
 
 });
 </script> 
@@ -148,66 +150,71 @@ onMounted(() => {
  
         <!-- Navigation Drawer (Dropdown on the left) -->
         <v-navigation-drawer v-model="drawer" class="primary opacity-1">
-            <v-list v-if="role = 'student' || 'student worker'" class="pt-0">
+            <div v-if="role == 'student' ||  role == 'student worker'" > 
+                <v-list >
+                    <v-list-item>
+                        <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title> 
+                        <v-divider></v-divider>
+                    </v-list-item>
+                    <v-list-item to="StudentHome">
+                        <v-btn variant="text">Dashboard</v-btn> 
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text">Profile</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/Badges">Badges</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/Shop">Rewards</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text">Calender</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
+                    </v-list-item>
+                </v-list>
+            </div>
+            <div v-if="role == 'proffessor' ||role == 'admin' || role == 'student worker'" class="pt-0"> 
+
                 <v-list-item>
-                    <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title>
+                    <v-list-item-title style="text-align: center;">ADMIN</v-list-item-title> 
                     <v-divider></v-divider>
                 </v-list-item>
-                <v-list-item to="StudentHome">
-                    <v-btn variant="text">Dashboard</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text">Profile</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Badges">Badges</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Shop">Rewards</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text">Calender</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
-                </v-list-item>
-            </v-list>
-            <v-list-item>
-                <v-list-item-title style="text-align: center;">ADMIN</v-list-item-title> 
-                <v-divider></v-divider>
-            </v-list-item>
-            <v-list v-if="role = 'admin' || 'proffessor'" class="pt-0">
-                <v-list-item to="AdminHome">
-                    <v-btn variant="text">Dashboard</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>  
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text">Comments</v-btn>
-                </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/approval">Student Approval</v-btn>
-                </v-list-item>
-                <v-list-item to="AdminManageEvents">
-                    <v-btn variant="text">Manage Events</v-btn>
-                </v-list-item>
-                <v-list-item to="ManageExperiencesTasks">
-                    <v-btn variant="text">Tasks/Experiences</v-btn>
-                </v-list-item>
-                <v-list-item to="AdminBadge">
-                    <v-btn variant="text">Badge Management</v-btn>
-                </v-list-item>
-                <v-list-item to="AdminViewRewards">
-                    <v-btn variant="text">Add Rewards</v-btn>
-                </v-list-item>
-                <v-list-item to="AdminShop">
-                    <v-btn variant="text">Purchase Rewards</v-btn>
-                </v-list-item>
-            </v-list>
+                <v-list > 
+                    <v-list-item to="AdminHome">
+                        <v-btn variant="text">Dashboard</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>  
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text">Comments</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/approval">Student Approval</v-btn>
+                    </v-list-item>
+                    <v-list-item to="AdminManageEvents">
+                        <v-btn variant="text">Manage Events</v-btn>
+                    </v-list-item>
+                    <v-list-item to="ManageExperiencesTasks">
+                        <v-btn variant="text">Tasks/Experiences</v-btn>
+                    </v-list-item>
+                    <v-list-item to="AdminBadge">
+                        <v-btn variant="text">Badge Management</v-btn>
+                    </v-list-item>
+                    <v-list-item to="AdminViewRewards">
+                        <v-btn variant="text">Add Rewards</v-btn>
+                    </v-list-item>
+                    <v-list-item to="AdminShop">
+                        <v-btn variant="text">Purchase Rewards</v-btn>
+                    </v-list-item>
+                </v-list>
+            </div>
         </v-navigation-drawer>
     </div>
 </template> 

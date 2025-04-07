@@ -159,11 +159,16 @@ onMounted(() => {
                     <v-list-item to="StudentHome">
                         <v-btn variant="text">Dashboard</v-btn> 
                     </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text">Profile</v-btn>
-                    </v-list-item>
+
                     <v-list-item>
                         <v-btn variant="text" to="/Badges">Badges</v-btn>
+                    </v-list-item>
+
+                    <v-list-item>
+                        <v-btn variant="text">Calender</v-btn>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
                     </v-list-item>
                     <v-list-item>
                         <v-btn variant="text" to="/Shop">Rewards</v-btn>
@@ -172,10 +177,7 @@ onMounted(() => {
                         <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
                     </v-list-item>
                     <v-list-item>
-                        <v-btn variant="text">Calender</v-btn>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
+                        <v-btn variant="text">Profile</v-btn>
                     </v-list-item>
                 </v-list>
             </div>
@@ -190,20 +192,21 @@ onMounted(() => {
                         <v-btn variant="text">Dashboard</v-btn>
                     </v-list-item>
                     <v-list-item>
-                        <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>  
-                    </v-list-item>
-                    <v-list-item>
                         <v-btn variant="text" to="/approval">Student Approval</v-btn>
                     </v-list-item>
-                    <v-list-item to="AdminManageEvents">
-                        <v-btn variant="text">Manage Events</v-btn>
-                    </v-list-item>
-                    <v-list-item to="ManageExperiencesTasks">
-                        <v-btn variant="text">Tasks/Experiences</v-btn>
+                    <v-list-item>
+                        <v-btn variant="text" to="/ManageUsers">User Management</v-btn>  
                     </v-list-item>
                     <v-list-item to="AdminBadge">
                         <v-btn variant="text">Badge Management</v-btn>
                     </v-list-item>
+                    <v-list-item to="AdminManageEvents">
+                        <v-btn variant="text">Event Management</v-btn>
+                    </v-list-item>
+                    <v-list-item to="ManageExperiencesTasks">
+                        <v-btn variant="text">Tasks/Experiences</v-btn>
+                    </v-list-item>
+
                     <v-list-item to="AdminViewRewards">
                         <v-btn variant="text">Add Rewards</v-btn>
                     </v-list-item>

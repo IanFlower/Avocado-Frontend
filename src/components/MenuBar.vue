@@ -193,9 +193,6 @@ onMounted(() => {
                         <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>  
                     </v-list-item>
                     <v-list-item>
-                        <v-btn variant="text">Comments</v-btn>
-                    </v-list-item>
-                    <v-list-item>
                         <v-btn variant="text" to="/approval">Student Approval</v-btn>
                     </v-list-item>
                     <v-list-item to="AdminManageEvents">

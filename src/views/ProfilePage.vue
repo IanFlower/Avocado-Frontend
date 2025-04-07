@@ -24,13 +24,64 @@ const timesAtTop = ref(0);
 const pointsAtTop = ref(0);
 const majorName = ref('');
 const departmentName = ref('');
+const classification = ref('');
 const userId = Utils.getStore('user') ? Utils.getStore('user').id : null;
 const badgesList = computed(() => badge.value.filter(badge => { if(search.value == '') return true; return badge.name.toLowerCase().includes(search.value.toLowerCase())}));
 const badges = ref([]);
 
-const fullName = computed(() => `${user.value.fName} ${user.value.lName}`);
+const semesters = [
+  'Freshman Fall Semester',
+  'Freshman Spring Semester',
+  'Sophomore Fall Semester',
+  'Sophomore Spring Semester',
+  'Junior Fall Semester',
+  'Junior Spring Semester',
+  'Senior Fall Semester',
+  'Senior Spring Semester'
+];
+
+// Separate indices for each section
+const selectedSemesterPoints = ref(0);
+const selectedSemesterLeaderboard = ref(0);
+const selectedSemesterBadges = ref(0);
+
+const nextSemesterPoints = () => {
+  if (selectedSemesterPoints.value < semesters.length - 1) {
+    selectedSemesterPoints.value++;
+  }
+};
+
+const prevSemesterPoints = () => {
+  if (selectedSemesterPoints.value > 0) {
+    selectedSemesterPoints.value--;
+  }
+};
+
+const nextSemesterLeaderboard = () => {
+  if (selectedSemesterLeaderboard.value < semesters.length - 1) {
+    selectedSemesterLeaderboard.value++;
+  }
+};
+
+const prevSemesterLeaderboard = () => {
+  if (selectedSemesterLeaderboard.value > 0) {
+    selectedSemesterLeaderboard.value--;
+  }
+};
+
+const nextSemesterBadges = () => {
+  if (selectedSemesterBadges.value < semesters.length - 1) {
+    selectedSemesterBadges.value++;
+  }
+};
+
+const prevSemesterBadges = () => {
+  if (selectedSemesterBadges.value > 0) {
+    selectedSemesterBadges.value--;
+  }
+};
+
 const pointsSpent = computed(() => earnedPoints.value - currentPoints.value);
-const classification = ref("");
 
 onMounted(async () => {
   if (userId) {
@@ -55,19 +106,25 @@ onMounted(async () => {
 
       const studentInfoMajor = await studentInfoMajorService.getAllByStudentInfoId(userId);
 
+      const majorNamesSet = new Set();
+      const departmentNamesSet = new Set();
+
       if (studentInfoMajor.data.length > 0) {
         for (const major of studentInfoMajor.data) {
           try {
             let m = await majorService.getMajorById(major.majorId);
             if (m.data) {
-              majorName.value += `${m.data.name}, `;
-              departmentName.value += `${m.data.dept}, `;
+              majorNamesSet.add(m.data.name);
+              departmentNamesSet.add(m.data.dept);
             }
           } catch (err) {
             console.error("Error fetching major details:", err);
           }
         }
       }
+
+      majorName.value = Array.from(majorNamesSet).join(', ');
+      departmentName.value = Array.from(departmentNamesSet).join(', ');
 
       const leaderboardData = await leaderboardService.getSortedStudentsByClass(userId);
       leaderboardData.data.forEach((student, index) => {
@@ -115,13 +172,13 @@ onMounted(async () => {
 
             <!-- Name and Email -->
             <v-col cols="12" sm="9" class="d-flex flex-column justify-center">
-              <div class="text-h3 font-weight-bold">{{ fullName }}</div>
-              <div class="text-subtitle-1 font-italic">{{ user.email }}</div>
+              <div v-if="user.fName && user.lName" class="text-h3 font-weight-bold">{{ `${user.fName} ${user.lName}` }}</div>
+              <div v-if="user.email" class="text-subtitle-1 font-italic">{{ user.email }}</div>
 
               <!-- Major and Department -->
-              <div class="text-h6 font-weight-bold mt-2">Classification: {{ classification }}</div>
-              <div class="text-h6 font-weight-bold mt-2">Major: {{ majorName }}</div>
-              <div class="text-subtitle-2">Department: {{ departmentName }}</div>
+              <div v-if="classification" class="text-h6 font-weight-bold mt-2">Classification: {{ classification }}</div>
+              <div v-if="majorName" class="text-h6 font-weight-bold mt-2">Major: {{ majorName }}</div>
+              <div v-if="departmentName" class="text-subtitle-2">Department: {{ departmentName }}</div>
             </v-col>
           </v-row>
 
@@ -133,6 +190,23 @@ onMounted(async () => {
             <v-col cols="12" sm="4" class="d-flex justify-center">
               <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%" style="background-color: #98FB98;">
                 <v-card-title class="text-h5 text-center">Point Stats</v-card-title>
+                <v-card-subtitle class="text-center">
+                  <v-btn 
+                    @click="prevSemesterPoints" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-left</v-icon>
+                  </v-btn>
+                  <span>{{ semesters[selectedSemesterPoints] }}</span>
+                  <v-btn 
+                    @click="nextSemesterPoints" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </v-card-subtitle>
                 <v-card-text class="text-center">
                   <div class="text-h6">Earned: {{ earnedPoints }}</div>
                   <div class="text-h6">Current: {{ currentPoints }}</div>
@@ -145,6 +219,23 @@ onMounted(async () => {
             <v-col cols="12" sm="4" class="d-flex justify-center">
               <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%" style="background-color: #98FB98;">
                 <v-card-title class="text-h5 text-center">Leaderboard Stats</v-card-title>
+                <v-card-subtitle class="text-center">
+                  <v-btn 
+                    @click="prevSemesterLeaderboard" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-left</v-icon>
+                  </v-btn>
+                  <span>{{ semesters[selectedSemesterLeaderboard] }}</span>
+                  <v-btn 
+                    @click="nextSemesterLeaderboard" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </v-card-subtitle>
                 <v-card-text class="text-center">
                   <p class="text-h6"><strong>#1 Rank Achievements:</strong> {{ timesAtTop }} times</p>
                   <p class="text-h6"><strong>Points at #1:</strong> {{ pointsAtTop }} points</p>
@@ -156,6 +247,23 @@ onMounted(async () => {
             <v-col cols="12" sm="4" class="d-flex justify-center">
               <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%">
                 <v-card-title class="text-h5 text-center">Badges Collected</v-card-title>
+                <v-card-subtitle class="text-center">
+                  <v-btn 
+                    @click="prevSemesterBadges" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-left</v-icon>
+                  </v-btn>
+                  <span>{{ semesters[selectedSemesterBadges] }}</span>
+                  <v-btn 
+                    @click="nextSemesterBadges" 
+                    icon 
+                    style="background-color: transparent; border-radius: 50%; padding: 0;"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </v-card-subtitle>
                 <v-card-text class="text-center">
                   <div class="text-h6">Earned This Semester:</div>
                   <v-row justify="center" class="d-flex">

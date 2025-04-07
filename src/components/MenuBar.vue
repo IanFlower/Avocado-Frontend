@@ -6,6 +6,8 @@ import Utils from "../config/utils"; // Importing a utility module for local sto
 import userService from "../services/userServices"; // Importing a user service to fetch user data
 import authServices from "../services/authServices";
 import Notification from "../services/notification.Services";
+import roleUserServices from "../services/roleUserServices"; // Importing a service to fetch user roles
+import roleServices from "../services/roleServices"; // Importing a service to fetch roles 
 
 const user = ref(null); // Reactive variable to store the logged-in user
 const title = ref("Career services"); // Reactive title 
@@ -16,6 +18,8 @@ const router = useRouter(); // Vue Router instance for navigation
 const admin = ref(null); // Reactive variable to store admin-related user data
 const drawer = ref(false); // Set drawer to false to keep it closed by default
 const notifications = ref([]) // List of notifications
+const role = ref("") // User role
+
   
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
@@ -49,8 +53,17 @@ onMounted(() => {
     logoURL.value = ocLogo; // Set logo URL
     resetMenu(); // Initialize user data
     getNotifications();
+    roleUserServices.getRoleByUserId(user.value.id).then((res) => {
+        const roleId = res.data.roleId; // Get the role ID from the response
+        roleServices.getRoleById(roleId).then((res) => {
+            role.value = res.data.name; // Get the role name from the response
+        });
+    }).catch((err) => { 
+        console.error("Error fetching user role:", err); // Log any errors
+    });
+
 });
-</script>
+</script> 
 
 <template>
     <div>
@@ -135,7 +148,7 @@ onMounted(() => {
  
         <!-- Navigation Drawer (Dropdown on the left) -->
         <v-navigation-drawer v-model="drawer" class="primary opacity-1">
-            <v-list>
+            <v-list v-if="role = 'student' || 'student worker'" class="pt-0">
                 <v-list-item>
                     <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title>
                     <v-divider></v-divider>
@@ -163,15 +176,15 @@ onMounted(() => {
                 </v-list-item>
             </v-list>
             <v-list-item>
-                <v-list-item-title style="text-align: center;">ADMIN</v-list-item-title>
+                <v-list-item-title style="text-align: center;">ADMIN</v-list-item-title> 
                 <v-divider></v-divider>
             </v-list-item>
-            <v-list>
+            <v-list v-if="role = 'admin' || 'proffessor'" class="pt-0">
                 <v-list-item to="AdminHome">
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
-                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
+                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>  
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Comments</v-btn>

@@ -77,10 +77,18 @@ onMounted(() => {
             </v-btn>
 
             <!-- OC Logo -->
-            <router-link :to="{ name: 'StudentHome' }">
-                <v-img style="background-blend-mode: color-burn; outline: none !important;" :src="logoURL" height="50"
-                    width="50"></v-img>
-            </router-link>
+            <div v-if="role =='student'|| role == 'student worker'" >
+                <router-link :to="{ name: 'StudentHome' }">
+                    <v-img style="background-blend-mode: color-burn; outline: none !important;" :src="logoURL" height="50"
+                        width="50"></v-img>
+                </router-link>
+            </div>
+            <div v-if="role == 'admin' || role == 'proffessor'">
+                <router-link :to="{ name: 'AdminHome' }"> 
+                    <v-img style="background-blend-mode: color-burn; outline: none !important;" :src="logoURL" height="50"
+                        width="50"></v-img>
+                </router-link>
+            </div>
 
             <!-- Title -->
             <v-toolbar-title class="title">Career Services</v-toolbar-title>

@@ -36,11 +36,7 @@
         <template v-slot:item.actions="{ item }">
           <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
           <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-
-          <!-- Image Icon to trigger image dialog -->
-          <v-icon v-if="item.image" @click="openImageDialog(item)" style="cursor: pointer;" color="primary">
-            mdi-image
-          </v-icon>
+          <v-icon @click="openRewardImageDialog(item)" size="large">mdi-image</v-icon>
         </template>
       </v-data-table>
     </div>
@@ -56,8 +52,6 @@
     </v-card>
   </v-dialog>
 
-  
-
   <!-- Edit Reward Dialog -->
   <v-dialog v-model="editRewardDialogBox" max-width="500px">
     <v-card>
@@ -65,7 +59,6 @@
       <v-card-text>
         <EditReward v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
           @close="closeEditRewardDialog" />
-
         <div v-else>
           <p>Loading reward...</p>
         </div>
@@ -73,16 +66,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- Image Dialog -->
-  <v-dialog v-model="imageDialog" max-width="800px">
-    <v-card>
-      <v-card-title class="headline">Reward Image</v-card-title>
-      <v-card-text>
-        <v-img :src="imageUrl" max-width="100%" alt="Image" />
-      </v-card-text>
-    </v-card>
-  </v-dialog>
-  
   <DeleteDialog 
     :dialog="deleteDialog"
     :item="currentItem" 
@@ -90,7 +73,6 @@
     @update:dialog="deleteDialog = $event"
     @delete="refreshDeleteRewards()"
   />
-
 </template>
 
 <script setup>
@@ -109,8 +91,6 @@ const category = "reward";
 const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
-const imageDialog = ref(false);
-const imageUrl = ref(""); 
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
@@ -128,7 +108,7 @@ const initialize = async () => {
     rewards.value = [...response.data.map(reward => ({
       id: reward.id,
       name: reward.name,
-      image: reward.image,
+      image: reward.image,  // Ensure this is a valid filename or path
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
       requiredPoints: reward.requiredPoints,
@@ -179,16 +159,6 @@ const closeEditRewardDialog = () => {
 const closeDeleteRewardDialog = () => {
   deleteRewardDialogBox.value = false;
   selectedReward.value = null;
-};
-
-// Image Dialog functions
-const openImageDialog = (item) => {
-  imageUrl.value = item.image || "default-image-path"; 
-  imageDialog.value = true;
-};
-
-const closeImageDialog = () => {
-  imageDialog.value = false;
 };
 
 onMounted(initialize);

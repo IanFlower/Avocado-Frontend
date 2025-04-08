@@ -118,7 +118,7 @@ const router = createRouter({
     },
     {
       path: "/Purchase/:userId",
-      alias: "/PurchaseRewards",
+      alias: "/PurchaseRewards/:userId",
       name: "PurchaseRewards",
       component: PurchaseRewards,
       props: true, // Pass the userId as a prop to the component

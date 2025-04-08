@@ -75,6 +75,7 @@
 import { ref, onMounted, defineProps } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
+import studentPurchaseService from "../services/studentPurchaseServices.js";  // Import the purchase service
 
 const props = defineProps({
   userId: String,
@@ -130,21 +131,34 @@ const confirmPurchase = (reward) => {
 };
 
 const purchaseReward = async () => {
-
   if (!selectedReward.value || !selectedReward.value.id) {
     return;
   }
+
   try {
+    // Update points and purchase count
     studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints;
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
       rewards.value[rewardIndex].purchaseCount += 1;
     }
+
+    // Save the purchase to the server
+    const purchaseResponse = await studentPurchaseService.createPurchase({
+      userId: props.userId,
+      rewardId: selectedReward.value.id,
+      requiredPoints: selectedReward.value.requiredPoints
+    });
+
+    console.log("Purchase response:", purchaseResponse); // Log the response for debugging
+
+    // Update student info
     await studentInfoServices.updateStudentInfo(props.userId, { currentPoints: studentInfo.value[0].currentPoints });
+
     dialog.value = false;
     fetchStudentInfo();
   } catch (error) {
-    console.error("Error updating reward:", error);
+    console.error("Error completing purchase:", error);
   }
 };
 

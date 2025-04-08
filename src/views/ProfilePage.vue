@@ -32,7 +32,7 @@ const userId = Utils.getStore('user') ? Utils.getStore('user').id : null;
 
 const badgesList = computed(() => badge.value.filter(badge => {
   if (search.value == '') return true;
-  return badge.name.toLowerCase().includes(search.value.toLowerCase())
+  return badge.name.toLowerCase().includes(search.value.toLowerCase());
 }));
 
 const badges = ref([]);
@@ -157,18 +157,15 @@ onMounted(async () => {
             <v-col cols="12" sm="3" class="d-flex justify-start">
               <v-avatar size="250" class="overflow-hidden">
                 <v-img :src="user.profilePicture || NoImageAvailable" alt="Profile Picture"
-                  style="object-fit: contain; image-rendering: crisp-edges; " />
+                  style="object-fit: contain; image-rendering: crisp-edges;" />
               </v-avatar>
-
             </v-col>
 
             <v-col cols="12" sm="9" class="d-flex flex-column justify-center">
-              <div v-if="user.fName && user.lName" class="text-h3 font-weight-bold">{{ `${user.fName} ${user.lName}` }}
-              </div>
+              <div v-if="user.fName && user.lName" class="text-h3 font-weight-bold">{{ `${user.fName} ${user.lName}` }}</div>
               <div v-if="user.email" class="text-subtitle-1 font-italic">{{ user.email }}</div>
 
-              <div v-if="classification" class="text-h6 font-weight-bold mt-2">Classification: {{ classification }}
-              </div>
+              <div v-if="classification" class="text-h6 font-weight-bold mt-2">Classification: {{ classification }}</div>
               <div v-if="majorName" class="text-h6 font-weight-bold mt-2">Major: {{ majorName }}</div>
               <div v-if="departmentName" class="text-subtitle-2">Department: {{ departmentName }}</div>
             </v-col>
@@ -179,17 +176,14 @@ onMounted(async () => {
           <v-row justify="space-between" align="center" no-gutters>
             <!-- Point Stats -->
             <v-col cols="12" sm="4" class="d-flex justify-center">
-              <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%"
-                style="background-color: #98FB98;">
+              <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%" style="background-color: #98FB98;">
                 <v-card-title class="text-h5 text-center">Point Stats</v-card-title>
                 <v-card-subtitle class="text-center">
-                  <v-btn @click="prevSemesterPoints" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="prevSemesterPoints" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
                   <span>{{ semesters[selectedSemesterPoints] }}</span>
-                  <v-btn @click="nextSemesterPoints" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="nextSemesterPoints" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                 </v-card-subtitle>
@@ -210,17 +204,14 @@ onMounted(async () => {
 
             <!-- Leaderboard Stats -->
             <v-col cols="12" sm="4" class="d-flex justify-center">
-              <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%"
-                style="background-color: #98FB98;">
+              <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%" style="background-color: #98FB98;">
                 <v-card-title class="text-h5 text-center">Leaderboard Stats</v-card-title>
                 <v-card-subtitle class="text-center">
-                  <v-btn @click="prevSemesterLeaderboard" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="prevSemesterLeaderboard" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
                   <span>{{ semesters[selectedSemesterLeaderboard] }}</span>
-                  <v-btn @click="nextSemesterLeaderboard" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="nextSemesterLeaderboard" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                 </v-card-subtitle>
@@ -236,13 +227,11 @@ onMounted(async () => {
               <v-card class="pa-4 tertiary rounded-xl" max-width="350px" width="100%">
                 <v-card-title class="text-h5 text-center">Badges Collected</v-card-title>
                 <v-card-subtitle class="text-center">
-                  <v-btn @click="prevSemesterBadges" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="prevSemesterBadges" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-left</v-icon>
                   </v-btn>
                   <span>{{ semesters[selectedSemesterBadges] }}</span>
-                  <v-btn @click="nextSemesterBadges" icon
-                    style="background-color: transparent; border-radius: 50%; padding: 0;">
+                  <v-btn @click="nextSemesterBadges" icon style="background-color: transparent; border-radius: 50%; padding: 0;">
                     <v-icon>mdi-chevron-right</v-icon>
                   </v-btn>
                 </v-card-subtitle>

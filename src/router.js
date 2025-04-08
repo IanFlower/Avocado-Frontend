@@ -19,7 +19,7 @@ import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
 import AdminViewRewards from "./components/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
-import ManageUsers from "./views/ManageUsers.vue"
+import ManageUsers from "./views/ManageUsers.vue";
 import approval from "./views/approval.vue";
 import AdminBadges from "./views/AdminBadges.vue";
 import profilePage from "./views/ProfilePage.vue";
@@ -120,7 +120,7 @@ const router = createRouter({
     },
     {
       path: "/Purchase/:userId",
-      alias: "/PurchaseRewards/:userId",
+      alias: "/PurchaseRewards/:userId",  // You can keep this alias if needed for URL compatibility
       name: "PurchaseRewards",
       component: PurchaseRewards,
       props: true, // Pass the userId as a prop to the component

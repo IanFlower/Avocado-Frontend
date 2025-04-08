@@ -83,9 +83,8 @@ const initialize = async () => {
 
 const goToRedeemPoints = (id) => {
   console.log("Navigating to purchase rewards with userId:", id);
-  router.push({ name: "purchaseRewards", params: { userId: id } });
+  router.push({ name: "PurchaseRewards", params: { userId: id } }); // Fixed route name
 };
-
 
 onMounted(initialize);
 </script>

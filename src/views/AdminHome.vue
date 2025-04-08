@@ -247,7 +247,7 @@
                                     </g>
                                 </svg> </v-col>
                             <v-col>
-                                <v-card-title>View Rewards</v-card-title>
+                                <v-card-title>Reward Management</v-card-title>
                                 <v-card-subtitle class="overflow-x-hidden">
                                     <v-divider vertical thickness="20px"></v-divider>
                                     View All rewards and Make New Rewards for Students to Buy

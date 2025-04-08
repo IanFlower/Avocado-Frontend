@@ -189,7 +189,7 @@ onMounted(() => {
                     <v-btn variant="text">Badge Management</v-btn>
                 </v-list-item>
                 <v-list-item to="AdminViewRewards">
-                    <v-btn variant="text">Add Reward</v-btn>
+                    <v-btn variant="text">Reward Management</v-btn>
                 </v-list-item>
                 <v-list-item to="AdminShop">
                     <v-btn variant="text">Purchase Rewards</v-btn>

@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">Add Reward</p>
+  <p class="pa-12" style="font-size: 50px;">Reward Management</p>
 
   <v-spacer></v-spacer>
   <div>

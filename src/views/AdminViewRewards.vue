@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">View Reward</p>
+  <p class="pa-12" style="font-size: 50px;">Add Reward</p>
 
   <v-spacer></v-spacer>
   <div>
@@ -10,7 +10,7 @@
             hide-details single-line class="ma-2" />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="custom-btn" @click="openAddRewardDialog">
+          <v-btn class="tertiary" @click="openAddRewardDialog">
             Add Reward
           </v-btn>
         </v-col>

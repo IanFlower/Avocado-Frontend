@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">Admin Shop</p>
+  <p class="pa-12" style="font-size: 50px;">Purchase Rewards</p>
 
   <v-spacer></v-spacer>
   <div>

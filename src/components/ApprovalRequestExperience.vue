@@ -67,7 +67,6 @@ const approveUser = async () => {
     await experienceService.update(selectedRequest.value.id, {
       approved: true,
       requestedByStudent: false,
-      pastRequested: true,
       subtext: "approved",
       points: selectedRequest.value.points,
       userId: selectedRequest.value.userId,
@@ -98,8 +97,6 @@ const denyUser = async () => {
     await experienceService.update(selectedRequest.value.id, {
       denied: true,
       requestedByStudent: false,
-      pastRequested: true,
-
       subtext: "denied", 
     });
 
@@ -107,7 +104,6 @@ const denyUser = async () => {
       userId: selectedRequest.value.userId,
       title: "Request Denied", 
       desc: `Your request for ${selectedRequest.value.name} has been Denied.`,
-      
       goodNews: false,
     });
 

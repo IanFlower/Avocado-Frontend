@@ -27,18 +27,18 @@ const resetMenu = () => {
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
         name.value = storedUser.fName + " " + storedUser.lName; // Concatenate full name
     }
+    if(user.value){
     roleUserServices.getRoleByUserId(user.value.id) // Fetch user role
         .then((res) => {
                 roleServices.getRoleById(res.data.roleId) // Fetch role details
                     .then((res) => {
                             role.value = res.data.name; // Set role name
-
                     });
-
         })
         .catch((error) => {
             console.error("Error fetching user roles:", error);
         });
+    } 
 
 };
 

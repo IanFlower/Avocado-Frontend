@@ -149,8 +149,8 @@ onMounted(() => {
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
+                <v-list-item :to="{ name: 'RequestExperience' }">
+                    <v-btn variant="text">Request Experience</v-btn>
                 </v-list-item>
             </v-list>
             <v-list-item>
@@ -161,14 +161,14 @@ onMounted(() => {
                 <v-list-item :to="{ name: 'AdminHome' }">
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/ManageUsers">Manage Users</v-btn>
+                <v-list-item :to="{ name: 'ManageUsers' }">
+                    <v-btn variant="text">Manage Users</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Comments</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/approval">Student Approval</v-btn>
+                <v-list-item :to="{name: 'Approval' }">
+                    <v-btn variant="text" >Student Approval</v-btn>
                 </v-list-item>
                 <v-list-item :to="{ name: 'AdminManageEvents' }">
                     <v-btn variant="text">Manage Events</v-btn>

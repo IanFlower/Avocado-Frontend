@@ -140,17 +140,17 @@ onMounted(() => {
                 <v-list-item :to="{ name: 'Badges' }">
                     <v-btn variant="text">Badges</v-btn>
                 </v-list-item>
-                <v-list-item :to="{ name: 'Rewards' }">
+                <v-list-item :to="{ name: 'Shop' }">
                     <v-btn variant="text">Rewards</v-btn>
                 </v-list-item>
-                <v-list-item :to="{ name: 'Leaderboard' }">
+                <v-list-item :to="{ name: 'LeaderBoard' }">
                     <v-btn variant="text">Leaderboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>
                 </v-list-item>
-                <v-list-item :to="{ name: 'RequestExperience' }">
-                    <v-btn variant="text">Request Experience</v-btn>
+                <v-list-item>
+                    <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
                 </v-list-item>
             </v-list>
             <v-list-item>

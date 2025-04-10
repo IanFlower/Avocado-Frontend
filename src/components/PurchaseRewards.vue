@@ -1,6 +1,4 @@
 <template>
-  <p class="pa-12 text-h3">Purchase Rewards</p>
-
   <v-container>
     <v-row>
       <v-col cols="6">

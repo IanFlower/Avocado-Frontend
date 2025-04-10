@@ -17,6 +17,7 @@ import Approval from "./views/approval.vue";
 import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
+import EditReward from "./components/EditReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
@@ -121,7 +122,7 @@ const router = createRouter({
       alias: "/PurchaseRewards/:userId",
       name: "PurchaseRewards",
       component: PurchaseRewards,
-      props: true, // Pass the userId as a prop to the component
+      props: true, 
     },
     {
       path: "/AdminShop",
@@ -146,6 +147,12 @@ const router = createRouter({
       alias: "/AddReward",
       name: "AddReward",
       component: AddReward,
+    },
+    {
+      path: "/EditReward",
+      alias: "/EditReward",
+      name: "EditReward",
+      component: EditReward,
     },
   ],
 });

@@ -1,6 +1,22 @@
+<script setup>
+import { useRouter } from 'vue-router';
+import { VCalendar } from 'vuetify/labs/VCalendar'
+
+const router = useRouter();
+
+  const goHome = () => {
+    router.push('/home'); 
+  };
+
+</script>
+
 <template>
 
-<v-row class="pa-2 ma-0">
+<div>
+  <v-calendar class="ma-4"></v-calendar>
+</div>
+
+<!-- <v-row class="pa-2 ma-0">
     <v-col cols="3" class="d-flex justify-center pa-1">
       <v-card class="d-flex flex-column pa-2 align-center text-center" height="700px" width="60%"
         style="background-color: #D5DFE7; color: black;">
@@ -15,17 +31,6 @@
         </v-card-actions>
       </v-card>
     </v-col>
-</v-row>
+</v-row> -->
 
 </template>
-
-<script setup>
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-  const goHome = () => {
-    router.push('/home'); 
-  };
-
-</script>

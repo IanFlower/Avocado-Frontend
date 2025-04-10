@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue"; // Importing Vue's reactivity and lifecycle hooks
-import { useRouter } from "vue-router"; // Importing Vue Router for navigation
-import ocLogo from "../assets/OC-really-good-logo.png"; // Importing the OC logo image
-import Utils from "../config/utils"; // Importing a utility module for local storage management
-import userService from "../services/userServices"; // Importing a user service to fetch user data
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import ocLogo from "../assets/OC-really-good-logo.png";
+import Utils from "../config/utils";
+import userService from "../services/userServices";
 import authServices from "../services/authServices";
 import Notification from "../services/notification.Services";
 import roleUserServices from "../services/roleUserServices"; // Importing a service to manage user roles
@@ -51,7 +51,9 @@ async function getNotifications() {
    let res = await Notification.getByUser()
    if (res) {
     notifications.value = res.data
-   } else {notifications.value = null}
+   } else {
+    notifications.value = null
+   }
 }
 
 async function deleteNotification(notification) {
@@ -59,19 +61,16 @@ async function deleteNotification(notification) {
     getNotifications()
 }
 
-// Lifecycle hook: Runs when the component is mounted
 onMounted(() => {
-    logoURL.value = ocLogo; // Set logo URL
-    resetMenu(); // Initialize user data
+    logoURL.value = ocLogo;
+    resetMenu();
     getNotifications();
 });
 </script>
 
 <template> 
     <div>
-        <!-- App Bar -->
         <v-app-bar app class="primary">
-            <!-- Hamburger Menu Button -->
             <v-btn @click="drawer = !drawer">
                 <v-icon icon="mdi-menu" size="30"></v-icon>
             </v-btn>
@@ -91,10 +90,8 @@ onMounted(() => {
                 </router-link>
             </div>
 
-            <!-- Title -->
             <v-toolbar-title class="title">Career Services</v-toolbar-title>
-
-            <v-spacer></v-spacer> <!-- Pushes elements to the right -->
+            <v-spacer></v-spacer>
 
             <!-- Notifications -->
             <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
@@ -105,26 +102,24 @@ onMounted(() => {
                     </v-btn>
                 </template> 
 
-                <!-- User menu content -->
                 <v-card class="pa-4">
                     <v-card-title class="mb-3">Notifications</v-card-title>
                     <v-card-text class="text-center" v-if="notifications.length == 0">No notifications</v-card-text>
                     <v-card-text class="text-center">
                         <v-row v-for="n in notifications" :key="n" class="mb-3">
-                                <v-card class="w-100" variant="outlined" :color="n.goodNews ? 'green-lighten-2' : 'red-lighten-2'">
-                                    <v-row class="w-100 mt-1 ml-1 overflow-y-visible">
-                                        <v-col class="ma-0 pa-0 pl-2 pt-2 overflow-y-visible text-h6" align="start">{{ n.title }}</v-col>
-                                        <v-col class="ma-0 pa-0 mr-1" align="end"><v-icon max-height="21" max-width="21" @click="deleteNotification(n)">mdi-close</v-icon></v-col>
-                                    </v-row>
-                                    <v-card-text class="text-left">{{ n.desc }}</v-card-text>
-                                </v-card>
+                            <v-card class="w-100" variant="outlined" :color="n.goodNews ? 'green-lighten-2' : 'red-lighten-2'">
+                                <v-row class="w-100 mt-1 ml-1 overflow-y-visible">
+                                    <v-col class="ma-0 pa-0 pl-2 pt-2 overflow-y-visible text-h6" align="start">{{ n.title }}</v-col>
+                                    <v-col class="ma-0 pa-0 mr-1" align="end">
+                                        <v-icon max-height="21" max-width="21" @click="deleteNotification(n)">mdi-close</v-icon>
+                                    </v-col>
+                                </v-row>
+                                <v-card-text class="text-left">{{ n.desc }}</v-card-text>
+                            </v-card>
                         </v-row>
                     </v-card-text>
                 </v-card>
             </v-menu>
-
-
-
 
             <!-- User Dropdown Menu -->
             <v-menu bottom min-width="200px" rounded offset-y v-if="user">
@@ -137,7 +132,6 @@ onMounted(() => {
                     </v-btn>
                 </template>
 
-                <!-- User menu content -->
                 <v-card class="pa-4">
                     <v-card-text class="text-center">
                         <h3 class="mb-2">{{ name }}</h3>
@@ -156,8 +150,8 @@ onMounted(() => {
                 </v-card>
             </v-menu>
         </v-app-bar>
- 
-        <!-- Navigation Drawer (Dropdown on the left) -->
+
+        <!-- Navigation Drawer -->
         <v-navigation-drawer v-model="drawer" class="primary opacity-1">
             <div  v-if="role == 'student' || role == 'student worker'">
             <v-list> 
@@ -165,7 +159,7 @@ onMounted(() => {
                     <v-list-item-title style="text-align: center;">STUDENT</v-list-item-title>
                     <v-divider></v-divider>
                 </v-list-item>
-                <v-list-item to="StudentHome">
+                <v-list-item :to="{ name: 'StudentHome' }">
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
                 <v-list-item>
@@ -174,8 +168,8 @@ onMounted(() => {
                 <v-list-item>
                     <v-btn variant="text" to="/Shop">Rewards</v-btn> 
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Leaderboard">Leaderboard</v-btn>
+                <v-list-item :to="{ name: 'LeaderBoard' }">
+                    <v-btn variant="text">Leaderboard</v-btn>
                 </v-list-item>
                 <v-list-item>
                     <v-btn variant="text">Calender</v-btn>
@@ -213,7 +207,7 @@ onMounted(() => {
                         <v-btn variant="text">Tasks/Experiences</v-btn>
                     </v-list-item>
                     <v-list-item to="AdminViewRewards">
-                        <v-btn variant="text">Add Rewards</v-btn>
+                        <v-btn variant="text">Reward Management</v-btn>
                     </v-list-item>
                     <v-list-item to="AdminShop">
                         <v-btn variant="text">Purchase Rewards</v-btn>
@@ -223,4 +217,4 @@ onMounted(() => {
 
         </v-navigation-drawer>
     </div>
-</template> 
+</template>

@@ -101,7 +101,7 @@ onMounted(initialize);
 </script>
 
 <template>
-  <p class="pa-12" style="font-size: 50px;">Admin Badges</p>
+  <p class="pa-12" style="font-size: 50px;">Badge Management</p>
   <v-spacer></v-spacer>
   <div>
     <div class="pa-12">

@@ -23,7 +23,9 @@
       style="border: 1px solid #ccc;"
     >
       <v-col cols="2">
-        <strong>{{ reward.name }}</strong>
+        <div style="font-size: 20px; font-weight: bold; color: #004761;">
+          {{ reward.name }}
+        </div>
       </v-col>
       <v-col cols="2">
         Purchased: {{ reward.purchaseCount }}
@@ -105,28 +107,21 @@ const fetchRewards = async () => {
 };
 
 const confirmPurchase = (reward) => {
-  if (!hasEnoughPoints(reward.requiredPoints)) {
-    return;
-  }
+  if (!hasEnoughPoints(reward.requiredPoints)) return;
   selectedReward.value = reward;
   dialog.value = true;
 };
 
 const purchaseReward = async () => {
-  if (!selectedReward.value || !selectedReward.value.id) {
-    return;
-  }
+  if (!selectedReward.value?.id) return;
   try {
-    // Deduct points locally
     studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints;
 
-    // Increment reward's purchase count locally
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
       rewards.value[rewardIndex].purchaseCount += 1;
     }
 
-    // Update backend
     await studentInfoServices.updateStudentInfo(props.userId, {
       currentPoints: studentInfo.value[0].currentPoints,
     });

@@ -18,10 +18,10 @@
         </div>
       </v-col>
       <v-col cols="2">
-        Purchased: {{ reward.purchaseCount }}
+        Purchase Count: {{ reward.purchaseCount }}
       </v-col>
       <v-col cols="2">
-        Required: {{ reward.requiredPoints }}
+        Required Points: {{ reward.requiredPoints }}
       </v-col>
       <v-col cols="3">
         Your Points:

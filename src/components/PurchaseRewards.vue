@@ -1,27 +1,17 @@
 <template>
   <v-container>
     <!-- Search Bar -->
-    <v-row>
+    <v-row justify="center">
       <v-col cols="6">
-        <v-text-field 
-          v-model="searchQuery" 
-          label="Search" 
-          prepend-inner-icon="mdi-magnify" 
-          variant="outlined"
-          hide-details 
-          single-line 
-          class="ma-2"
-        />
+        <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
+          hide-details single-line class="ma-2" />
       </v-col>
     </v-row>
 
+
     <!-- Rewards List -->
-    <v-row
-      v-for="reward in filteredRewards"
-      :key="reward.id"
-      class="mb-3 pa-2 rounded-lg"
-      style="border: 1px solid #ccc;"
-    >
+    <v-row v-for="reward in filteredRewards" :key="reward.id" class="mb-3 pa-2 rounded-lg"
+      style="border: 1px solid #ccc;">
       <v-col cols="2">
         <div style="font-size: 20px; font-weight: bold; color: #004761;">
           {{ reward.name }}
@@ -40,12 +30,8 @@
         </span>
       </v-col>
       <v-col cols="3">
-        <v-btn
-          :disabled="!hasEnoughPoints(reward.requiredPoints)"
-          color="primary"
-          block
-          @click="confirmPurchase(reward)"
-        >
+        <v-btn :disabled="!hasEnoughPoints(reward.requiredPoints)" color="primary" block
+          @click="confirmPurchase(reward)">
           {{ hasEnoughPoints(reward.requiredPoints) ? 'Purchase' : 'Not Enough Points' }}
         </v-btn>
       </v-col>

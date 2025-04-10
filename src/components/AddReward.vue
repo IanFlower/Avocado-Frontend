@@ -1,52 +1,50 @@
 <template>
-  <v-dialog :model-value="modelValue" max-width="500px">
-    <v-card>
-      <v-card-title> Add Reward </v-card-title>
-      <v-container>
-        <v-form ref="rewardForm" v-model="formValid" lazy-validation>
-          <v-text-field
-            v-model="reward.name"
-            label="Name"
-            :rules="[rules.required]"
-            required
-          ></v-text-field>
+  <v-card>
+    <v-card-title> Add Reward </v-card-title>
+    <v-container>
+      <v-form ref="rewardForm" v-model="formValid" lazy-validation>
+        <v-text-field
+          v-model="reward.name"
+          label="Name"
+          :rules="[rules.required]"
+          required
+        ></v-text-field>
 
-          <v-textarea
-            v-model="reward.desc"
-            label="Description"
-            :rules="[rules.required]"
-            required
-          ></v-textarea>
+        <v-textarea
+          v-model="reward.desc"
+          label="Description"
+          :rules="[rules.required]"
+          required
+        ></v-textarea>
 
-          <v-text-field
-            v-model.number="reward.requiredPoints"
-            label="Required Points"
-            type="number"
-            :rules="[rules.required, rules.number]"
-            required
-          ></v-text-field>
+        <v-text-field
+          v-model.number="reward.requiredPoints"
+          label="Required Points"
+          type="number"
+          :rules="[rules.required, rules.number]"
+          required
+        ></v-text-field>
 
-          <!-- Image Upload with Validation -->
-          <v-file-input
-            label="Upload Image"
-            accept="image/*"
-            @change="handleImageUpload"
-            :error-messages="imageError"
-            required
-          ></v-file-input>
+        <!-- Image Upload with Validation -->
+        <v-file-input
+          label="Upload Image"
+          accept="image/*"
+          @change="handleImageUpload"
+          :error-messages="imageError"
+          required
+        ></v-file-input>
 
-          <v-card-actions>
-            <v-btn @click="cancel" text color="secondary-button">Cancel</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn @click="validateAndSubmit" text color="blue darken-1">Save</v-btn>
-          </v-card-actions>
+        <v-card-actions>
+          <v-btn @click="emit('rewardAdded')" text color="secondary-button">Cancel</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click="validateAndSubmit" text color="blue darken-1">Save</v-btn>
+        </v-card-actions>
 
-          <!-- General Error Message (if needed) -->
-          <v-alert v-if="errorMessage" type="error" class="mt-2" dense>{{ errorMessage }}</v-alert>
-        </v-form>
-      </v-container>
-    </v-card>
-  </v-dialog>
+        <!-- General Error Message (if needed) -->
+        <v-alert v-if="errorMessage" type="error" class="mt-2" dense>{{ errorMessage }}</v-alert>
+      </v-form>
+    </v-container>
+  </v-card>
 </template>
 
 <script setup>
@@ -129,15 +127,14 @@ const validateAndSubmit = async () => {
     };
 
     const iconResponse = await iconServices.addIcon(iconData);
-    console.log('Icon Response:', iconResponse);
     const imageUrl = iconResponse.imageUrl.replace('/uploads/', '');
-    const rewardResponse = await rewardServices.addReward({
+
+    await rewardServices.addReward({
       name: reward.value.name,
       desc: reward.value.desc,
       image: imageUrl,
       requiredPoints: reward.value.requiredPoints,
     });
-    console.log('Reward Response:', rewardResponse);
 
     emit('rewardAdded');
     emit('update:modelValue', false); // Close dialog
@@ -152,7 +149,7 @@ function handleImageUpload(event) {
   const file = event?.target?.files?.[0] || event;
   if (file) {
     icon.value.image = file;
-    imageError.value = ''; // Clear error when an image is selected
+    imageError.value = '';
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">Admin Shop</p>
+  <p class="pa-12" style="font-size: 50px;">Purchase Rewards</p>
 
   <v-spacer></v-spacer>
   <div>
@@ -83,7 +83,7 @@ const initialize = async () => {
 
 const goToRedeemPoints = (id) => {
   console.log("Navigating to purchase rewards with userId:", id);
-  router.push({ name: "purchaseRewards", params: { userId: id } });
+  router.push({ name: "PurchaseRewards", params: { userId: id } });
 };
 
 

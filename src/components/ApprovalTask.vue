@@ -48,7 +48,7 @@ const approveTask = async (approval) => {
   let notificationComment = null
   if (comment.value) {
     notificationComment = ` Comment from approver: ${comment.value}`
-  }
+  } else {notificationComment = ""}
 
   if (approval) {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})

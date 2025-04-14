@@ -60,7 +60,7 @@
 import { ref, onMounted } from "vue";
 import userServices from "../services/userServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
-import PurchaseRewards from "../components/purchaseRewards.vue";
+import PurchaseRewards from "../components/PurchaseRewards.vue";
 
 const users = ref([]);
 const searchQuery = ref("");

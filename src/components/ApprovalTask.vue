@@ -66,6 +66,14 @@ const approveTask = async (approval) => {
     const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
     // Check if user earned badges
     userBadgesServices.checkUserBadges(studentId)
+
+    await logService.createLog({
+    name: "Task Approved",
+    desc: `${user.email} approved the requested experience ${selectedRequest.value.name} for the user ${selectedRequest.value.fullName}`,
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval" 
+  }) 
   } else {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

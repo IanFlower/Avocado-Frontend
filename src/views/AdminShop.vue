@@ -2,44 +2,43 @@
   <p class="pa-12" style="font-size: 50px;">Purchase Rewards</p>
 
   <v-spacer></v-spacer>
-  <div>
-    <div class="pa-12">
-      <v-row>
-        <v-col cols="6">
-          <v-text-field 
-            v-model="searchQuery" 
-            label="Search" 
-            prepend-inner-icon="mdi-magnify" 
-            variant="outlined" 
-            hide-details 
-            single-line 
-            class="ma-2"
-          />
-        </v-col>
-      </v-row>
 
-      <v-data-table 
-        :headers="headers" 
-        :items="users" 
-        :search="searchQuery" 
-        item-value="fullName"
-      >
-        <template v-slot:item.actions="{ item }">
-          <v-icon 
-            color="#004761" 
-            size="large" 
-            class="pa-6" 
-            @click="openDialog(item.id)"
-          >
-            mdi-cart
-          </v-icon>
-        </template>
+  <div class="pa-12">
+    <v-row>
+      <v-col cols="6">
+        <v-text-field 
+          v-model="searchQuery" 
+          label="Search" 
+          prepend-inner-icon="mdi-magnify" 
+          variant="outlined" 
+          hide-details 
+          single-line 
+          class="ma-2"
+        />
+      </v-col>
+    </v-row>
 
-        <template v-slot:item.points="{ item }">
-          <span>{{ item.currentPoints !== undefined ? item.currentPoints : 'Loading...' }}</span>
-        </template>
-      </v-data-table>
-    </div>
+    <v-data-table 
+      :headers="headers" 
+      :items="users" 
+      :search="searchQuery" 
+      item-value="fullName"
+    >
+      <template v-slot:item.actions="{ item }">
+        <v-icon 
+          color="#004761" 
+          size="large" 
+          class="pa-6" 
+          @click="openDialog(item.id)"
+        >
+          mdi-cart
+        </v-icon>
+      </template>
+
+      <template v-slot:item.points="{ item }">
+        <span>{{ item.currentPoints !== undefined ? item.currentPoints : 'Loading...' }}</span>
+      </template>
+    </v-data-table>
   </div>
 
   <!-- Dialog Popup for PurchaseRewards -->
@@ -47,8 +46,9 @@
     <v-card>
       <v-card-title class="text-h5 d-flex justify-space-between">
         Redeem Points
-          <v-icon icon @click="dialog = false">mdi-close</v-icon>
+        <v-icon @click="dialog = false">mdi-close</v-icon>
       </v-card-title>
+      
       <v-card-text>
         <PurchaseRewards :userId="selectedUserId" />
       </v-card-text>

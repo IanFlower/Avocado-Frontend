@@ -87,7 +87,7 @@
                                 </svg>
                             </v-col>
                             <v-col>
-                                <v-card-title>Student Shop</v-card-title>
+                                <v-card-title>Purchase Rewards</v-card-title>
                                 <v-card-subtitle class="overflow-x-hidden">
                                     <v-divider vertical thickness="20px"></v-divider>
                                     Redeem Student Points/Edit Shop Items
@@ -124,10 +124,10 @@
                                 </svg>
                             </v-col>
                             <v-col>
-                                <v-card-title>Badges</v-card-title>
+                                <v-card-title>Badge Management</v-card-title>
                                 <v-card-subtitle class="overflow-x-hidden">
                                     <v-divider vertical thickness="20px"></v-divider>
-                                    Manage Badges
+                                    View and Create New Badges for Students to Unlock
                                 </v-card-subtitle>
                             </v-col>
                         </v-row>
@@ -247,10 +247,10 @@
                                     </g>
                                 </svg> </v-col>
                             <v-col>
-                                <v-card-title>View Rewards</v-card-title>
+                                <v-card-title>Reward Management</v-card-title>
                                 <v-card-subtitle class="overflow-x-hidden">
                                     <v-divider vertical thickness="20px"></v-divider>
-                                    View all rewards and make new rewards for students to buy
+                                    View All rewards and Make New Rewards for Students to Buy
                                 </v-card-subtitle>
                             </v-col>
                         </v-row>

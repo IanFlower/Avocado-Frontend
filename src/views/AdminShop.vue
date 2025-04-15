@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">Admin Shop</p>
+  <p class="pa-12" style="font-size: 50px;">Purchase Rewards</p>
 
   <v-spacer></v-spacer>
   <div>
@@ -14,7 +14,7 @@
             hide-details 
             single-line 
             class="ma-2"
-          ></v-text-field>
+          />
         </v-col>
       </v-row>
 
@@ -29,7 +29,7 @@
             color="#004761" 
             size="large" 
             class="pa-6" 
-            @click="goToRedeemPoints(item.id)"
+            @click="openDialog(item.id)"
           >
             mdi-cart
           </v-icon>
@@ -41,17 +41,31 @@
       </v-data-table>
     </div>
   </div>
+
+  <!-- Dialog Popup for PurchaseRewards -->
+  <v-dialog v-model="dialog" max-width="1000">
+    <v-card>
+      <v-card-title class="text-h5 d-flex justify-space-between">
+        Redeem Points
+          <v-icon icon @click="dialog = false">mdi-close</v-icon>
+      </v-card-title>
+      <v-card-text>
+        <PurchaseRewards :userId="selectedUserId" />
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import userServices from "../services/userServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
+import PurchaseRewards from "../components/PurchaseRewards.vue";
 
-const router = useRouter();
 const users = ref([]);
 const searchQuery = ref("");
+const dialog = ref(false);
+const selectedUserId = ref(null);
 
 const headers = ref([
   { title: "Student Name", key: "fullName", align: "start", sortable: true },
@@ -67,7 +81,7 @@ const initialize = async () => {
 
     for (let user of usersData) {
       const studentInfo = await studentInfoServices.getStudentInfoById(user.id);
-      user.currentPoints = studentInfo.data[0]?.currentPoints || 0; 
+      user.currentPoints = studentInfo.data[0]?.currentPoints || 0;
     }
 
     users.value = usersData.map(user => ({
@@ -81,11 +95,10 @@ const initialize = async () => {
   }
 };
 
-const goToRedeemPoints = (id) => {
-  console.log("Navigating to purchase rewards with userId:", id);
-  router.push({ name: "purchaseRewards", params: { userId: id } });
+const openDialog = (id) => {
+  selectedUserId.value = id;
+  dialog.value = true;
 };
-
 
 onMounted(initialize);
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <p class="pa-12" style="font-size: 50px;">View Reward</p>
+  <p class="pa-12" style="font-size: 50px;">Reward Management</p>
 
   <v-spacer></v-spacer>
   <div>
@@ -10,7 +10,7 @@
             hide-details single-line class="ma-2" />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
-          <v-btn class="custom-btn" @click="openAddRewardDialog">
+          <v-btn class="tertiary" @click="openAddRewardDialog">
             Add Reward
           </v-btn>
         </v-col>
@@ -34,10 +34,7 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-btn icon class="transparent no-padding" @click="openEditRewardDialog(item)">
-            <v-icon color="#004761" size="large">mdi-pencil</v-icon>
-          </v-btn>
-
+          <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
           <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
 
           <!-- Image Icon to trigger image dialog -->
@@ -56,12 +53,10 @@
       <v-card-text>
         <AddReward @rewardAdded="closeAddRewardDialog" />
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="closeAddRewardDialog">Cancel</v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
+
+  
 
   <!-- Edit Reward Dialog -->
   <v-dialog v-model="editRewardDialogBox" max-width="500px">
@@ -75,10 +70,6 @@
           <p>Loading reward...</p>
         </div>
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="closeEditRewardDialog">Cancel</v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 
@@ -89,10 +80,6 @@
       <v-card-text>
         <v-img :src="imageUrl" max-width="100%" alt="Image" />
       </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="red" text @click="closeImageDialog">Close</v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
   

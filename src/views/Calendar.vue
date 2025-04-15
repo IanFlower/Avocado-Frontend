@@ -7,7 +7,7 @@ import EventService from '../services/eventServices';
 const allEvents = ref([]);
 const calEvents = [];
 const router = useRouter();
-const eventDialog = ref(false)
+const buttonDialog = ref(true)
 
 const goHome = () => {
   router.push('/home'); 
@@ -54,6 +54,7 @@ const handleLogin = () => {
   if (tokenClient) {
     tokenClient.requestAccessToken();
   }
+  closeDialog()
 };
 
 async function loadAndListEvents() {
@@ -113,32 +114,35 @@ async function loadAndListEvents() {
       end: new Date(e.end?.dateTime || e.end?.date),
       color: "blue",
       allDay: !e.start?.dateTime, // all-day if there's no specific time
-      class: "calendar-event"
     });
   });
 }
+
+const closeDialog = () => {
+  buttonDialog.value = false;
+};
 
 
 onMounted(() => {
   initialize();
 });
-
-
-function handleEventClick() {
-  eventDialog.value = true
-}
 </script>
 
 
 <template>
 <v-div>
-  <v-btn color="primary" class="ma-2" @click="handleLogin">Login to Google Calendar</v-btn>
   <v-calendar
   :events="allEvents" 
-  class="ma-4"
-  @click:event="handleEventClick"/>
-  <v-dialog v-model="eventDialog">
-    <v-card>Cool event</v-card>
+  class="ma-4"/>
+  <v-dialog width="500px" v-model="buttonDialog">
+    <v-card>
+      <v-card-title>Would you like to login to your Google Calendar?</v-card-title>
+      <v-card-actions>
+          <v-btn class="secondary-button" text @click="closeDialog()">No</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="handleLogin()">Yes</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </v-div>
 

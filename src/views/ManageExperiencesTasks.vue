@@ -31,7 +31,7 @@ const tableOverLayRefs = ref([{
 // Constants
 const semesters = [
     1, 2, 3, 4, 5, 6, 7, 8]
-
+const priority = [1, 2, 3]
 const categories = ref([])
 const cliftonStrengths = ref([])
 const majors = ref([])
@@ -264,14 +264,14 @@ onMounted(async () => {
                             v-model="tableOverLayRefs.item.data.desc"></v-textarea> <!--  Description-->
                         <v-text-field label="Points*" :rules="[required('Points')]"
                             v-model="tableOverLayRefs.item.data.points"></v-text-field> <!--  Points-->
-                        <v-text-field label="Type" :rules="[required('Type')]"
-                            v-model="tableOverLayRefs.item.data.type"></v-text-field> <!--  Type -->
                         <!-- <v-select label="Category" :items="categories" item-title="name" :rules="[required('Category')]"
                             v-model="tableOverLayRefs.item.data.category" clearable></v-select>
                          Category -->
                         <v-select label="Semesters Till Graduation*" :rules="[required('Semesters Till Graduation')]"
                             v-model="tableOverLayRefs.item.data.semestersFromGraduation" :items="semesters"></v-select>
                         <!--  Semester Till graduation out of 8 -->
+                        <v-select label="Priority*" :rules="[required('Priority')]"
+                            v-model="tableOverLayRefs.item.data.priority" :items="priority"></v-select>
                         <v-checkbox label="Reflection Required"
                             v-model="tableOverLayRefs.item.data.reflectionRequired"></v-checkbox>
                         <!--  Reflection Required-->

@@ -74,6 +74,7 @@ const approveUser = async () => {
       subtext: "approved",
       points: selectedRequest.value.points,
       userId: selectedRequest.value.userId,
+      pastRequested: true,
     });
 
     notificationService.createNotification({
@@ -81,6 +82,7 @@ const approveUser = async () => {
       title: "Request Approved", 
       desc: `Your request for ${selectedRequest.value.name} has been approved.`,
       goodNews: true,
+
     });
 
     fetchUsers();
@@ -117,6 +119,7 @@ const denyUser = async () => {
       title: "Request Denied", 
       desc: `Your request for ${selectedRequest.value.name} has been Denied.`,
       goodNews: false,
+      pastRequested: true,
     });
 
     fetchUsers(); 

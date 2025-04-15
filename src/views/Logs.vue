@@ -7,14 +7,13 @@ const snackbar = ref(false);
 const snackbarMessage = ref(""); 
 const snackbarColor = ref(""); 
 const logs = ref([]);
-const selectedLog = ref(null); 
 
 const headers = ref([
-  { title: "Log Title", key: "name", sortable: false },
-  { title: "Date", key: "dateFormatted", sortable: false },
-  { title: "Description", key: "desc" },
-  { title: "Email", key: "email" },
-  { title: "Type", key: "type" },
+  { title: "Log Title", key: "name", sortable: true },
+  { title: "Date", key: "dateFormatted", sortable: true },
+  { title: "Description", key: "desc",sortable: true },
+  { title: "Email", key: "email",sortable: true },
+  { title: "Type", key: "type",sortable: true },
   { title: "Actions", key: "actions", sortable: false },
 ]);
 
@@ -28,8 +27,10 @@ const showSnackbar = (message, color) => {
   }, 3000);
 };
 const deleteLog = async (logId) => {
-    await logsServices.deleteLog(logId);
-    fetchLogs(); 
+    await logsServices.deleteLog(logId)
+    .then((response) => {
+      fetchLogs(); 
+    })
 };
 
 // Fetch logs from backend
@@ -63,6 +64,15 @@ onMounted(() => {
   <v-spacer></v-spacer> 
   <div>
     <div class="pa-12">
+      <v-text-field 
+            v-model="search"
+            label="Search"
+            prepend-inner-icon="mdi-magnify" 
+            variant="outlined"
+            hide-details
+            single-line
+            class="ma-2"
+        ></v-text-field>
       <v-data-table
         :headers="headers"
         :items="logs"

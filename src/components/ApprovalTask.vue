@@ -12,6 +12,7 @@ import notificationService from "../services/notification.Services";
 import userBadgesServices from "../services/userBadgesServices";
 import documentService from "../services/documentService";
 import PDF from "pdf-vue3";
+import logService from "../services/logServices";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility

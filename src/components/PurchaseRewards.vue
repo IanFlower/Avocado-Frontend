@@ -117,7 +117,7 @@ const purchaseReward = async () => {
 
     await studentPurchaseService.createPurchase({
       rewardId: selectedReward.value.id,
-      userId: props.userId
+      // studentInfoId: props.studentInfoId
     });
 
     //create the purchase information

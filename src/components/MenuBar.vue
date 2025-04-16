@@ -32,7 +32,7 @@ const resetMenu = () => {
         .then((res) => {
                 roleServices.getRoleById(res.data.roleId) // Fetch role details
                     .then((res) => {
-                            role.value = res.data.name; // Set role name
+                            role.value = res.data.name; 
                     });
         })
         .catch((error) => {
@@ -211,6 +211,9 @@ onMounted(() => {
                     </v-list-item>
                     <v-list-item to="AdminShop">
                         <v-btn variant="text">Purchase Rewards</v-btn>
+                    </v-list-item>
+                    <v-list-item to="logs">
+                        <v-btn variant="text">Logs</v-btn>
                     </v-list-item>
                 </v-list>
         </div>

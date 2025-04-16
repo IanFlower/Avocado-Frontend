@@ -4,6 +4,10 @@ import userServices from "../services/userServices";
 import experienceService from "../services/experiencesServices";
 import notificationService from "../services/notification.Services";
 import { no } from "vuetify/locale";
+import logService from "../services/logServices";
+import Utils from "../config/utils";
+
+const user = Utils.getStore("user"); // Get the current user from local storage
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -11,7 +15,7 @@ const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
 const users = ref([]); // List of experience requests and the names of the users
 const dialog = ref(false); // Controls the confirmation dialog visibility
-const selectedRequest = ref(null); // Stores the selected experience request for approval
+const selectedRequest = ref(null); // Stores the selected experience request for approva
 
 const headers = ref([
   { title: "Request Name", key: "name", sortable: false },
@@ -70,6 +74,7 @@ const approveUser = async () => {
       subtext: "approved",
       points: selectedRequest.value.points,
       userId: selectedRequest.value.userId,
+      pastRequested: true,
     });
 
     notificationService.createNotification({
@@ -77,10 +82,19 @@ const approveUser = async () => {
       title: "Request Approved", 
       desc: `Your request for ${selectedRequest.value.name} has been approved.`,
       goodNews: true,
+
     });
 
     fetchUsers();
     users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
+
+    await logService.createLog({
+    name: "Requested Experience Approved",
+    desc: `${user.email} approved the requested experience ${selectedRequest.value.name} for the user ${selectedRequest.value.fullName}`,
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval" 
+  }) 
 
     showSnackbar("Request approved successfully", "success");
   } catch (error) {
@@ -105,6 +119,7 @@ const denyUser = async () => {
       title: "Request Denied", 
       desc: `Your request for ${selectedRequest.value.name} has been Denied.`,
       goodNews: false,
+      pastRequested: true,
     });
 
     fetchUsers(); 

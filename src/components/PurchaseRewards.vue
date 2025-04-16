@@ -2,15 +2,14 @@
   <v-container>
     <!-- Search Bar -->
     <v-row justify="center">
-      <v-col cols="6">
+      <v-col cols="8">
         <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
           hide-details single-line class="ma-2" />
       </v-col>
     </v-row>
 
     <!-- Rewards List -->
-    <v-row v-for="reward in filteredRewards" :key="reward.id" class="mb-3 pa-2 rounded-lg"
-      style="border: 1px solid #ccc;">
+    <v-row v-for="reward in filteredRewards" :key="reward.id" class="mb-3 pa-2 rounded-lg justify-center">
       <v-col cols="2">
         <div style="font-size: 20px; font-weight: bold; color: #004761;">
           {{ reward.name }}
@@ -22,13 +21,13 @@
       <v-col cols="2">
         Required Points: {{ reward.requiredPoints }}
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         Your Points:
         <span class="font-weight-bold">
           {{ studentInfo.length > 0 ? studentInfo[0].currentPoints : 'Loading...' }}
         </span>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-btn :disabled="!hasEnoughPoints(reward.requiredPoints)" color="primary" block
           @click="confirmPurchase(reward)">
           {{ hasEnoughPoints(reward.requiredPoints) ? 'Purchase' : 'Not Enough Points' }}
@@ -108,22 +107,24 @@ const purchaseReward = async () => {
   if (!selectedReward.value?.id) return;
   try {
     // Update points and purchase count
-    studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints; //decrease points
+    const updateStudentInfoPoint = { 
+      ...studentInfo.value[0], // Include all existing student info fields
+      currentPoints: studentInfo.value[0].currentPoints - selectedReward.value.requiredPoints,
+    }
+    await studentInfoServices.updateStudentInfo(props.userId, updateStudentInfoPoint);
 
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
-      rewards.value[rewardIndex].purchaseCount += 1; //increase purchase count
+      rewards.value[rewardIndex].purchaseCount += 1; 
     }
 
     await studentPurchaseService.createPurchase({
       rewardId: selectedReward.value.id,
-      // studentInfoId: props.studentInfoId
     });
 
-    //create the purchase information
-
     dialog.value = false; //close dialog
-    fetchStudentInfo(); //refresh the student info
+    fetchStudentInfo();
+    fetchRewards();
   } catch (error) {
     console.error("Error purchasing reward:", error); //error message
   }

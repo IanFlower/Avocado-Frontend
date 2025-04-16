@@ -8,7 +8,6 @@
       </v-col>
     </v-row>
 
-
     <!-- Rewards List -->
     <v-row v-for="reward in filteredRewards" :key="reward.id" class="mb-3 pa-2 rounded-lg"
       style="border: 1px solid #ccc;">
@@ -44,8 +43,9 @@
         <v-card-text>
           Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
         </v-card-text>
-        <v-card-actions class="justify-end">
+        <v-card-actions class="justify-center">
           <v-btn color="success" variant="text" @click="purchaseReward">Yes</v-btn>
+          <v-btn color="success" variant="text" @click="close">No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -56,10 +56,11 @@
 import { ref, onMounted, defineProps, computed } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
-import studentPurchaseService from "../services/studentPurchaseServices.js";  // Import the purchase service
+import studentPurchaseService from "../services/studentPurchaseServices.js";
 
 const props = defineProps({
   userId: String,
+  rewardId: String,
 });
 
 const rewards = ref([]);
@@ -94,40 +95,47 @@ const fetchRewards = async () => {
 };
 
 const confirmPurchase = (reward) => {
-  if (!hasEnoughPoints(reward.requiredPoints)) return;
-  selectedReward.value = reward;
-  dialog.value = true;
+  if (!hasEnoughPoints(reward.requiredPoints)) return; //check if the student has enough points
+  selectedReward.value = reward; //the reward is available to purchase
+  dialog.value = true; //open the dialog
+};
+
+const close = () => {
+  dialog.value = false; //close the dialog
 };
 
 const purchaseReward = async () => {
   if (!selectedReward.value?.id) return;
   try {
     // Update points and purchase count
-    studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints;
+    studentInfo.value[0].currentPoints -= selectedReward.value.requiredPoints; //decrease points
 
     const rewardIndex = rewards.value.findIndex(r => r.id === selectedReward.value.id);
     if (rewardIndex !== -1) {
-      rewards.value[rewardIndex].purchaseCount += 1;
+      rewards.value[rewardIndex].purchaseCount += 1; //increase purchase count
     }
 
-    await studentInfoServices.updateStudentInfo(props.userId, {
-      currentPoints: studentInfo.value[0].currentPoints,
+    await studentPurchaseService.createPurchase({
+      rewardId: selectedReward.value.id,
+      userId: props.userId
     });
 
-    dialog.value = false;
-    fetchStudentInfo();
+    //create the purchase information
+
+    dialog.value = false; //close dialog
+    fetchStudentInfo(); //refresh the student info
   } catch (error) {
-    console.error("Error purchasing reward:", error);
+    console.error("Error purchasing reward:", error); //error message
   }
 };
 
 const hasEnoughPoints = (requiredPoints) => {
-  return studentInfo.value.length > 0 && studentInfo.value[0].currentPoints >= requiredPoints;
+  return studentInfo.value.length > 0 && studentInfo.value[0].currentPoints >= requiredPoints; //check if the student has enough points
 };
 
 const filteredRewards = computed(() => {
   return rewards.value.filter(reward =>
-    reward.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    reward.name.toLowerCase().includes(searchQuery.value.toLowerCase()) //filtering for the search bar
   );
 });
 

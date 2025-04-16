@@ -162,19 +162,19 @@ onMounted(() => {
                 <v-list-item :to="{ name: 'StudentHome' }">
                     <v-btn variant="text">Dashboard</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Badges">Badges</v-btn>
+                <v-list-item :to="{ name: 'Badges' }">
+                    <v-btn variant="text">Badges</v-btn>
                 </v-list-item>
-                <v-list-item>
-                    <v-btn variant="text" to="/Shop">Rewards</v-btn> 
+                <v-list-item :to="{ name: 'Shop' }">
+                    <v-btn variant="text">Rewards</v-btn> 
                 </v-list-item>
                 <v-list-item :to="{ name: 'LeaderBoard' }">
                     <v-btn variant="text">Leaderboard</v-btn>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item :to="{ name: 'Calendar' }">
                     <v-btn variant="text">Calender</v-btn>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item :to="{ name: 'Profile' }">
                     <v-btn variant="text">Profile</v-btn>
                 </v-list-item>
                 <v-list-item>
@@ -188,28 +188,28 @@ onMounted(() => {
                     <v-divider></v-divider>
                 </v-list-item>
                 <v-list> 
-                    <v-list-item to="AdminHome">
+                    <v-list-item :to="{ name: 'AdminHome' }">
                         <v-btn variant="text">Dashboard</v-btn>
                     </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text" to="/approval">Student Approval</v-btn>
+                    <v-list-item :to="{ name: 'Approval' }">
+                        <v-btn variant="text">Student Approval</v-btn>
                     </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text" to="/ManageUsers">User Management</v-btn> 
+                    <v-list-item :to="{ name: 'ManageUsers'}">
+                        <v-btn variant="text">User Management</v-btn> 
                     </v-list-item>
-                    <v-list-item to="AdminManageEvents">
+                    <v-list-item :to="{ name: 'AdminManageEvents'}">
                         <v-btn variant="text">Event Management</v-btn>
                     </v-list-item>
-                    <v-list-item to="AdminBadge">
+                    <v-list-item :to="{ name: 'AdminBadge'}">
                         <v-btn variant="text">Badge Management</v-btn>
-                    </v-list-item>
-                    <v-list-item to="ManageExperiencesTasks">
+                    </v-list-item >
+                    <v-list-item :to="{ name: 'ManageExperiencesTasks'}">
                         <v-btn variant="text">Tasks/Experiences</v-btn>
-                    </v-list-item>
-                    <v-list-item to="AdminViewRewards">
+                    </v-list-item >
+                    <v-list-item :to="{ name: 'ViewRewards'}">
                         <v-btn variant="text">Reward Management</v-btn>
                     </v-list-item>
-                    <v-list-item to="AdminShop">
+                    <v-list-item :to="{ name: 'AdminShop' }">
                         <v-btn variant="text">Purchase Rewards</v-btn>
                     </v-list-item>
                 </v-list>

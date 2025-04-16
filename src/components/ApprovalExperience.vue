@@ -8,7 +8,9 @@ import experienceService from "../services/experiencesServices";
 import experienceMajorService from "../services/experienceMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
-
+import logService from "../services/logServices";
+import Utils from "../config/utils";
+const user =Utils.getStore("user");
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
@@ -55,6 +57,14 @@ const approveExperience = async (approval) => {
     let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
     let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
     await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    await logService.createLog({
+    name: "Experience Approved",
+    desc: user.email+ " approved the experience " + selectedExperience.value.experienceName + " for the user " + selectedExperience.value.studentName,
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval" 
+  })
+
   } else {
     await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

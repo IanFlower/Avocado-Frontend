@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import userSerices from "../services/userServices";
 import roleUserServices from "../services/roleUserServices";
+import logService from "../services/logServices";
+import Utils from "../config/utils";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -9,7 +11,11 @@ const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
 const users = ref([]); // List of users
 const dialog = ref(false); // Controls the confirmation dialog visibility
-const selectedUser = ref(null); // Stores the user to be approved
+const selectedUser = ref(null); // Stores the user to be approvedconst user = Utils.getStore("user");
+
+const user = Utils.getStore("user"); 
+
+
 
 const headers = ref([
   { title: "First Name", key: "fName" },
@@ -45,10 +51,20 @@ const approveUser = async () => {
     .catch((error) => {
       showSnackbar("Error approving user", "error");
     })
-    .finally(() => {
-      dialog.value = false; 
-      selectedUser.value = null;
-    });
+
+  await logService.createLog({
+    name: "Admin Approval",
+    desc: user.email+ " approved the user " + selectedUser.value.email + " to be an admin",
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval"
+  })
+  .then((response) => {
+    console.log("Log created successfully:", response.data);
+    selectedUser.value = null; 
+    dialog.value = false;  
+  })
+  
 };
 
 const confirmApproval = (user) => {
@@ -78,7 +94,7 @@ onMounted(() => {
               size="large"
               class="pa-6"
               @click="confirmApproval(item)"
-            >
+            > 
               mdi-thumb-up
             </v-icon>
           </template>

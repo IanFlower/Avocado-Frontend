@@ -72,7 +72,7 @@ const approveTask = async (approval) => {
 
     await logService.createLog({
     name: "Task Approved",
-    desc: `${user.email} approved the requested experience ${selectedRequest.value.name} for the user ${selectedRequest.value.fullName}`,
+    desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
     date: new Date().toISOString(),
     email: user.email, 
     type: "Approval" 

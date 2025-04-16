@@ -119,7 +119,6 @@ const saveDialog = () => {
         firstLogin: false,
     }).then((response) => {
         console.log(response);
-        closeDialog();
         router.push("/home");
     }).catch((error) => {
         console.log(error);

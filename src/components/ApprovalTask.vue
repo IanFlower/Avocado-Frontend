@@ -13,6 +13,8 @@ import userBadgesServices from "../services/userBadgesServices";
 import documentService from "../services/documentService";
 import PDF from "pdf-vue3";
 import logService from "../services/logServices";
+import Utils from "../config/utils";
+const user = Utils.getStore("user"); // Get the current user from local storage
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -36,7 +38,7 @@ const headers = ref([
 ]);
 
 const showSnackbar = (message, color) => {
-  snackbarMessage.value = message;
+  snackbarMessage.value = message; 
   snackbarColor.value = color === "success" ? "green" : "red";
   snackbar.value = true;
   setTimeout(() => {

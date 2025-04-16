@@ -84,18 +84,27 @@ async function fetchExperiences() {
     flightPlanExperiences.value.data.map(async (fpExperience) => {
       // Get experience
       let experience = await experienceService.getById(fpExperience.experienceId);
+      let majors = []
 
       let experiencePoints = experience.data.points;
       // Get majors
       let experienceMajors = await experienceMajorService.getAllForExperienceId(experience.data.id);
 
-      let majors = await Promise.all( 
-        experienceMajors.data.map( async (tm) => {
-          let currMajor = await majorService.getMajorById(tm.majorId)
-          return currMajor.data.name
-        })
-      )
+      
+      let fullMajorList = await majorService.getAllMajors()
+      if (fullMajorList.data.length == experienceMajors.data.length) {
+        majors = ["All Majors"];
+      } else {
 
+        majors = await Promise.all( 
+          experienceMajors.data.map( async (tm) => {
+            let currMajor = fullMajorList.data.find((m) => {
+                return m.id == tm.id
+            })
+            return currMajor.data.name
+          })
+        )
+      }
       let allMajors = ""
       majors.forEach((major) => {allMajors += `${major} `})
       

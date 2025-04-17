@@ -6,8 +6,15 @@
     <div class="pa-12">
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
-            hide-details single-line class="ma-2" />
+          <v-text-field
+            v-model="searchQuery"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+            class="ma-2"
+          />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
           <v-btn class="tertiary" @click="openAddRewardDialog">
@@ -16,7 +23,13 @@
         </v-col>
       </v-row>
 
-      <v-data-table :headers="headers" :items="rewards" :search="searchQuery" item-value="name" class="elevation-1">
+      <v-data-table
+        :headers="headers"
+        :items="rewards"
+        :search="searchQuery"
+        item-value="name"
+        class="elevation-1"
+      >
         <template v-slot:item.name="{ item }">
           <span>{{ item.name }}</span>
         </template>
@@ -36,9 +49,13 @@
         <template v-slot:item.actions="{ item }">
           <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
           <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-
-          <!-- Image Icon to trigger image dialog -->
-          <v-icon v-if="item.image" @click="openImageDialog(item)" style="cursor: pointer;" color="primary">
+          <v-icon @click="openImageDialog(item)" class="teritary" size="large">mdi-image</v-icon>
+          <v-icon
+            v-if="item.image"
+            @click="openImageDialog(item)"
+            style="cursor: pointer;"
+            color="primary"
+          >
             mdi-image
           </v-icon>
         </template>
@@ -49,23 +66,30 @@
   <!-- Add Reward Dialog -->
   <v-dialog v-model="showAddRewardDialog" max-width="500px">
     <v-card>
-      <v-card-title>Add Reward</v-card-title>
+      <v-card-title>
+        <span class="text-h6">Add Reward</span>
+      </v-card-title>
       <v-card-text>
-        <AddReward @rewardAdded="closeAddRewardDialog" />
+        <RewardForm @rewardAdded="closeAddRewardDialog" @close="closeAddRewardDialog" />
       </v-card-text>
     </v-card>
   </v-dialog>
 
-  
-
   <!-- Edit Reward Dialog -->
   <v-dialog v-model="editRewardDialogBox" max-width="500px">
     <v-card>
-      <v-card-title>Edit Reward</v-card-title>
+      <v-card-title>
+        <span class="text-h6">
+          {{ selectedReward ? 'Edit Reward' : 'Loading...' }}
+        </span>
+      </v-card-title>
       <v-card-text>
-        <EditReward v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
-          @close="closeEditRewardDialog" />
-
+        <RewardForm
+          v-if="selectedReward"
+          :rewardId="selectedReward.id"
+          @rewardUpdated="refreshRewards"
+          @close="closeEditRewardDialog"
+        />
         <div v-else>
           <p>Loading reward...</p>
         </div>
@@ -82,23 +106,22 @@
       </v-card-text>
     </v-card>
   </v-dialog>
-  
-  <DeleteDialog 
+
+  <DeleteDialog
     :dialog="deleteDialog"
-    :item="currentItem" 
+    :item="currentItem"
     :category="category"
     @update:dialog="deleteDialog = $event"
     @delete="refreshDeleteRewards()"
   />
-
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import rewardServices from "../services/rewardServices.js";
-import AddReward from "../components/AddReward.vue";
-import EditReward from "../components/EditReward.vue";
+import RewardForm from "../components/RewardForm.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
+import iconService from "../services/iconServices.js";
 
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
@@ -110,36 +133,33 @@ const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
 const imageDialog = ref(false);
-const imageUrl = ref(""); 
+const imageUrl = ref("");
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
   { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
   { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
-  { title: "Actions", key: "actions", align: "center", sortable: false }
+  { title: "Actions", key: "actions", align: "center", sortable: false },
 ]);
 
 const initialize = async () => {
   try {
     const response = await rewardServices.getAllRewards();
-    console.log("Fetched rewards:", response.data);
-
-    rewards.value = [...response.data.map(reward => ({
+    rewards.value = response.data.map((reward) => ({
       id: reward.id,
       name: reward.name,
       image: reward.image,
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
       requiredPoints: reward.requiredPoints,
-    }))];
+    }));
   } catch (error) {
     console.error("Error fetching rewards:", error);
     rewards.value = [];
   }
 };
 
-// Open and Close functions for dialogs
 const deleteItem = (item) => {
   deleteDialog.value = true;
   currentItem.value = item;
@@ -160,13 +180,11 @@ const openEditRewardDialog = (reward) => {
 };
 
 const refreshRewards = async () => {
-  console.log("Refreshing rewards...");
   await initialize();
   closeEditRewardDialog();
 };
 
 const refreshDeleteRewards = async () => {
-  console.log("Refreshing rewards...");
   await initialize();
   closeDeleteRewardDialog();
 };
@@ -181,15 +199,28 @@ const closeDeleteRewardDialog = () => {
   selectedReward.value = null;
 };
 
-// Image Dialog functions
-const openImageDialog = (item) => {
-  imageUrl.value = item.image || "default-image-path"; 
-  imageDialog.value = true;
+const openImageDialog = async (item) => {
+  if (!item.image) {
+    console.warn("No image found for this reward.");
+    imageUrl.value = "default-image-path"; // fallback image
+    imageDialog.value = true;
+    return;
+  }
+
+  try {
+    const response = await iconService.getIconByFile(item.image);
+    const blob = response.data;
+    const url = URL.createObjectURL(blob);
+    imageUrl.value = url;
+    imageDialog.value = true;
+  } catch (error) {
+    console.error("Failed to load image:", error);
+    imageUrl.value = "default-image-path";
+    imageDialog.value = true;
+  }
 };
 
-const closeImageDialog = () => {
-  imageDialog.value = false;
-};
+
 
 onMounted(initialize);
 </script>

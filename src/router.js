@@ -17,10 +17,12 @@ import Approval from "./views/approval.vue";
 import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";
 import AddReward from "./components/AddReward.vue";
-import AdminViewRewards from "./components/AdminViewRewards.vue";
+import EditReward from "./components/EditReward.vue";
+import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
 import ManageUsers from "./views/ManageUsers.vue"
 import AdminBadges from "./views/AdminBadges.vue";
+import Logs from "./views/Logs.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,10 +120,10 @@ const router = createRouter({
     },
     {
       path: "/Purchase/:userId",
-      alias: "/PurchaseRewards",
+      alias: "/PurchaseRewards/:userId",
       name: "PurchaseRewards",
       component: PurchaseRewards,
-      props: true, // Pass the userId as a prop to the component
+      props: true, 
     },
     {
       path: "/AdminShop",
@@ -146,6 +148,18 @@ const router = createRouter({
       alias: "/AddReward",
       name: "AddReward",
       component: AddReward,
+    },
+    {
+      path: "/EditReward",
+      alias: "/EditReward",
+      name: "EditReward",
+      component: EditReward,
+    },
+    {
+      path: "/Logs",
+      alias: "/Logs",
+      name: "Logs",
+      component: Logs,
     },
   ],
 });

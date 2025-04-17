@@ -9,6 +9,9 @@ import experienceMajorService from "../services/experienceMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
 import userBadgesServices from "../services/userBadgesServices";
+import logService from "../services/logServices";
+import Utils from "../config/utils";
+const user =Utils.getStore("user");
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -42,7 +45,7 @@ const approveExperience = async (approval) => {
   let notificationComment = null
   if (comment.value) {
     notificationComment = ` Comment from approver: ${comment.value}`
-  }
+  } else {notificationComment = ""}
 
   if (approval) {
     await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
@@ -57,6 +60,15 @@ const approveExperience = async (approval) => {
     let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
     const studentId = (await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
     userBadgesServices.checkUserBadges(studentId)
+
+    await logService.createLog({
+    name: "Experience Approved",
+    desc: user.email+ " approved the experience " + selectedExperience.value.experienceName + " for the user " + selectedExperience.value.studentName,
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval" 
+  })
+  
   } else {
     await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

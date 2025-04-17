@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogModel" height="800px" max-width="1000px">
+    <v-dialog v-model="dialogModel" max-width="1000px" @update:model-value="closeDialog">
         <v-card class="d-flex flex-column">
             <v-card-title class="bg-secondary text-center sticky-title">
                 <span>Edit permission - {{ selectedUser?.fullName }}</span>
@@ -7,37 +7,54 @@
             <v-card-text class="flex-grow-1 d-flex">
                 <v-container class="pa-0">
                     <v-row dense class="fill-height">
-                        <v-col cols="5">
-                            <p class="font-weight-bold" align="center">Read Only Permissions</p>
-                            <v-checkbox v-model="localPermission.readAttendance" label="Attendance"
+                        <v-col>
+                            <p class="font-weight-bold" align="center">View Only Permissions</p>
+                            <v-checkbox v-model="localPermission.readAttendance" label="View Attendance"
                                 class="mb-0"></v-checkbox>
-                            <v-checkbox v-model="localPermission.readStudentInfo" label="Student Info"
+                            <v-checkbox v-model="localPermission.readStudentInfo" label="View Student Infos"
                                 class="mb-1"></v-checkbox>
-                            <v-checkbox v-model="localPermission.readStrengths" label="Strength"
+                            <v-checkbox v-model="localPermission.readStrengths" label="View Strengths"
                                 class="mb-1"></v-checkbox>
-                            <v-checkbox v-model="localPermission.readLogs" label="Logs" class="mb-1"></v-checkbox>
-                            <p class="font-weight-bold" align="center">Add Only Permissions</p>
-                            <v-checkbox v-model="localPermission.addExperience" label="Experience"
-                                class="mb-1"></v-checkbox>
-                            <v-checkbox v-model="localPermission.addTask" label="Task" class="mb-1"></v-checkbox>
-                            <v-checkbox v-model="localPermission.addReward" label="Reward" class="mb-1"></v-checkbox>
-                            <v-checkbox v-model="localPermission.addNotification" label="Reward" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.readLogs" label="View Logs" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.redeemReward" label="Redeem Rewards" class="mb-1"></v-checkbox>
 
                         </v-col>
                         <v-divider vertical class="full-height"></v-divider>
-                        <v-col cols="5">
+
+                        <v-col>                            
+                            <p class="font-weight-bold" align="center">Add Only Permissions</p>
+                            <v-checkbox v-model="localPermission.readAttendance" label="Add Attendance"
+                                class="mb-0"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addExperience" label="Add Experience"
+                                class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addTask" label="Add Task" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addReward" label="Add Reward" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addBadge" label="Add Badge" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.addNotification" label="Add Notification" class="mb-1"></v-checkbox>
+                        </v-col>
+                        <v-divider vertical class="full-height"></v-divider>
+                        <v-col>
+                            <p class="font-weight-bold" align="center">Delete Only Permissions</p>
+                            <v-checkbox v-model="localPermission.removeExperience" label="Delete Experience"
+                                class="mb-0"></v-checkbox>
+                            <v-checkbox v-model="localPermission.removeTask" label="Delete Task" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.removeBadge" label="Delete Badge" class="mb-1"></v-checkbox>
+                            <v-checkbox v-model="localPermission.removeReward" label="Delete Reward" class="mb-1"></v-checkbox>
+                        </v-col>
+                        <v-divider vertical class="full-height"></v-divider>
+                        <v-col>
                             <p class="font-weight-bold" align="center">Full Permissions</p>
                             <v-checkbox v-model="localPermission.writeAttendance" label="Attendance" class="mb-1"
                                 @change="toggleFullPermission('writeAttendance', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addExperience" label="Experience" class="mb-1"
-                                @change="toggleFullPermission('addExperience', $event)"></v-checkbox>
+                                @change="toggleFullPermission('addExperience', $event)"></v-checkbox> 
                             <v-checkbox v-model="localPermission.changeStudentInfo" label="Student Info" class="mb-1"
                                 @change="toggleFullPermission('changeStudentInfo', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addReward" label="Reward" class="mb-1"
                                 @change="toggleFullPermission('addReward', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addEvent" label="Event" class="mb-1"
                                 @change="toggleFullPermission('addEvent', $event)"></v-checkbox>
-                            <v-checkbox v-model="localPermission.addBadge" label="Event" class="mb-1"
+                            <v-checkbox v-model="localPermission.addBadge" label="Badge" class="mb-1"
                                 @change="toggleFullPermission('addBadge', $event)"></v-checkbox>
                             <v-checkbox v-model="localPermission.addNotification" label="Notification" class="mb-1"></v-checkbox>
                             <v-checkbox v-model="localPermission.changePermissions" label="Alter User Permissions"
@@ -48,7 +65,7 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-actions>
-                <v-btn color="blue darken-1" text @click="closeDialog">Cancel</v-btn>
+                <v-btn color="red darken-1" text @click="closeDialog">Cancel</v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="saveDialog">Save</v-btn>
             </v-card-actions>
@@ -122,10 +139,9 @@ const initialize = () => {
 
 // Watch for changes in the selected user and re-initialize
 watch(() => props.selectedUser, (newUser) => {
-    if (newUser) {
-        initialize();
-    }
+    initialize();
 });
+
 
 // Call initialize when the component is mounted
 onMounted(() => {
@@ -134,6 +150,30 @@ onMounted(() => {
 
 // Function to close the dialog
 const closeDialog = () => {
+    localPermission.value = {
+        permissionsId: null,
+        readAttendance: false,
+        writeAttendance: false,
+        addTask: false,
+        removeTask: false,
+        addExperience: false,
+        removeExperience: false,
+        changePermissions: false,
+        readLogs: false,
+        readStudentInfo: false,
+        changeStudentInfo: false,
+        addReward: false,
+        removeReward: false,
+        redeemReward: false,
+        readStrengths: false,
+        addEvent: false,
+        changeEvent: false,
+        removeEvent: false,
+        addBadge: false,
+        removeBadge: false,
+        addNotification: false,
+        userId: null,
+    };
     emit("update:dialog", false);
 };
 

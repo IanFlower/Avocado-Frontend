@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted,watch  } from "vue";
-import userSerices from "../services/userServices";
+import userServices from "../services/userServices";
 
 import flightPlanTaskService from "../services/flightPlanTaskServices";
 import studentInfoServices from "../services/studentInfoServices";
@@ -12,6 +12,9 @@ import notificationService from "../services/notification.Services";
 import userBadgesServices from "../services/userBadgesServices";
 import documentService from "../services/documentService";
 import PDF from "pdf-vue3";
+import logService from "../services/logServices";
+import Utils from "../config/utils";
+const user = Utils.getStore("user"); // Get the current user from local storage
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -35,7 +38,7 @@ const headers = ref([
 ]);
 
 const showSnackbar = (message, color) => {
-  snackbarMessage.value = message;
+  snackbarMessage.value = message; 
   snackbarColor.value = color === "success" ? "green" : "red";
   snackbar.value = true;
   setTimeout(() => {
@@ -48,7 +51,7 @@ const approveTask = async (approval) => {
   let notificationComment = null
   if (comment.value) {
     notificationComment = ` Comment from approver: ${comment.value}`
-  }
+  } else {notificationComment = ""}
 
   if (approval) {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
@@ -66,6 +69,14 @@ const approveTask = async (approval) => {
     const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
     // Check if user earned badges
     userBadgesServices.checkUserBadges(studentId)
+
+    await logService.createLog({
+    name: "Task Approved",
+    desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
+    date: new Date().toISOString(),
+    email: user.email, 
+    type: "Approval" 
+  }) 
   } else {
     await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

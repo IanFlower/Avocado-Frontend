@@ -1,6 +1,4 @@
 <template>
-  <v-card>
-    <v-card-title> Add Reward </v-card-title>
     <v-container>
       <v-form ref="rewardForm" v-model="formValid" lazy-validation>
         <v-text-field
@@ -44,7 +42,6 @@
         <v-alert v-if="errorMessage" type="error" class="mt-2" dense>{{ errorMessage }}</v-alert>
       </v-form>
     </v-container>
-  </v-card>
 </template>
 
 <script setup>

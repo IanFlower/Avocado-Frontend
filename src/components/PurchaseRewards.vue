@@ -30,7 +30,7 @@
         </span>
       </v-col>
       <v-col cols="3">
-        <v-btn :disabled="!hasEnoughPoints(reward.requiredPoints)" color="primary" block
+        <v-btn class="tertiary-button" :disabled="!hasEnoughPoints(reward.requiredPoints)" block
           @click="confirmPurchase(reward)">
           {{ hasEnoughPoints(reward.requiredPoints) ? 'Purchase' : 'Not Enough Points' }}
         </v-btn>
@@ -45,7 +45,8 @@
           Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn color="success" variant="text" @click="purchaseReward">Yes</v-btn>
+          <v-col><v-btn class="warning-button" variant="text" @click="purchaseReward">Yes</v-btn></v-col>
+          <v-col><v-btn class="secondary float-right" variant="text" @click="dialog = false">No</v-btn></v-col>
         </v-card-actions>
       </v-card>
     </v-dialog>

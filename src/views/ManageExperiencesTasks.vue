@@ -39,7 +39,7 @@ const majors = ref([])
 const types = ref([])
 // Data
 const experiencesTasksData = ref([]);
-const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester + 1 && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
+const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester  && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
 const headers = [
     { title: 'Scheduling Type', align: 'left', key: 'dataType' },
     { title: 'Name', align: 'left', key: 'data.name' },

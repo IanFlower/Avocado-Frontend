@@ -8,6 +8,7 @@ import experienceService from "../services/experiencesServices";
 import experienceMajorService from "../services/experienceMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
+import userBadgesServices from "../services/userBadgesServices";
 
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -54,7 +55,8 @@ const approveExperience = async (approval) => {
     await notificationService.createNotification(notification)
     let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
     let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
-    await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    const studentId = (await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
+    userBadgesServices.checkUserBadges(studentId)
   } else {
     await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {

@@ -2,10 +2,6 @@
 import apiClient from './services.js';
 
 const userBadgesServices = {
-  // Get all userBadges
-  getAll() {
-    return apiClient.get('/studentInfoBadge');
-  },
   checkUserBadges(studentInfo) {
     return apiClient.get(`/studentInfoBadge/checkUserBadges/${studentInfo}`);
   },

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import badgeServices from "../services/badgeServices.js";
 import AddBadge from "../components/AddBadge.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
@@ -16,8 +16,9 @@ const emptyBadge = {
   allCount: 0,
   taskCount: 0,
   experienceCount: 0,
-  badgeSpecificTaskAND: true,
-  badgeSpecificExperiencesAND: true,
+  badgeSpecificTaskAND: false,
+  badgeSpecificExperiencesAND: false,
+  byCount: true
 };
 // Helper refs
 const deletebadgeDialogBox = ref(false);
@@ -34,7 +35,6 @@ const showAddbadgeDialog = ref(false);
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
-  { title: "id", key: "id", align: "start", sortable: true },
   { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Actions", key: "actions", align: "center", sortable: false }
 ]);
@@ -47,13 +47,7 @@ const initialize = async () => {
     if (!response || !response.data || typeof response.data !== "object") {
       throw new Error("Invalid JSON response");
     }
-
-    badges.value = response.data.map(badge => ({
-      id: badge.id,
-      name: badge.name,
-      desc: badge.desc,
-      image: badge.image
-    }));
+    badges.value = response.data
   } catch (error) {
     console.error("Error fetching badges:", error.message);
     badges.value = [];
@@ -158,4 +152,3 @@ onMounted(initialize);
     @delete="refreshDeleteBadges()"
   />
 </template>
-

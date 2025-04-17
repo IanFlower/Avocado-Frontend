@@ -23,19 +23,6 @@ onMounted(async () => {
       await studentInfoServices.getStudentInfoById(Utils.getStore('user').id).catch(() => null)
     )?.data?.[0]?.id;
 
-    userBadgesServices.checkUserBadges(studentId).then((response) => {
-      let earnedBadges = response.data.map((badge) => {
-        return badge.badgeId;
-      });
-      if(earnedBadges.length > 0) {
-        for (const badge of badges.value) {
-          badge.earned = earnedBadges.includes(badge.id);
-        }
-      }
-    }).catch((error) => {
-      console.error('Error checking user badges:', error.message);
-    });
-
     let earnedBadges = (await userBadgesServices.getByStudentId(studentId).catch(() => null))?.data || [];
     earnedBadges = earnedBadges.map((badge) => badge.badgeId);
 
@@ -52,6 +39,20 @@ onMounted(async () => {
         badge.image = null;
       }
     }
+
+    userBadgesServices.checkUserBadges(studentId).then((response) => {
+      let earnedBadges = response.data.map((badge) => {
+        return badge.badgeId;
+      });
+      if(earnedBadges.length > 0) {
+        for (const badge of badges.value) {
+          badge.earned = earnedBadges.includes(badge.id);
+        }
+      }
+    }).catch((error) => {
+      console.error('Error checking user badges:', error.message);
+    });
+    
   } catch (error) {
     console.error('Error fetching badges:', error.message);
   }

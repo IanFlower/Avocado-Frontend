@@ -101,7 +101,7 @@
     <v-card>
       <v-card-title class="headline">Reward Image</v-card-title>
       <v-card-text>
-        <v-img :src="imageUrl" max-width="100%" alt="Image" />
+        <v-img :src="imageUrl" max-width="100%" height="400px" cover class="rounded" />
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -121,6 +121,7 @@ import rewardServices from "../services/rewardServices.js";
 import RewardForm from "../components/RewardForm.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
 import iconService from "../services/iconServices.js";
+import NoImageAvailable from "../assets/No_Image_Found.png";
 
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
@@ -201,25 +202,28 @@ const closeDeleteRewardDialog = () => {
 const openImageDialog = async (item) => {
   if (!item.image) {
     console.warn("No image found for this reward.");
-    imageUrl.value = "default-image-path"; // fallback image
+    imageUrl.value = NoImageAvailable;
     imageDialog.value = true;
     return;
   }
 
   try {
     const response = await iconService.getIconByFile(item.image);
-    const blob = response.data;
-    const url = URL.createObjectURL(blob);
-    imageUrl.value = url;
+
+    if (typeof response.data === "string") {
+      imageUrl.value = `data:image/*;base64,${response.data}`;
+    } else {
+      console.warn("Image data was not a base64 string, using fallback.");
+      imageUrl.value = NoImageAvailable;
+    }
+
     imageDialog.value = true;
   } catch (error) {
     console.error("Failed to load image:", error);
-    imageUrl.value = "default-image-path";
+    imageUrl.value = NoImageAvailable;
     imageDialog.value = true;
   }
 };
-
-
 
 onMounted(initialize);
 </script>

@@ -1,241 +1,234 @@
-<script setup>
-import { onMounted, ref, computed } from 'vue';
-import userService from '../services/userServices.js';
-import studentInfoServices from '../services/studentInfoServices.js';
-import majorService from '../services/majors.Services.js';
-import studentInfoMajorService from '../services/studentInfoMajorServices.js';
-import badgeService from '../services/badgeServices.js';
-import userBadgesServices from '../services/userBadgesServices.js';
-import studentPurchaseService from '../services/studentPurchaseServices.js';
-import iconServices from '../services/iconServices.js';
-import NoImageAvailable from '../assets/No_Image_Found.png';
-
-const props = defineProps({
-  userId: {
-    type: Number,
-    required: true
-  }
-});
-
-const user = ref({
-  fName: '',
-  lName: '',
-  email: '',
-  profilePicture: '',
-  majorId: null,
-});
-
-const earnedPoints = ref(0);
-const currentPoints = ref(0);
-const majorName = ref('');
-const departmentName = ref('');
-const classification = ref('');
-const recentPurchases = ref([]);
-
-const badges = ref([]);
-const currentIndex = ref(0);
-
-const completedBadges = computed(() =>
-  badges.value.filter(badge => badge.earned)
-);
-
-function prevBadge() {
-  if (currentIndex.value > 0) {
-    currentIndex.value--;
-  }
-}
-
-function nextBadge() {
-  if (currentIndex.value < completedBadges.value.length - 1) {
-    currentIndex.value++;
-  }
-}
-
-onMounted(async () => {
-  try {
-    const response = await userService.getUserById(props.userId);
-    if (response.data) user.value = response.data;
-
-    const studentInfo = await studentInfoServices.getStudentInfoById(props.userId);
-    console.log('Student Info Response:', studentInfo);
-    
-    if (studentInfo.data && studentInfo.data.length > 0) {
-      earnedPoints.value = studentInfo.data[0].earnedPoints;
-      currentPoints.value = studentInfo.data[0].currentPoints;
-
-      const semestersTillGraduation = studentInfo.data[0].semestersTillGraduation;
-      classification.value = semestersTillGraduation <= 2 ? "Senior"
-        : semestersTillGraduation <= 4 ? "Junior"
-          : semestersTillGraduation <= 6 ? "Sophomore"
-            : "Freshman";
-
-      const studentInfoId = studentInfo.data[0].id;
-      console.log('Student Info ID:', studentInfoId);
-
-      try {
-        // BADGE FETCHING LOGIC
-        const allBadges = await badgeService.getAllBadges();
-        const earnedRes = await userBadgesServices.getByStudentId(props.userId);
-        console.log('Earned Badges Response:', earnedRes);
-        const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
-
-        badges.value = allBadges.data.map(badge => ({
-          ...badge,
-          earned: earnedBadges.includes(badge.id),
-          image: badge.image || null
-        }));
-
-        for (const badge of badges.value) {
-          if (badge.image) {
-            try {
-              const icon = await iconServices.getIconByFile(badge.image);
-              badge.image = icon.data;
-            } catch (error) {
-              console.error("Error fetching badge image:", error.message);
-              badge.image = null;
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching badges:", error);
-      }
-
-      try {
-        // MAJOR AND DEPARTMENT FETCHING LOGIC
-        const studentInfoMajor = await studentInfoMajorService.getAllByStudentInfoId(studentInfoId);
-        console.log('Student Info Major Response:', studentInfoMajor);
-        
-        const majorNamesSet = new Set();
-        const departmentNamesSet = new Set();
-
-        if (studentInfoMajor.data && studentInfoMajor.data.length > 0) {
-          console.log('Student Info Major Data:', studentInfoMajor.data);
-          for (const major of studentInfoMajor.data) {
-            try {
-              let m = await majorService.getMajorById(major.majorId);
-              console.log('Major Response:', m);
-              if (m.data) {
-                majorNamesSet.add(m.data.name);
-                departmentNamesSet.add(m.data.dept);
-              }
-            } catch (err) {
-              console.error("Error fetching major details:", err);
-            }
-          }
-        } else {
-          console.log('No major data found for studentInfo:', studentInfoId);
-        }
-
-        majorName.value = Array.from(majorNamesSet).join(', ');
-        departmentName.value = Array.from(departmentNamesSet).join(', ');
-        console.log('Final Major Name:', majorName.value);
-        console.log('Final Department Name:', departmentName.value);
-      } catch (error) {
-        console.error("Error fetching majors:", error);
-      }
-    }
-
-    try {
-      const purchaseRes = await studentPurchaseService.getRecentPurchases();
-      if (purchaseRes.data) {
-        recentPurchases.value = purchaseRes.data.slice(0, 3);
-      }
-    } catch (error) {
-      console.error("Error fetching recent purchases:", error);
-    }
-
-  } catch (error) {
-    console.error('Error fetching user or student info:', error);
-  }
-});
-</script>
-
 <template>
-  <v-container fluid class="mt-10">
-    <v-row justify="center">
-      <v-col cols="12" sm="10" class="d-flex justify-center">
-        <v-row align="center" class="w-100">
-          <v-col cols="12" sm="4" class="d-flex justify-center">
-            <v-avatar size="300" class="overflow-hidden">
-              <v-img :src="user.profilePicture || NoImageAvailable" alt="Profile Picture" cover class="elevation-1"
-                lazy-src="https://via.placeholder.com/300" />
-            </v-avatar>
+  <p class="pa-12" style="font-size: 50px;">Reward Management</p>
 
-          </v-col>
+  <v-spacer></v-spacer>
+  <div>
+    <div class="pa-12">
+      <v-row>
+        <v-col cols="6">
+          <v-text-field
+            v-model="searchQuery"
+            label="Search"
+            prepend-inner-icon="mdi-magnify"
+            variant="outlined"
+            hide-details
+            single-line
+            class="ma-2"
+          />
+        </v-col>
+        <v-col cols="6" class="d-flex justify-end">
+          <v-btn class="tertiary" @click="openAddRewardDialog">
+            Add Reward
+          </v-btn>
+        </v-col>
+      </v-row>
 
-          <v-col cols="12" sm="8" class="d-flex flex-column justify-center align-center">
-            <div v-if="user.fName && user.lName" class="text-h3 font-weight-bold text-center">
-              {{ `${user.fName} ${user.lName}` }}
-            </div>
-            <div v-if="user.email" class="text-subtitle-1 font-italic text-center">{{ user.email }}</div>
+      <v-data-table
+        :headers="headers"
+        :items="rewards"
+        :search="searchQuery"
+        item-value="name"
+        class="elevation-1"
+      >
+        <template v-slot:item.name="{ item }">
+          <span>{{ item.name }}</span>
+        </template>
 
-            <div v-if="classification" class="text-h6 font-weight-bold mt-2 text-center">
-              Classification: {{ classification }}
-            </div>
-            <div v-if="majorName" class="text-h6 font-weight-bold mt-2 text-center">Major: {{ majorName }}</div>
-            <div v-if="departmentName" class="text-subtitle-2 text-center">Department: {{ departmentName }}</div>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+        <template v-slot:item.desc="{ item }">
+          <span>{{ item.desc }}</span>
+        </template>
 
-    <v-divider class="my-6"></v-divider>
+        <template v-slot:item.purchaseCount="{ item }">
+          <span>{{ item.purchaseCount }}</span>
+        </template>
 
-    <v-row justify="center" align="center" class="mt-4" no-gutters>
-      <!-- Point Stats -->
-      <v-col cols="12" md="5" class="d-flex justify-center mb-4 mx-2">
-        <v-card class="pa-6 tertiary rounded-xl" max-width="100%" width="100%">
-          <v-card-title class="text-h4 text-center">Point Stats</v-card-title>
-          <v-card-text class="text-center">
-            <v-divider class="my-4"></v-divider>
-            <div class="mt-4">
-              <div class="text-h4 mb-2">Recent Purchases:</div>
-              <div v-if="recentPurchases.length === 0">No recent purchases found.</div>
-              <div v-else>
-                <div v-for="(purchase, index) in recentPurchases" :key="index" class="text-h4">
-                  • {{ purchase.reward?.name || 'Unknown Reward' }}
-                  {{ typeof purchase.reward?.requiredPoints === 'number' ? purchase.reward.requiredPoints : 'N/A' }}
-                  points
-                </div>
-              </div>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
+        <template v-slot:item.requiredPoints="{ item }">
+          <span>{{ item.requiredPoints }}</span>
+        </template>
 
-      <!-- Badges -->
-      <v-col cols="12" md="5" class="d-flex justify-center mb-4 mx-2">
-        <v-card class="pa-6 tertiary rounded-xl" max-width="100%" width="100%">
-          <v-card-title class="text-h4 text-center">Badges Collected</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text class="text-center">
-            <v-row align="center" justify="center" class="d-flex">
-              <v-col cols="2" class="d-flex justify-center">
-                <v-icon @click="prevBadge" :class="{ 'text-disabled': currentIndex === 0 }" style="cursor: pointer;">
-                  mdi-chevron-left
-                </v-icon>
-              </v-col>
+        <template v-slot:item.actions="{ item }">
+          <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
+          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
+          <v-icon
+            v-if="item.image"
+            @click="openImageDialog(item)"
+            style="cursor: pointer;"
+            color="primary"
+          >
+            mdi-image
+          </v-icon>
+        </template>
+      </v-data-table>
+    </div>
+  </div>
 
-              <v-col cols="8" class="d-flex flex-column align-center">
-                <div class="text-h5 mb-2" v-if="completedBadges.length > 0">
-                  {{ completedBadges[currentIndex].name }}
-                </div>
-                <v-img v-if="completedBadges.length > 0"
-                  :src="completedBadges[currentIndex].image ? `data:image/*;base64,${completedBadges[currentIndex].image}` : NoImageAvailable"
-                  height="400px" width="400px" class="rounded" cover></v-img>
-                <div v-else class="text-subtitle-1 mt-2">No completed badges yet.</div>
-              </v-col>
+  <!-- Add Reward Dialog -->
+  <v-dialog v-model="showAddRewardDialog" max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="text-h6">Add Reward</span>
+      </v-card-title>
+      <v-card-text>
+        <RewardForm @rewardAdded="closeAddRewardDialog" @close="closeAddRewardDialog" />
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 
-              <v-col cols="2" class="d-flex justify-center">
-                <v-icon @click="nextBadge" :class="{ 'text-disabled': currentIndex === completedBadges.length - 1 }"
-                  style="cursor: pointer;">
-                  mdi-chevron-right
-                </v-icon>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <!-- Edit Reward Dialog -->
+  <v-dialog v-model="editRewardDialogBox" max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="text-h6">
+          {{ selectedReward ? 'Edit Reward' : 'Loading...' }}
+        </span>
+      </v-card-title>
+      <v-card-text>
+        <RewardForm
+          v-if="selectedReward"
+          :rewardId="selectedReward.id"
+          @rewardUpdated="refreshRewards"
+          @close="closeEditRewardDialog"
+        />
+        <div v-else>
+          <p>Loading reward...</p>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+  <!-- Image Dialog -->
+  <v-dialog v-model="imageDialog" max-width="800px">
+    <v-card>
+      <v-card-title class="headline">Reward Image</v-card-title>
+      <v-card-text>
+        <v-img :src="imageUrl" max-width="100%" height="400px" cover class="rounded" />
+      </v-card-text>
+    </v-card>
+  </v-dialog>
+
+  <DeleteDialog
+    :dialog="deleteDialog"
+    :item="currentItem"
+    :category="category"
+    @update:dialog="deleteDialog = $event"
+    @delete="refreshDeleteRewards()"
+  />
 </template>
+
+<script setup>
+import { ref, onMounted } from "vue";
+import rewardServices from "../services/rewardServices.js";
+import RewardForm from "../components/RewardForm.vue";
+import DeleteDialog from "../components/DeleteDialog.vue";
+import iconService from "../services/iconServices.js";
+import NoImageAvailable from "../assets/No_Image_Found.png";
+
+const editRewardDialogBox = ref(false);
+const deleteRewardDialogBox = ref(false);
+const selectedReward = ref(null);
+const deleteDialog = ref(false);
+const currentItem = ref();
+const category = "reward";
+const rewards = ref([]);
+const searchQuery = ref("");
+const showAddRewardDialog = ref(false);
+const imageDialog = ref(false);
+const imageUrl = ref("");
+
+const headers = ref([
+  { title: "Name", key: "name", align: "start", sortable: true },
+  { title: "Description", key: "desc", align: "center", sortable: false },
+  { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
+  { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
+  { title: "Actions", key: "actions", align: "center", sortable: false },
+]);
+
+const initialize = async () => {
+  try {
+    const response = await rewardServices.getAllRewards();
+    rewards.value = response.data.map((reward) => ({
+      id: reward.id,
+      name: reward.name,
+      image: reward.image,
+      desc: reward.desc,
+      purchaseCount: reward.purchaseCount,
+      requiredPoints: reward.requiredPoints,
+    }));
+  } catch (error) {
+    console.error("Error fetching rewards:", error);
+    rewards.value = [];
+  }
+};
+
+const deleteItem = (item) => {
+  deleteDialog.value = true;
+  currentItem.value = item;
+};
+
+const openAddRewardDialog = () => {
+  showAddRewardDialog.value = true;
+};
+
+const closeAddRewardDialog = () => {
+  showAddRewardDialog.value = false;
+  initialize();
+};
+
+const openEditRewardDialog = (reward) => {
+  selectedReward.value = reward;
+  editRewardDialogBox.value = true;
+};
+
+const refreshRewards = async () => {
+  await initialize();
+  closeEditRewardDialog();
+};
+
+const refreshDeleteRewards = async () => {
+  await initialize();
+  closeDeleteRewardDialog();
+};
+
+const closeEditRewardDialog = () => {
+  editRewardDialogBox.value = false;
+  selectedReward.value = null;
+};
+
+const closeDeleteRewardDialog = () => {
+  deleteRewardDialogBox.value = false;
+  selectedReward.value = null;
+};
+
+const openImageDialog = async (item) => {
+  if (!item.image) {
+    console.warn("No image found for this reward.");
+    imageUrl.value = NoImageAvailable;
+    imageDialog.value = true;
+    return;
+  }
+
+  try {
+    const response = await iconService.getIconByFile(item.image);
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      imageUrl.value = reader.result;
+      imageDialog.value = true;
+    };
+
+    reader.onerror = (error) => {
+      console.error("Error converting blob to base64:", error);
+      imageUrl.value = NoImageAvailable;
+      imageDialog.value = true;
+    };
+
+    reader.readAsDataURL(response.data);
+  } catch (error) {
+    console.error("Failed to load image:", error);
+    imageUrl.value = NoImageAvailable;
+    imageDialog.value = true;
+  }
+};
+
+onMounted(initialize);
+</script>

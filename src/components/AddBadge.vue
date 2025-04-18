@@ -207,8 +207,8 @@ onMounted(async () => {
 
             <!-- Radio Toggle -->
             <v-radio-group v-model="badge.byCount" row class="mt-4 mb-4">
-              <v-radio label="By Count" :value = true />
-              <v-radio label="By Specific Tasks/Experiences" :value= false />
+              <v-radio label="By Count" :value="true" />
+              <v-radio label="By Specific Tasks/Experiences" :value="false" />
             </v-radio-group>
             <v-divider class="mb-2"></v-divider>
             <!-- Count Mode -->
@@ -235,7 +235,10 @@ onMounted(async () => {
             <v-row v-if="!badge.byCount" dense>
               <v-col cols="2">
                 <v-switch color="#004761" :label="badge.badgeSpecificTaskAND ? 'All' : 'Any'"
-                  v-model="badge.badgeSpecificTaskAND" />
+                  v-model="badge.badgeSpecificTaskAND" 
+:false-value="false"
+:true-value="true"
+/>
               </v-col>
               <v-col cols="10">
                 <v-select v-model="taskPrerequisites" :items="tasks" item-value="id" item-title="name" clearable
@@ -244,13 +247,17 @@ onMounted(async () => {
               <v-col cols="12">
                 <v-col cols="6" offset="6">
                 <v-text-field v-model="badge.taskCount" label="# needed to complete" type="number" density="compact"
-                  hide-details variant="outlined" v-if="!badge.badgeSpecificTaskAND" />
+                  hide-details variant="outlined" v-if="!badge.badgeSpecificTaskAND"
+ />
                 </v-col>
               </v-col>
               <v-divider class="mb-2"></v-divider>
               <v-col cols="2">
                 <v-switch color="#004761" :label="badge.badgeSpecificExperiencesAND ? 'All' : 'Any'"
-                  v-model="badge.badgeSpecificExperiencesAND" />
+                  v-model="badge.badgeSpecificExperiencesAND" 
+:false-value="false"
+:true-value="true"
+/>
               </v-col>
               <v-col cols="10">
                 <v-select v-model="experiencePrerequisites" :items="experiences" item-value="id" item-title="name"

@@ -16,7 +16,11 @@ const file = ref({
     taskId: null,
 }); 
 
-const emit = defineEmits(["update:dialog", "update:task"]);
+async function save(){
+
+}
+
+const emit = defineEmits(["update:dialog", "update:task", "update:refresh"]);
 
 const props = defineProps({
     dialog: Boolean,
@@ -116,10 +120,12 @@ async function upload() {
         {
             documentName: documentName.value,
             pending : true,
+            subtext: "Pending"
         }
     )
         .then((res) => {
             console.log("Flight plan task updated successfully:", res.data);
+            emit("update:refresh", true);
             closeDialog();
         })
         .catch((error) => { 

@@ -43,7 +43,7 @@
   </div>
 
   <!-- Dialog Popup for PurchaseRewards -->
-  <v-dialog v-model="dialog" max-width="1000">
+  <v-dialog v-model="dialog" max-width="1500px">
     <v-card>
       <v-card-title class="text-h5 d-flex justify-space-between">
         Redeem Points

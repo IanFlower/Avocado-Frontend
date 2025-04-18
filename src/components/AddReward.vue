@@ -48,9 +48,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import rewardServices from '../services/rewardServices.js';
 import iconServices from '../services/iconServices.js';
+
+const props = defineProps({
+  modelValue: Boolean,
+});
+
+const emit = defineEmits(['update:modelValue', 'rewardAdded']);
 
 const reward = ref({
   name: '',
@@ -67,12 +73,38 @@ const rewardForm = ref(null);
 const errorMessage = ref('');
 const imageError = ref('');
 const formValid = ref(false);
-const emit = defineEmits(['rewardAdded']);
 
 const rules = {
   required: (value) => !!value || 'This field is required',
   number: (value) => (!isNaN(value) && value > 0) || 'Must be a positive number',
 };
+
+function resetForm() {
+  reward.value = {
+    name: '',
+    desc: '',
+    requiredPoints: null,
+  };
+
+  icon.value = {
+    image: null,
+    forBadge: false,
+  };
+
+  formValid.value = false;
+  imageError.value = '';
+  errorMessage.value = '';
+  rewardForm.value?.resetValidation();
+}
+
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal) {
+      resetForm();
+    }
+  }
+);
 
 const validateAndSubmit = async () => {
   const valid = await rewardForm.value.validate();
@@ -105,6 +137,8 @@ const validateAndSubmit = async () => {
     });
 
     emit('rewardAdded');
+    emit('update:modelValue', false); // Close dialog
+    resetForm();
   } catch (error) {
     console.error('Error adding reward:', error);
     errorMessage.value = 'An error occurred while adding the reward.';
@@ -117,5 +151,10 @@ function handleImageUpload(event) {
     icon.value.image = file;
     imageError.value = '';
   }
+}
+
+function cancel() {
+  emit('update:modelValue', false);
+  resetForm();
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="dialogModel" max-width="1000px">
+    <v-dialog v-model="dialogModel" max-width="1000px" @update:model-value="closeDialog">
         <v-card class="d-flex flex-column">
             <v-card-title class="bg-secondary text-center sticky-title">
                 <span>Edit permission - {{ selectedUser?.fullName }}</span>
@@ -142,10 +142,6 @@ watch(() => props.selectedUser, (newUser) => {
     initialize();
 });
 
-watch(() => props.dialog, () => {
-    initialize();
-});
-
 
 // Call initialize when the component is mounted
 onMounted(() => {
@@ -154,6 +150,30 @@ onMounted(() => {
 
 // Function to close the dialog
 const closeDialog = () => {
+    localPermission.value = {
+        permissionsId: null,
+        readAttendance: false,
+        writeAttendance: false,
+        addTask: false,
+        removeTask: false,
+        addExperience: false,
+        removeExperience: false,
+        changePermissions: false,
+        readLogs: false,
+        readStudentInfo: false,
+        changeStudentInfo: false,
+        addReward: false,
+        removeReward: false,
+        redeemReward: false,
+        readStrengths: false,
+        addEvent: false,
+        changeEvent: false,
+        removeEvent: false,
+        addBadge: false,
+        removeBadge: false,
+        addNotification: false,
+        userId: null,
+    };
     emit("update:dialog", false);
 };
 

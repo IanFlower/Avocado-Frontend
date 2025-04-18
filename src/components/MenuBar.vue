@@ -20,7 +20,7 @@ const notifications = ref([]) // List of notifications
 const role = ref(""); // Reactive variable to store user role
 
 const goToProfile = () => {
-    router.push({ name: 'Profile' });
+    router.push({ name: 'Profile', params: { userId: user.value.id } });
 };
 
 // Function to retrieve user data from local storage and fetch additional user info
@@ -185,7 +185,7 @@ onMounted(() => {
                     <v-list-item :to="{ name: 'Calendar' }">
                         <v-btn variant="text">Calender</v-btn>
                     </v-list-item>
-                    <v-list-item :to="{ name: 'Profile' }">
+                    <v-list-item :to="{ name: 'Profile', params: { userId: user.id } }">
                         <v-btn variant="text">Profile</v-btn>
                     </v-list-item>
                     <v-list-item>

@@ -102,10 +102,11 @@ const router = createRouter({
       component: Calendar,
     },
     {
-      path: "/profile",
-      alias: "/profilePage",
+      path: "/profile/:userId",
+      alias: "/profilePage/:userId",
       name: "Profile",
       component: profilePage,
+      props: true,
     },
     {
       path: "/leaderboard",

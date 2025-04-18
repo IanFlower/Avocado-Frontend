@@ -2,15 +2,20 @@
 import { onMounted, ref, computed } from 'vue';
 import userService from '../services/userServices.js';
 import studentInfoServices from '../services/studentInfoServices.js';
-import leaderboardService from '../services/leaderboardServices.js';
 import majorService from '../services/majors.Services.js';
 import studentInfoMajorService from '../services/studentInfoMajorServices.js';
 import badgeService from '../services/badgeServices.js';
 import userBadgesServices from '../services/userBadgesServices.js';
 import studentPurchaseService from '../services/studentPurchaseServices.js';
-import Utils from '../config/utils.js';
 import iconServices from '../services/iconServices.js';
 import NoImageAvailable from '../assets/No_Image_Found.png';
+
+const props = defineProps({
+  userId: {
+    type: Number,
+    required: true
+  }
+});
 
 const user = ref({
   fName: '',
@@ -26,8 +31,6 @@ const majorName = ref('');
 const departmentName = ref('');
 const classification = ref('');
 const recentPurchases = ref([]);
-
-const userId = Utils.getStore('user') ? Utils.getStore('user').id : null;
 
 const badges = ref([]);
 const currentIndex = ref(0);
@@ -49,27 +52,32 @@ function nextBadge() {
 }
 
 onMounted(async () => {
-  if (userId) {
-    try {
-      const response = await userService.getUserById(userId);
-      if (response.data) user.value = response.data;
+  try {
+    const response = await userService.getUserById(props.userId);
+    if (response.data) user.value = response.data;
 
-      const studentInfo = await studentInfoServices.getStudentInfoById(userId);
-      if (studentInfo.data.length > 0) {
-        earnedPoints.value = studentInfo.data[0].earnedPoints;
-        currentPoints.value = studentInfo.data[0].currentPoints;
+    const studentInfo = await studentInfoServices.getStudentInfoById(props.userId);
+    console.log('Student Info Response:', studentInfo);
+    
+    if (studentInfo.data && studentInfo.data.length > 0) {
+      earnedPoints.value = studentInfo.data[0].earnedPoints;
+      currentPoints.value = studentInfo.data[0].currentPoints;
 
-        const semestersTillGraduation = studentInfo.data[0].semestersTillGraduation;
-        classification.value = semestersTillGraduation <= 2 ? "Senior"
-          : semestersTillGraduation <= 4 ? "Junior"
-            : semestersTillGraduation <= 6 ? "Sophomore"
-              : "Freshman";
+      const semestersTillGraduation = studentInfo.data[0].semestersTillGraduation;
+      classification.value = semestersTillGraduation <= 2 ? "Senior"
+        : semestersTillGraduation <= 4 ? "Junior"
+          : semestersTillGraduation <= 6 ? "Sophomore"
+            : "Freshman";
 
-        const studentId = studentInfo.data[0].id;
+      const studentInfoId = studentInfo.data[0].id;
+      console.log('Student Info ID:', studentInfoId);
 
-        // BADGE FETCHING LOGIC
+      try {
+        // BADGE FETCHING LOGIC - Using userId instead of studentInfoId
         const allBadges = await badgeService.getAllBadges();
-        const earnedRes = await userBadgesServices.getByStudentId(studentId);
+        // Use props.userId instead of studentInfoId for badge fetching if this is what the API expects
+        const earnedRes = await userBadgesServices.getByStudentId(props.userId);
+        console.log('Earned Badges Response:', earnedRes);
         const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
 
         badges.value = allBadges.data.map(badge => ({
@@ -89,37 +97,57 @@ onMounted(async () => {
             }
           }
         }
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+        // Continue with other operations even if badge fetching fails
       }
 
-      const studentInfoMajor = await studentInfoMajorService.getAllByStudentInfoId(userId);
-      const majorNamesSet = new Set();
-      const departmentNamesSet = new Set();
+      try {
+        // MAJOR AND DEPARTMENT FETCHING LOGIC
+        const studentInfoMajor = await studentInfoMajorService.getAllByStudentInfoId(studentInfoId);
+        console.log('Student Info Major Response:', studentInfoMajor);
+        
+        const majorNamesSet = new Set();
+        const departmentNamesSet = new Set();
 
-      if (studentInfoMajor.data.length > 0) {
-        for (const major of studentInfoMajor.data) {
-          try {
-            let m = await majorService.getMajorById(major.majorId);
-            if (m.data) {
-              majorNamesSet.add(m.data.name);
-              departmentNamesSet.add(m.data.dept);
+        if (studentInfoMajor.data && studentInfoMajor.data.length > 0) {
+          console.log('Student Info Major Data:', studentInfoMajor.data);
+          for (const major of studentInfoMajor.data) {
+            try {
+              let m = await majorService.getMajorById(major.majorId);
+              console.log('Major Response:', m);
+              if (m.data) {
+                majorNamesSet.add(m.data.name);
+                departmentNamesSet.add(m.data.dept);
+              }
+            } catch (err) {
+              console.error("Error fetching major details:", err);
             }
-          } catch (err) {
-            console.error("Error fetching major details:", err);
           }
+        } else {
+          console.log('No major data found for studentInfo:', studentInfoId);
         }
+
+        majorName.value = Array.from(majorNamesSet).join(', ');
+        departmentName.value = Array.from(departmentNamesSet).join(', ');
+        console.log('Final Major Name:', majorName.value);
+        console.log('Final Department Name:', departmentName.value);
+      } catch (error) {
+        console.error("Error fetching majors:", error);
       }
+    }
 
-      majorName.value = Array.from(majorNamesSet).join(', ');
-      departmentName.value = Array.from(departmentNamesSet).join(', ');
-
-      const purchaseRes = await studentPurchaseService.getRecentPurchases(userId);
+    try {
+      const purchaseRes = await studentPurchaseService.getRecentPurchases();
       if (purchaseRes.data) {
         recentPurchases.value = purchaseRes.data.slice(0, 3);
       }
-
     } catch (error) {
-      console.error('Error fetching user or student info:', error);
+      console.error("Error fetching recent purchases:", error);
     }
+
+  } catch (error) {
+    console.error('Error fetching user or student info:', error);
   }
 });
 </script>

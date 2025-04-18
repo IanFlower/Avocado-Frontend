@@ -49,7 +49,6 @@
         <template v-slot:item.actions="{ item }">
           <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
           <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-          <v-icon @click="openImageDialog(item)" class="teritary" size="large">mdi-image</v-icon>
           <v-icon
             v-if="item.image"
             @click="openImageDialog(item)"

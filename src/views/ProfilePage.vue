@@ -73,9 +73,8 @@ onMounted(async () => {
       console.log('Student Info ID:', studentInfoId);
 
       try {
-        // BADGE FETCHING LOGIC - Using userId instead of studentInfoId
+        // BADGE FETCHING LOGIC
         const allBadges = await badgeService.getAllBadges();
-        // Use props.userId instead of studentInfoId for badge fetching if this is what the API expects
         const earnedRes = await userBadgesServices.getByStudentId(props.userId);
         console.log('Earned Badges Response:', earnedRes);
         const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
@@ -99,7 +98,6 @@ onMounted(async () => {
         }
       } catch (error) {
         console.error("Error fetching badges:", error);
-        // Continue with other operations even if badge fetching fails
       }
 
       try {

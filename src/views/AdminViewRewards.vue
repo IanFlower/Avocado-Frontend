@@ -6,15 +6,8 @@
     <div class="pa-12">
       <v-row>
         <v-col cols="6">
-          <v-text-field
-            v-model="searchQuery"
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            hide-details
-            single-line
-            class="ma-2"
-          />
+          <v-text-field v-model="searchQuery" label="Search" prepend-inner-icon="mdi-magnify" variant="outlined"
+            hide-details single-line class="ma-2" />
         </v-col>
         <v-col cols="6" class="d-flex justify-end">
           <v-btn class="tertiary" @click="openAddRewardDialog">
@@ -23,13 +16,7 @@
         </v-col>
       </v-row>
 
-      <v-data-table
-        :headers="headers"
-        :items="rewards"
-        :search="searchQuery"
-        item-value="name"
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="rewards" :search="searchQuery" item-value="name" class="elevation-1">
         <template v-slot:item.name="{ item }">
           <span>{{ item.name }}</span>
         </template>
@@ -47,16 +34,9 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
-          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-          <v-icon
-            v-if="item.image"
-            @click="openImageDialog(item)"
-            style="cursor: pointer;"
-            color="primary"
-          >
-            mdi-image
-          </v-icon>
+          <v-icon class="me-2 teritary-button" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
+          <v-icon class="me-2" color="#A30D11" size="large" @click="deleteItem(item)">mdi-delete</v-icon>
+          <v-icon v-if="item.image" class="me-2" size="large" @click="openImageDialog(item)">mdi-image</v-icon>
         </template>
       </v-data-table>
     </div>
@@ -83,12 +63,8 @@
         </span>
       </v-card-title>
       <v-card-text>
-        <RewardForm
-          v-if="selectedReward"
-          :rewardId="selectedReward.id"
-          @rewardUpdated="refreshRewards"
-          @close="closeEditRewardDialog"
-        />
+        <RewardForm v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
+          @close="closeEditRewardDialog" />
         <div v-else>
           <p>Loading reward...</p>
         </div>
@@ -106,13 +82,8 @@
     </v-card>
   </v-dialog>
 
-  <DeleteDialog
-    :dialog="deleteDialog"
-    :item="currentItem"
-    :category="category"
-    @update:dialog="deleteDialog = $event"
-    @delete="refreshDeleteRewards()"
-  />
+  <DeleteDialog :dialog="deleteDialog" :item="currentItem" :category="category" @update:dialog="deleteDialog = $event"
+    @delete="refreshDeleteRewards()" />
 </template>
 
 <script setup>

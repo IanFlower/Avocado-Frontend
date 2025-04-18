@@ -20,8 +20,9 @@ import AddReward from "./components/AddReward.vue";
 import EditReward from "./components/EditReward.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
-import ManageUsers from "./views/ManageUsers.vue"
+import ManageUsers from "./views/ManageUsers.vue";
 import AdminBadges from "./views/AdminBadges.vue";
+import profilePage from "./views/ProfilePage.vue";
 import Logs from "./views/Logs.vue";
 
 const router = createRouter({
@@ -99,6 +100,13 @@ const router = createRouter({
       alias: "/calendarPage",
       name: "Calendar",
       component: Calendar,
+    },
+    {
+      path: "/profile/:userId",
+      alias: "/profilePage/:userId",
+      name: "Profile",
+      component: profilePage,
+      props: true,
     },
     {
       path: "/leaderboard",

@@ -37,20 +37,25 @@
       </v-col>
     </v-row>
 
-    <!-- Confirm Purchase Dialog -->
-    <v-dialog v-model="dialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h5">Confirm Purchase</v-card-title>
-        <v-card-text>
-          Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
-        </v-card-text>
-        <v-card-actions class="justify-end">
-          <v-col><v-btn class="red darken-1" variant="text" @click="dialog = false">No</v-btn></v-col>
+<!-- Confirm Purchase Dialog -->
+<v-dialog v-model="dialog" max-width="400">
+  <v-card>
+    <v-card-title class="text-h5 justify-center">Confirm Purchase</v-card-title>
+    <v-card-text>
+      Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
+    </v-card-text>
+    <v-card-actions class="justify-center">
+      <v-col>
+        <v-btn color="red darken-1" variant="text" @click="dialog = false">No</v-btn>
+      </v-col>
 
-          <v-col><v-btn class="blue darken-1" variant="text" @click="purchaseReward">Yes</v-btn></v-col>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-col>
+        <v-btn color="blue darken-1" variant="text" @click="purchaseReward">Yes</v-btn>
+      </v-col>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+
   </v-container>
 </template>
 

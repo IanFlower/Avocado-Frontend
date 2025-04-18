@@ -44,12 +44,12 @@
     <v-card-text>
       Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
     </v-card-text>
-    <v-card-actions class="justify-center">
-      <v-col>
+    <v-card-actions>
+      <v-col align="Start">
         <v-btn color="red darken-1" variant="text" @click="dialog = false">No</v-btn>
       </v-col>
 
-      <v-col>
+      <v-col align="End">
         <v-btn color="blue darken-1" variant="text" @click="purchaseReward">Yes</v-btn>
       </v-col>
     </v-card-actions>

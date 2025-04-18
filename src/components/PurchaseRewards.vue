@@ -27,27 +27,32 @@
           {{ studentInfo.length > 0 ? studentInfo[0].currentPoints : 'Loading...' }}
         </span>
       </v-col>
-      <v-col cols="2">
-        <v-btn :disabled="!hasEnoughPoints(reward.requiredPoints)" color="primary" block
+      <v-col cols="3">
+        <v-btn class="tertiary-button" :disabled="!hasEnoughPoints(reward.requiredPoints)" block
           @click="confirmPurchase(reward)">
           {{ hasEnoughPoints(reward.requiredPoints) ? 'Purchase' : 'Not Enough Points' }}
         </v-btn>
       </v-col>
     </v-row>
+    
+<!-- Confirm Purchase Dialog -->
+<v-dialog v-model="dialog" max-width="400">
+  <v-card>
+    <v-card-title class="text-h5 justify-center">Confirm Purchase</v-card-title>
+    <v-card-text>
+      Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
+    </v-card-text>
+    <v-card-actions>
+      <v-col align="Start">
+        <v-btn color="red darken-1" variant="text" @click="dialog = false">No</v-btn>
+      </v-col>
 
-    <!-- Confirm Purchase Dialog -->
-    <v-dialog v-model="dialog" max-width="400">
-      <v-card>
-        <v-card-title class="text-h5">Confirm Purchase</v-card-title>
-        <v-card-text>
-          Would you like to purchase <strong>{{ selectedReward?.name }}</strong>?
-        </v-card-text>
-        <v-card-actions class="justify-center">
-          <v-btn color="success" variant="text" @click="purchaseReward">Yes</v-btn>
-          <v-btn color="success" variant="text" @click="close">No</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-col align="End">
+        <v-btn color="blue darken-1" variant="text" @click="purchaseReward">Yes</v-btn>
+      </v-col>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
   </v-container>
 </template>
 

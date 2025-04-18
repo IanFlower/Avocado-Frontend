@@ -12,6 +12,7 @@ import experienceMajorService from '../services/experienceMajorServices';
 import taskMajorService from '../services/taskMajorServices';
 import taskStrengthService from '../services/taskStrengthService';
 import experienceStrengthService from '../services/experienceStrengthService';
+import prerequisiteService from '../services/prerequisiteServices';
 
 // Valication
 const required = (label) => (value) => !!value || `The ${label} field is required.`;
@@ -31,10 +32,11 @@ const tableOverLayRefs = ref([{
 // Constants
 const semesters = [
     1, 2, 3, 4, 5, 6, 7, 8]
-
+const priority = [1, 2, 3]
 const categories = ref([])
 const cliftonStrengths = ref([])
 const majors = ref([])
+const allTasks = ref([]);
 
 const types = ref([])
 // Data
@@ -96,11 +98,21 @@ async function editSaveItem() {
             console.log("An error occurred deleting experience major");
         })
         // Create new bridge table records for experienceId and majors
-        tableOverLayRefs.value.item.majors.forEach((item) => {
-            experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log("An error occurred creating experience major");
+        if (tableOverLayRefs.value.item.majors[0] == 0) {
+            majors.value.forEach((major) => {
+                if (major.id != 0) {
+                    experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: major.id }).catch((error) => {
+                        console.log("An error occurred creating experience major");
+                    })
+                }
             })
-        })
+        } else {
+            tableOverLayRefs.value.item.majors.forEach((item) => {
+                experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
+                    console.log("An error occurred creating experience major");
+                })
+            })
+        }
         // Delete existing bridge table records for experienceId
         await experienceStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log("An error occurred deleting experience strength");
@@ -118,11 +130,21 @@ async function editSaveItem() {
             console.log("An error occurred deleting task major");
         })
         // Create new bridge table records for experienceId and majors
-        tableOverLayRefs.value.item.majors.forEach((item) => {
-            taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log("An error occurred creating task major");
+        if (tableOverLayRefs.value.item.majors[0] == 0) {
+            majors.value.forEach((major) => {
+                if (major.id != 0) {
+                    taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: major.id }).catch((error) => {
+                        console.log("An error occurred creating task major");   
+                    })
+                }
             })
-        })
+        } else {
+            tableOverLayRefs.value.item.majors.forEach((item) => {
+                taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
+                    console.log("An error occurred creating task major");
+                })
+            })
+        }
         // Delete existing bridge table records for experienceId
         await taskStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log("An error occurred deleting task strength");
@@ -133,6 +155,20 @@ async function editSaveItem() {
                 console.log("An error occurred creating task strength");
             })
         })
+
+         // Delete existing bridge table records for task-prerequisite
+        await prerequisiteService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
+            console.log("An error occurred deleting task prerequisites");
+        });
+        // Create new task-prerequisite records
+        tableOverLayRefs.value.item.data.prerequisites.forEach((item) => {
+            prerequisiteService.create({
+                taskId: tableOverLayRefs.value.item.data.id,
+                prerequisiteId: item.id
+            }).catch((error) => {
+                console.log("An error occurred creating task prerequisite");
+            });
+        });
     }
 
     // Close dialog
@@ -160,6 +196,7 @@ onMounted(async () => {
     }).catch((error) => { console.log("An error occurred fetching clifton strengths") })
     majorService.getAllMajors().then((data) => {
         majors.value = data.data
+        majors.value.unshift({name: "All Majors", id: 0})
     }).catch((error) => { console.log("An error occurred fetching majors") })
     TypeService.getAllTypes().then((data) => {
         types.value = data.data
@@ -200,6 +237,7 @@ onMounted(async () => {
         console.log("An error occurred fetching experiences");
     })
     await taskService.getAll().then((data) => {
+        allTasks.value = data.data;
         data.data.forEach(async (item) => {
             let arrMajors = []
             let arrStrengths = []
@@ -215,6 +253,7 @@ onMounted(async () => {
             }).catch((error) => {
                 console.log("An error occurred fetching task strengths");
             })
+            item.prerequisites = item.prerequisites || [];
             experiencesTasksData.value.push({
                 dataType: "Task",
                 data: item,
@@ -271,14 +310,31 @@ onMounted(async () => {
                             v-model="tableOverLayRefs.item.data.desc"></v-textarea> <!--  Description-->
                         <v-text-field label="Points*" :rules="[required('Points')]"
                             v-model="tableOverLayRefs.item.data.points"></v-text-field> <!--  Points-->
-                        <v-text-field label="Type" :rules="[required('Type')]"
-                            v-model="tableOverLayRefs.item.data.type"></v-text-field> <!--  Type -->
                         <!-- <v-select label="Category" :items="categories" item-title="name" :rules="[required('Category')]"
                             v-model="tableOverLayRefs.item.data.category" clearable></v-select>
                          Category -->
                         <v-select label="Semesters Till Graduation*" :rules="[required('Semesters Till Graduation')]"
                             v-model="tableOverLayRefs.item.data.semestersFromGraduation" :items="semesters"></v-select>
                         <!--  Semester Till graduation out of 8 -->
+                        <v-select label="Priority*" :rules="[required('Priority')]"
+                            v-model="tableOverLayRefs.item.data.priority" :items="priority"></v-select>
+                        <!-- Priority -->
+                        <v-select
+                            v-if="tableOverLayRefs.item.dataType == 'Task'"
+                            label="Prerequisites"
+                            hint="Start typing to search for specific tasks"
+                            persistent-hint
+                            v-model="tableOverLayRefs.item.data.prerequisites"
+                            :items="allTasks"
+                            item-value="id"
+                            item-title="name"
+                            clearable
+                            multiple
+                            chips
+                            return-object
+                        ></v-select>
+
+                        <!-- Prerequisites -->
                         <v-checkbox label="Reflection Required"
                             v-model="tableOverLayRefs.item.data.reflectionRequired"></v-checkbox>
                         <!--  Reflection Required-->

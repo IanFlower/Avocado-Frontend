@@ -16,12 +16,12 @@ import UserInfoDialog from "./components/UserInfoDialog.vue";
 import Approval from "./views/approval.vue";
 import RequestExperience from "./views/RequestExperience.vue";
 import AdminShop from "./views/AdminShop.vue";
-import AddReward from "./components/AddReward.vue";
-import EditReward from "./components/EditReward.vue";
+import RewardForm from "./components/RewardForm.vue";
 import AdminViewRewards from "./views/AdminViewRewards.vue";
 import PurchaseRewards from "./components/PurchaseRewards.vue";
-import ManageUsers from "./views/ManageUsers.vue"
+import ManageUsers from "./views/ManageUsers.vue";
 import AdminBadges from "./views/AdminBadges.vue";
+import profilePage from "./views/ProfilePage.vue";
 import Logs from "./views/Logs.vue";
 
 const router = createRouter({
@@ -101,6 +101,13 @@ const router = createRouter({
       component: Calendar,
     },
     {
+      path: "/profile/:userId",
+      alias: "/profilePage/:userId",
+      name: "Profile",
+      component: profilePage,
+      props: true,
+    },
+    {
       path: "/leaderboard",
       alias: "/leaderboardPage",
       name: "LeaderBoard",
@@ -144,16 +151,10 @@ const router = createRouter({
       component: AdminViewRewards,
     },
     {
-      path: "/AddReward",
-      alias: "/AddReward",
-      name: "AddReward",
-      component: AddReward,
-    },
-    {
-      path: "/EditReward",
-      alias: "/EditReward",
-      name: "EditReward",
-      component: EditReward,
+      path: "/Reward",
+      alias: "/reward",
+      name: "Reward",
+      component: RewardForm,
     },
     {
       path: "/Logs",

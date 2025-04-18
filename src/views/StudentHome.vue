@@ -85,7 +85,22 @@
         </v-row>
 
         <!-- Experiences Section -->
-        <h2 class="text-center my-3">Experiences</h2>
+        <v-row align="center">
+          <!-- Left spacer -->
+          <v-col cols="4"></v-col>
+
+          <!-- Centered title -->
+          <v-col cols="4" class="d-flex justify-center">
+            <h2 class="my-3">Experiences</h2>
+          </v-col>
+
+          <!-- Right button -->
+          <v-col cols="4" class="d-flex justify-end" >
+            <v-btn class="font-italic" variant="text" to="RequestExperience">Request Experiences</v-btn>
+          </v-col>
+        </v-row>
+        
+        
         <v-row no-gutters>
           <v-list class="overflow-y-auto w-100" max-height="250">
             <v-card v-for="ex in experiences" :key="ex"
@@ -169,8 +184,13 @@
         </v-row>
       </v-col>
     </v-row>
-    <TaskDialog :dialog="showTask" :item="currentTask" :refresh="refresh" @update:dialog="showTask = $event"
-      @update:task="changeTask($event)" />
+    <TaskDialog 
+      :dialog="showTask"
+      :item="currentTask"
+      :refresh="refresh"
+      @update:dialog="showTask = $event"
+      @update:task="changeTask($event)"
+      @update:refresh="getTasks()"/>
 
     <ExperienceDialog :dialog="showExperience" :item="currentExperience" :refresh="refresh"
       @update:dialog="showExperience = $event" @update:experience="changeExperience()" />

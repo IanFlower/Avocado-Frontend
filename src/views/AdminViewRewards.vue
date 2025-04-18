@@ -34,13 +34,9 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-icon class="me-2 teritary" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
-          <v-icon @click="deleteItem(item)" color="#A30D11" size="large">mdi-delete</v-icon>
-
-          <!-- Image Icon to trigger image dialog -->
-          <v-icon v-if="item.image" @click="openImageDialog(item)" style="cursor: pointer;" color="primary">
-            mdi-image
-          </v-icon>
+          <v-icon class="me-2 teritary-button" size="large" @click="openEditRewardDialog(item)">mdi-pencil</v-icon>
+          <v-icon class="me-2" color="#A30D11" size="large" @click="deleteItem(item)">mdi-delete</v-icon>
+          <v-icon v-if="item.image" class="me-2" size="large" @click="openImageDialog(item)">mdi-image</v-icon>
         </template>
       </v-data-table>
     </div>
@@ -49,23 +45,26 @@
   <!-- Add Reward Dialog -->
   <v-dialog v-model="showAddRewardDialog" max-width="500px">
     <v-card>
-      <v-card-title>Add Reward</v-card-title>
+      <v-card-title>
+        <span class="text-h6">Add Reward</span>
+      </v-card-title>
       <v-card-text>
-        <AddReward @rewardAdded="closeAddRewardDialog" />
+        <RewardForm @rewardAdded="closeAddRewardDialog" @close="closeAddRewardDialog" />
       </v-card-text>
     </v-card>
   </v-dialog>
 
-  
-
   <!-- Edit Reward Dialog -->
   <v-dialog v-model="editRewardDialogBox" max-width="500px">
     <v-card>
-      <v-card-title>Edit Reward</v-card-title>
+      <v-card-title>
+        <span class="text-h6">
+          {{ selectedReward ? 'Edit Reward' : 'Loading...' }}
+        </span>
+      </v-card-title>
       <v-card-text>
-        <EditReward v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
+        <RewardForm v-if="selectedReward" :rewardId="selectedReward.id" @rewardUpdated="refreshRewards"
           @close="closeEditRewardDialog" />
-
         <div v-else>
           <p>Loading reward...</p>
         </div>
@@ -78,27 +77,22 @@
     <v-card>
       <v-card-title class="headline">Reward Image</v-card-title>
       <v-card-text>
-        <v-img :src="imageUrl" max-width="100%" alt="Image" />
+        <v-img :src="imageUrl" max-width="100%" height="400px" cover class="rounded" />
       </v-card-text>
     </v-card>
   </v-dialog>
-  
-  <DeleteDialog 
-    :dialog="deleteDialog"
-    :item="currentItem" 
-    :category="category"
-    @update:dialog="deleteDialog = $event"
-    @delete="refreshDeleteRewards()"
-  />
 
+  <DeleteDialog :dialog="deleteDialog" :item="currentItem" :category="category" @update:dialog="deleteDialog = $event"
+    @delete="refreshDeleteRewards()" />
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import rewardServices from "../services/rewardServices.js";
-import AddReward from "../components/AddReward.vue";
-import EditReward from "../components/EditReward.vue";
+import RewardForm from "../components/RewardForm.vue";
 import DeleteDialog from "../components/DeleteDialog.vue";
+import iconService from "../services/iconServices.js";
+import NoImageAvailable from "../assets/No_Image_Found.png";
 
 const editRewardDialogBox = ref(false);
 const deleteRewardDialogBox = ref(false);
@@ -110,36 +104,33 @@ const rewards = ref([]);
 const searchQuery = ref("");
 const showAddRewardDialog = ref(false);
 const imageDialog = ref(false);
-const imageUrl = ref(""); 
+const imageUrl = ref("");
 
 const headers = ref([
   { title: "Name", key: "name", align: "start", sortable: true },
   { title: "Description", key: "desc", align: "center", sortable: false },
   { title: "Purchase Count", key: "purchaseCount", align: "center", sortable: true },
   { title: "Required Points", key: "requiredPoints", align: "center", sortable: true },
-  { title: "Actions", key: "actions", align: "center", sortable: false }
+  { title: "Actions", key: "actions", align: "center", sortable: false },
 ]);
 
 const initialize = async () => {
   try {
     const response = await rewardServices.getAllRewards();
-    console.log("Fetched rewards:", response.data);
-
-    rewards.value = [...response.data.map(reward => ({
+    rewards.value = response.data.map((reward) => ({
       id: reward.id,
       name: reward.name,
       image: reward.image,
       desc: reward.desc,
       purchaseCount: reward.purchaseCount,
       requiredPoints: reward.requiredPoints,
-    }))];
+    }));
   } catch (error) {
     console.error("Error fetching rewards:", error);
     rewards.value = [];
   }
 };
 
-// Open and Close functions for dialogs
 const deleteItem = (item) => {
   deleteDialog.value = true;
   currentItem.value = item;
@@ -160,13 +151,11 @@ const openEditRewardDialog = (reward) => {
 };
 
 const refreshRewards = async () => {
-  console.log("Refreshing rewards...");
   await initialize();
   closeEditRewardDialog();
 };
 
 const refreshDeleteRewards = async () => {
-  console.log("Refreshing rewards...");
   await initialize();
   closeDeleteRewardDialog();
 };
@@ -181,14 +170,30 @@ const closeDeleteRewardDialog = () => {
   selectedReward.value = null;
 };
 
-// Image Dialog functions
-const openImageDialog = (item) => {
-  imageUrl.value = item.image || "default-image-path"; 
-  imageDialog.value = true;
-};
+const openImageDialog = async (item) => {
+  if (!item.image) {
+    console.warn("No image found for this reward.");
+    imageUrl.value = NoImageAvailable;
+    imageDialog.value = true;
+    return;
+  }
 
-const closeImageDialog = () => {
-  imageDialog.value = false;
+  try {
+    const response = await iconService.getIconByFile(item.image);
+
+    if (typeof response.data === "string") {
+      imageUrl.value = `data:image/*;base64,${response.data}`;
+    } else {
+      console.warn("Image data was not a base64 string, using fallback.");
+      imageUrl.value = NoImageAvailable;
+    }
+
+    imageDialog.value = true;
+  } catch (error) {
+    console.error("Failed to load image:", error);
+    imageUrl.value = NoImageAvailable;
+    imageDialog.value = true;
+  }
 };
 
 onMounted(initialize);

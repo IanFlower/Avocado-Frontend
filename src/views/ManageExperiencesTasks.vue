@@ -96,11 +96,21 @@ async function editSaveItem() {
             console.log("An error occurred deleting experience major");
         })
         // Create new bridge table records for experienceId and majors
-        tableOverLayRefs.value.item.majors.forEach((item) => {
-            experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log("An error occurred creating experience major");
+        if (tableOverLayRefs.value.item.majors[0] == 0) {
+            majors.value.forEach((major) => {
+                if (major.id != 0) {
+                    experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: major.id }).catch((error) => {
+                        console.log("An error occurred creating experience major");
+                    })
+                }
             })
-        })
+        } else {
+            tableOverLayRefs.value.item.majors.forEach((item) => {
+                experienceMajorService.create({ experienceId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
+                    console.log("An error occurred creating experience major");
+                })
+            })
+        }
         // Delete existing bridge table records for experienceId
         await experienceStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log("An error occurred deleting experience strength");
@@ -118,11 +128,21 @@ async function editSaveItem() {
             console.log("An error occurred deleting task major");
         })
         // Create new bridge table records for experienceId and majors
-        tableOverLayRefs.value.item.majors.forEach((item) => {
-            taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
-                console.log("An error occurred creating task major");
+        if (tableOverLayRefs.value.item.majors[0] == 0) {
+            majors.value.forEach((major) => {
+                if (major.id != 0) {
+                    taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: major.id }).catch((error) => {
+                        console.log("An error occurred creating task major");   
+                    })
+                }
             })
-        })
+        } else {
+            tableOverLayRefs.value.item.majors.forEach((item) => {
+                taskMajorService.create({ taskId: tableOverLayRefs.value.item.data.id, majorId: item }).catch((error) => {
+                    console.log("An error occurred creating task major");
+                })
+            })
+        }
         // Delete existing bridge table records for experienceId
         await taskStrengthService.delete(tableOverLayRefs.value.item.data.id).catch((error) => {
             console.log("An error occurred deleting task strength");
@@ -160,6 +180,7 @@ onMounted(async () => {
     }).catch((error) => { console.log("An error occurred fetching clifton strengths") })
     majorService.getAllMajors().then((data) => {
         majors.value = data.data
+        majors.value.unshift({name: "All Majors", id: 0})
     }).catch((error) => { console.log("An error occurred fetching majors") })
     TypeService.getAllTypes().then((data) => {
         types.value = data.data

@@ -194,7 +194,8 @@
       :item="currentTask"
       :refresh="refresh"
       @update:dialog="showTask = $event"
-      @update:task="changeTask($event)"/>
+      @update:task="changeTask($event)"
+      @update:refresh="getTasks()"/>
 
     <ExperienceDialog 
       :dialog="showExperience"

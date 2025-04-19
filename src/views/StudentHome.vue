@@ -62,6 +62,25 @@
           </v-card>
         </v-row>
 
+        <!-- Progress Bar-->
+        <v-row class="mt-4 d-flex justify-center">
+          <v-col cols="11">
+            <div class="d-flex justify-end mb-1">
+              <span class="text-subtitle-2 font-weight-medium">
+                {{ completedCount }} / {{ totalCount }} Completed
+              </span>
+            </div>
+            <v-progress-linear
+              :model-value="completionPercentage"
+              :buffer-value="100"
+              height="24"
+              class="accent-button"
+              rounded
+              stream
+            ></v-progress-linear>
+          </v-col>
+        </v-row>
+
         <!-- Tasks Section-->
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
@@ -123,7 +142,7 @@
       </v-col>
 
 
-
+      <!-- Points and Student Shop Action-->
       <v-col cols="3" align="center" class="pa-0">
         <v-row>
           <v-col align="center">
@@ -189,25 +208,27 @@
 
 
     </v-row>
+
     <TaskDialog 
       :dialog="showTask"
       :item="currentTask"
       :refresh="refresh"
       @update:dialog="showTask = $event"
       @update:task="changeTask($event)"
-      @update:refresh="getTasks()"/>
+      @update:refresh="refreshAll()"/>
 
     <ExperienceDialog 
       :dialog="showExperience"
       :item="currentExperience"
       :refresh="refresh"
       @update:dialog="showExperience = $event"
-      @update:experience="changeExperience()"/>
+      @update:experience="changeExperience()"
+      @update:refresh="refreshAll()"/>
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref,computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
@@ -248,6 +269,18 @@ onMounted( async () => {
   getLeaderboardinfo();
 })
 
+const completedCount = computed(() => {
+  const taskCompleted = tasks.value.filter(t => t.flightPlanTask.completed).length;
+  const experienceCompleted = experiences.value.filter(ex => ex.flightPlanExperience.completed).length;
+  return taskCompleted + experienceCompleted;
+});
+
+const totalCount = computed(() => tasks.value.length + experiences.value.length);
+
+const completionPercentage = computed(() => {
+  if (totalCount.value === 0) return 0;
+  return parseFloat(((completedCount.value / totalCount.value) * 100).toFixed(2));
+});
 
 function getLeaderboardinfo(){
   leaderboardService.getSortedStudentsByClass(userId).then((response) => {
@@ -277,15 +310,39 @@ function getMedal(index) {
   return null;
 }
 
+function refreshAll() {
+  getTasks();
+  getExperiences();
+}
+
 function changeTask(task) {
   currentTask.value = task;
   refresh.value = true;
   showTask.value = true;
+  const index = tasks.value.findIndex(t => t.task.id === updatedTask.task.id);
+  if (index !== -1) {
+    tasks.value[index] = updatedTask;
+    tasks.value = [...tasks.value]; // force reactivity
+  }
+  currentTask.value = updatedTask;
+  showTask.value = true;
+
+
 }
 
 
 function changeExperience() {
   getExperiences()
+  const index = experiences.value.findIndex(
+    (ex) => ex.Experience.id === updatedExperience.Experience.id
+  );
+  if (index !== -1) {
+    experiences.value[index] = updatedExperience;
+    experiences.value = [...experiences.value]; 
+  }
+  currentExperience.value = updatedExperience;
+  showExperience.value = true;
+
 }
 
 function getUpcomingEvents() {
@@ -416,6 +473,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 .bg-gold {
   background-color: #ffd700; 
 }

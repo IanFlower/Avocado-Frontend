@@ -41,13 +41,8 @@ const allTasks = ref([]);
 const types = ref([])
 // Data
 const experiencesTasksData = ref([]);
-const tableData = computed(() =>
-  experiencesTasksData.value
-  .filter(item =>
-    item.data.semestersFromGraduation === tableOverLayRefs.value.selectedSemester + 1 
-  )
-  .sort((a, b) => a.dataType.localeCompare(b.dataType))
-);
+
+const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester  && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
 
 const headers = [
     { title: 'Scheduling Type', align: 'left', key: 'dataType' },

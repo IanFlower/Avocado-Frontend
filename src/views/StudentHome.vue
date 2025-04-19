@@ -156,14 +156,14 @@
         </v-row>
 
         <!-- Latest Badge (Bottom) -->
-        <v-row>
+         <v-row>
           <v-col align="center">
-            <h4>Latest Badge:</h4>
+            <h4 class="text-h5 font-weight-bold">Latest Badge:</h4>
             <div v-if="latestBadge">
-              <div class="text-subtitle-1 font-weight-bold mb-2">
+              <div class="text-h6 font-weight-bold mb-2">
                 {{ latestBadge.name }}
               </div>
-              <v-img height="110px" width="110px" :src="latestBadge.imageUrl"
+              <v-img height="180px" width="180px" :src="latestBadge.imageUrl"
                 :alt="latestBadge.name" class="clickable-image hover-effect" @click="goToBadges" />
             </div>
             <div v-else class="text-center">

@@ -216,7 +216,7 @@ onMounted(() => {
         <v-card-text>
 
             <PDF v-if="document" :src="file" style="height: 600px;" />
-            <token v-if="selectedTask.link">Document Link:  {{ ` `+ selectedTask.link }}</token>
+            <a v-if="selectedTask.link" :href="selectedTask.link" target="_blank" >Document Link:  {{ ` `+ selectedTask.link }}</a>
 
 
         </v-card-text>
@@ -253,5 +253,8 @@ onMounted(() => {
 }
 .v-divider.full-height {
   height: 100%;
+}
+a {
+  color: #004761;
 }
 </style>

@@ -41,7 +41,7 @@ function initialize() {
     prerequisite.value = null;
     docRequired.value = false;
     docRequired.value = item.value?.task?.documentRequired || false;
-    link.value = item.value?.task?.link || null;
+    link.value = item.value?.flightPlanTask?.link || null;
     // item.value = props.item;
     getPrerequisites();
     try {

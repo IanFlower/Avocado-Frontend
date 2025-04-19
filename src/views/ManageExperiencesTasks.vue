@@ -161,14 +161,16 @@ async function editSaveItem() {
             console.log("An error occurred deleting task prerequisites");
         });
         // Create new task-prerequisite records
-        tableOverLayRefs.value.item.data.prerequisites.forEach((item) => {
-            prerequisiteService.create({
-                taskId: tableOverLayRefs.value.item.data.id,
-                prerequisiteId: item.id
-            }).catch((error) => {
-                console.log("An error occurred creating task prerequisite");
+        if (tableOverLayRefs.value.item.data.prerequisites != undefined) {
+            tableOverLayRefs.value.item.data.prerequisites.forEach((item) => {
+                prerequisiteService.create({
+                    taskId: tableOverLayRefs.value.item.data.id,
+                    prerequisiteId: item.id
+                }).catch((error) => {
+                    console.log("An error occurred creating task prerequisite");
+                });
             });
-        });
+        }
     }
 
     // Close dialog

@@ -1,6 +1,6 @@
 <script setup>
 import PrerequisiteServices from "../services/prerequisiteServices";
-import documentService from "../services/documentService"; 
+import documentService from "../services/documentService";
 import studentInfoServices from "../services/studentInfoServices";
 import { ref, computed, onMounted, watch } from "vue";
 import Utils from "../config/utils";
@@ -8,17 +8,11 @@ import flightPlanTaskService from "../services/flightPlanTaskServices";
 
 const user = Utils.getStore("user");
 const prerequisite = ref(null);
+const link = ref(null);
 const documentName = ref(null);
 
 const docRequired = ref(false);
-const file = ref({
-    file: null, 
-    taskId: null,
-}); 
-
-async function save(){
-
-}
+const file = ref(null);
 
 const emit = defineEmits(["update:dialog", "update:task", "update:refresh"]);
 
@@ -47,6 +41,7 @@ function initialize() {
     prerequisite.value = null;
     docRequired.value = false;
     docRequired.value = item.value?.task?.documentRequired || false;
+    link.value = item.value?.task?.link || null;
     // item.value = props.item;
     getPrerequisites();
     try {
@@ -57,7 +52,7 @@ function initialize() {
 
 }
 
-watch(() => props.item, (currItem) => {   
+watch(() => props.item, (currItem) => {
     if (currItem) {
         initialize();
     }
@@ -107,10 +102,13 @@ async function upload() {
     };
 
     try {
-        const response = await documentService.uploadDocument(fileData); 
-        documentName.value = response.data.filePath;
-        console.log("File uploaded successfully:", response.data);
-        closeDialog();
+        if (file.value) {
+            const response = await documentService.uploadDocument(fileData);
+            console.log(response)
+            documentName.value = response.filePath.replace('/studentUploads/', '');
+            console.log("File uploaded successfully:", response);
+            closeDialog();
+        }
     } catch (error) {
         console.error("File upload failed:", error);
     }
@@ -119,7 +117,8 @@ async function upload() {
         item.value.flightPlanTask.id,
         {
             documentName: documentName.value,
-            pending : true,
+            link: link.value,
+            pending: true,
             subtext: "Pending"
         }
     )
@@ -128,7 +127,7 @@ async function upload() {
             emit("update:refresh", true);
             closeDialog();
         })
-        .catch((error) => { 
+        .catch((error) => {
             console.error("Error updating flight plan task:", error);
         });
 }
@@ -151,18 +150,15 @@ async function upload() {
                         </v-col>
                     </v-row>
                     <v-row v-if="docRequired" class="mt-4">
-                        <v-textarea label="Provide Link"></v-textarea>
+                        <v-text-field label="Provide Link" v-model="link"></v-text-field>
                     </v-row>
                     <v-row v-if="docRequired" align="center">
                         <v-col class="text-center font-weight-bold">Or</v-col>
                     </v-row>
                     <v-row v-if="docRequired" align="center">
                         <v-col>
-                            <v-file-input 
-                            label="Upload Document"
-                            accept=".pdf,.jpg,.jpeg,.png" 
-                            @change="handleFileUpload"
-                            />                        
+                            <v-file-input label="Upload Document" accept=".pdf,.jpg,.jpeg,.png"
+                                @change="handleFileUpload" />
                         </v-col>
                     </v-row>
 

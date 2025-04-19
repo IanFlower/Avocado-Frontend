@@ -68,7 +68,7 @@ const approveTask = async (approval) => {
     let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
     const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
     // Check if user earned badges
-    userBadgesServices.checkUserBadges(studentId)
+    userBadgesServices.checkUserBadges(selectedTask.value.studentInfoId)
 
     await logService.createLog({
     name: "Task Approved",
@@ -108,7 +108,7 @@ async function fetchTasks() {
       let majors = []
       let taskPoints = task.data.points;
       // Get majors
-      let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
+      let taskMajors = await taskMajorService.getAllForTaskId(task.data.id)
 
       let fullMajorList = await majorService.getAllMajors()
       if (fullMajorList.data.length == taskMajors.data.length) {
@@ -143,9 +143,11 @@ async function fetchTasks() {
         taskName: task.data.name,
         semestersFromGraduation: task.data.semestersFromGraduation,
         major: allMajors,
+        link: fpTask.link,
         studentName: name,
         fpTaskId: fpTask.id,
         userId: userId,
+        studentInfoId: flightPlan.data.studentInfoId,
         taskPoints: taskPoints,
         currPoints: currPoints,
         earnedPoints: earnedPoints
@@ -214,6 +216,7 @@ onMounted(() => {
         <v-card-text>
 
             <PDF v-if="document" :src="file" style="height: 600px;" />
+            <token v-if="selectedTask.link">Document Link:  {{ ` `+ selectedTask.link }}</token>
 
 
         </v-card-text>

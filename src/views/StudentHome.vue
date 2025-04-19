@@ -30,7 +30,6 @@
         </v-card>
       </v-col>
 
-
       <!-- Main Section -->
       <v-col cols="6">
         <!-- Semester Selection -->
@@ -77,7 +76,7 @@
                         class="mx-3 secondary"></v-divider>{{ t.flightPlanTask.subtext }}</v-row>
                   </v-col>
                   <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
-                  <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
+                  <v-col align="end" class="text-end">{{ t.task.points }} pts</v-col>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -86,21 +85,15 @@
 
         <!-- Experiences Section -->
         <v-row align="center">
-          <!-- Left spacer -->
           <v-col cols="4"></v-col>
-
-          <!-- Centered title -->
           <v-col cols="4" class="d-flex justify-center">
             <h2 class="my-3">Experiences</h2>
           </v-col>
-
-          <!-- Right button -->
-          <v-col cols="4" class="d-flex justify-end" >
+          <v-col cols="4" class="d-flex justify-end">
             <v-btn class="font-italic" variant="text" to="RequestExperience">Request Experiences</v-btn>
           </v-col>
         </v-row>
-        
-        
+
         <v-row no-gutters>
           <v-list class="overflow-y-auto w-100" max-height="250">
             <v-card v-for="ex in experiences" :key="ex"
@@ -116,15 +109,13 @@
                   </v-col>
                   <v-col align="center" v-if="ex.flightPlanExperience.completed"
                     class="font-weight-bold">Completed</v-col>
-                  <v-col align="end" class="text-end">{{ ex.Experience.points }}</v-col>
+                  <v-col align="end" class="text-end">{{ ex.Experience.points }} pts</v-col>
                 </v-row>
               </v-card-text>
             </v-card>
           </v-list>
         </v-row>
       </v-col>
-
-
 
       <v-col cols="3" align="center" class="pa-0">
         <v-row>
@@ -146,14 +137,11 @@
             <v-divider></v-divider>
             <v-card-text>
               <v-row v-for="(student, index) in students.slice(0, 3)" :key="student.id" align="center" class="py-1">
-                <!-- Medal Image -->
                 <v-col cols="3" class="d-flex justify-center align-center">
                   <v-avatar size="40">
                     <v-img :src="getMedal(index)" alt="Medal"></v-img>
                   </v-avatar>
                 </v-col>
-
-                <!-- Student Info -->
                 <v-col cols="9">
                   <v-card :class="getRankClass(index)" class="text-h6 font-weight-bold py-1 px-2 ">
                     <div class="d-flex justify-space-between align-center name-container">
@@ -171,259 +159,263 @@
         <v-row>
           <v-col align="center">
             <h4>Latest Badge:</h4>
-            <div v-if="latestBadge" class="text-subtitle-1 font-weight-bold mb-2">
-              {{ latestBadge.name }}
+            <div v-if="latestBadge">
+              <div class="text-subtitle-1 font-weight-bold mb-2">
+                {{ latestBadge.name }}
+              </div>
+              <v-img height="110px" width="110px" :src="latestBadge.imageUrl"
+                :alt="latestBadge.name" class="clickable-image hover-effect" @click="goToBadges" />
             </div>
-            <div v-else class="text-subtitle-1 font-italic mb-2">
-              No Badge Earned
+            <div v-else class="text-center">
+              <div class="text-subtitle-1 font-italic mb-2">
+                You have no badges earned at this time!
+              </div>
+              <div class="text-body-2 font-weight-medium">
+                Start your Flight Plan!
+              </div>
             </div>
-            <v-img height="110px" width="110px" :src="latestBadge ? latestBadge.imageUrl : noBadgeImage"
-              :alt="latestBadge ? latestBadge.name : 'No Badge'" class="clickable-image hover-effect"
-              @click="goToBadges" />
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-    <TaskDialog 
-      :dialog="showTask"
-      :item="currentTask"
-      :refresh="refresh"
-      @update:dialog="showTask = $event"
-      @update:task="changeTask($event)"
-      @update:refresh="getTasks()"/>
-
-    <ExperienceDialog :dialog="showExperience" :item="currentExperience" :refresh="refresh"
-      @update:dialog="showExperience = $event" @update:experience="changeExperience()" />
   </v-container>
 </template>
 
-  <script setup>
-  import { onMounted, ref, watch } from 'vue';
-  import { useRouter } from 'vue-router';
-  import EventServices from "../services/eventServices";
-  import FlightPlanTask from "../services/flightPlanTaskServices";
-  import TaskDialog from "../components/TaskDialog.vue";
-  import FlightPlanExperience from "../services/flightPlanExperienceServices";
-  import ExperienceDialog from "../components/ExperienceDialog.vue";
-  import studentInfoServices from "../services/studentInfoServices.js";
-  import Utils from "../config/utils.js";
-  import UserServices from "../services/userServices";
-  import FlightPlan from "../services/flightPlanServices"
-  import BadgeServices from "../services/badgeServices";
-  import noBadgeImage from '../assets/no_Image_Found.png';
 
-  import leaderboardService from '../services/leaderboardServices.js';
-  import medal1 from '../assets/number_1.svg';
-  import medal2 from '../assets/number_2.svg';
-  import medal3 from '../assets/number_3.svg';
+<script setup>
+import { onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import EventServices from "../services/eventServices";
+import FlightPlanTask from "../services/flightPlanTaskServices";
+import TaskDialog from "../components/TaskDialog.vue";
+import FlightPlanExperience from "../services/flightPlanExperienceServices";
+import ExperienceDialog from "../components/ExperienceDialog.vue";
+import studentInfoServices from "../services/studentInfoServices.js";
+import Utils from "../config/utils.js";
+import UserServices from "../services/userServices";
+import FlightPlan from "../services/flightPlanServices"
+import BadgeServices from "../services/badgeServices";
+import userBadgesServices from "../services/userBadgesServices.js";
+import iconServices from "../services/iconServices.js";
+import noBadgeImage from '../assets/no_Image_Found.png';
+import leaderboardService from '../services/leaderboardServices.js';
+import medal1 from '../assets/number_1.svg';
+import medal2 from '../assets/number_2.svg';
+import medal3 from '../assets/number_3.svg';
 
-  // leaderboard variables
-  const students = ref([]);
+const router = useRouter();
+const upcomingEvents = ref([]);
+const tasks = ref([]);
+const showTask = ref(false)
+const currentTask = ref(null)
+const experiences = ref([]);
+const showExperience = ref(false)
+const currentExperience = ref(null)
+const refresh = ref(null)
+const selectedStudentPoints = ref(0);
+const latestBadge = ref(null);
+const students = ref([]);
 
-  const router = useRouter();
-  const upcomingEvents = ref([]);
-  const tasks = ref([]);
-  const showTask = ref(false)
-  const currentTask = ref(null)
-  const experiences = ref([]);
-  const showExperience = ref(false)
-  const currentExperience = ref(null)
-  const refresh = ref(null)
-  const selectedStudentPoints = ref(0);
-  const latestBadge = ref(null);
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 
+onMounted(async () => {
+  await FlightPlan.createFlightPlan()
+  getUpcomingEvents()
+  getTasks()
+  getExperiences()
+  getLeaderboardinfo();
+  getLatestBadge();
+});
 
-  onMounted(async () => {
-    await FlightPlan.createFlightPlan()
-    getUpcomingEvents()
-    getTasks()
-    getExperiences()
-    getLeaderboardinfo();
-    getLatestBadge();
-  })
+function getLeaderboardinfo() {
+  leaderboardService.getSortedStudentsByClass(userId).then((response) => {
+    if (response) {
+      students.value = response.data;
+      if (students.value.length > 0) {
+        selectedStudentPoints.value = students.value.find(student => student.userId === userId).currentPoints;
+      }
+    } else {
+      console.log("No students found");
+    }
+  }).catch(error => {
+    console.log("Error fetching leaderboard:", error);
+  });
+}
 
-  function getLeaderboardinfo() {
-    leaderboardService.getSortedStudentsByClass(userId).then((response) => {
-      if (response) {
-        students.value = response.data;
-        if (students.value.length > 0) {
-          selectedStudentPoints.value = students.value.find(student => student.userId === userId).currentPoints;
+function getRankClass(index) {
+  if (index === 0) return 'bg-gold';
+  if (index === 1) return 'bg-silver';
+  if (index === 2) return 'bg-bronze';
+  return '';
+}
+
+function getMedal(index) {
+  if (index === 0) return medal1;
+  if (index === 1) return medal2;
+  if (index === 2) return medal3;
+  return null;
+}
+
+function changeTask(task) {
+  currentTask.value = task;
+  refresh.value = true;
+  showTask.value = true;
+}
+
+function changeExperience() {
+  getExperiences()
+}
+
+function getUpcomingEvents() {
+  EventServices.getAllEvents()
+    .then((res) => {
+      if (res) {
+        let currDate = Date.now()
+        let filteredData = res.data.map((event) => {
+          if (Date.parse(event.startDateTime) >= currDate - 86400000) {
+            return event
+          }
+        })
+        let sortedData = filteredData.sort((a, b) => { return Date.parse(a.startDateTime) - Date.parse(b.startDateTime) }).slice(0, 6)
+        upcomingEvents.value = sortedData.filter((item) => { return item !== undefined });
+      } else {
+        console.log("No events found")
+      }
+    })
+}
+
+function parseTime(date) {
+  let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
+  let hours = parseInt(time[1], 10);
+  let minutes = time[2];
+  let period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  return `${hours}:${minutes} ${period}`;
+}
+
+function parseDate(date) {
+  let parsedDate = new Date(date.startDateTime).toDateString();
+  if (date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
+    let weekday = parsedDate.match(/^(\S+)/)
+    let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
+    let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
+    let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
+    parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
+  }
+  return parsedDate;
+}
+
+function getTasks() {
+  FlightPlanTask.getFlightPlanTaskByUserId(userId)
+    .then((res) => {
+      tasks.value = res.data.tasks.sort((taskA, taskB) => { return taskA.task.priority - taskB.task.priority });
+    })
+}
+
+function getExperiences() {
+  FlightPlanExperience.getFlightPlanExperienceByUserId(userId)
+    .then((res) => {
+      experiences.value = res.data.Experiences.sort((a, b) => { return a.Experience.priority - b.Experience.priority });
+    })
+}
+
+const handleTaskClick = (task) => {
+  showTask.value = true;
+  currentTask.value = task
+};
+
+const handleExperienceClick = (experience) => {
+  showExperience.value = true;
+  currentExperience.value = experience
+};
+
+const goToShop = () => {
+  router.push('/shop');
+};
+
+const goToBadges = () => {
+  router.push('/badges');
+};
+
+const goToCalendar = () => {
+  router.push('/calendar');
+};
+
+const goToLeaderboard = () => {
+  router.push('/leaderboard');
+};
+
+const getButtonClass = (index) => {
+  if (index === 0) return 'accent';
+  if (index === 1) return 'accent opacity-50';
+  if (index === 2) return 'accent opacity-25';
+  if (index === 3) return 'white';
+  return '';
+};
+
+const dropdownOpen = ref(false);
+const selectedYear = ref(2025);
+const selectedSeason = ref('Spring');
+const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
+
+const selectSeason = (season, year) => {
+  selectedSeason.value = season;
+  selectedYear.value = year;
+  dropdownOpen.value = true;
+};
+
+async function getLatestBadge() {
+  try {
+    const allBadges = await BadgeServices.getAllBadges(userId);
+    const earnedRes = await userBadgesServices.getByStudentId(userId);
+    const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
+
+    const badges = allBadges.data
+      .filter(badge => earnedBadges.includes(badge.id))
+      .map(badge => ({
+        ...badge,
+        earned: true,
+        earnedDate: new Date(badge.earnedDate || badge.createdAt),
+        image: badge.image || null
+      }));
+
+    if (badges.length > 0) {
+      const today = new Date();
+
+      const closestBadge = badges.reduce((prev, curr) =>
+        Math.abs(curr.earnedDate - today) < Math.abs(prev.earnedDate - today) ? curr : prev
+      );
+
+      if (closestBadge.image) {
+        try {
+          const icon = await iconServices.getIconByFile(closestBadge.image);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: `data:image/*;base64,${icon.data}`,
+          };
+        } catch (error) {
+          console.error("Error fetching badge image:", error.message);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: noBadgeImage,
+          };
         }
       } else {
-        console.log("No students found");
+        latestBadge.value = {
+          ...closestBadge,
+          imageUrl: noBadgeImage,
+        };
       }
-    }).catch(error => {
-      console.log("Error fetching leaderboard:", error);
-    });
-  }
-
-  function getRankClass(index) {
-    if (index === 0) return 'bg-gold';
-    if (index === 1) return 'bg-silver';
-    if (index === 2) return 'bg-bronze';
-    return '';
-  }
-  function getMedal(index) {
-    if (index === 0) return medal1;
-    if (index === 1) return medal2;
-    if (index === 2) return medal3;
-    return null;
-  }
-
-  function changeTask(task) {
-    currentTask.value = task;
-    refresh.value = true;
-    showTask.value = true;
-  }
-
-
-  function changeExperience() {
-    getExperiences()
-  }
-
-  function getUpcomingEvents() {
-    EventServices.getAllEvents()
-      .then((res) => {
-        if (res) {
-          let currDate = Date.now()
-          let filteredData = res.data.map((event) => {
-            if (Date.parse(event.startDateTime) >= currDate - 86400000) {
-              return event
-            }
-          })
-          let sortedData = filteredData.sort((a, b) => { return Date.parse(a.startDateTime) - Date.parse(b.startDateTime) }).slice(0, 6)
-          upcomingEvents.value = sortedData.filter((item) => { return item !== undefined });
-        } else {
-          console.log("No events found")
-        }
-      })
-  }
-
-  function parseTime(date) {
-    let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
-
-    let hours = parseInt(time[1], 10);
-    let minutes = time[2];
-    let period = hours >= 12 ? "PM" : "AM";
-
-    // Convert to 12-hour format
-    hours = hours % 12 || 12;
-
-    return `${hours}:${minutes} ${period}`;
-  }
-
-
-  function parseDate(date) {
-    let parsedDate = new Date(date.startDateTime).toDateString();
-    if (date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
-      let weekday = parsedDate.match(/^(\S+)/)
-      let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
-      let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
-      let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
-      parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`
-    }
-    return parsedDate;
-  }
-
-  function getTasks() {
-    FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-      .then((res) => {
-        tasks.value = res.data.tasks.sort((taskA, taskB) => { return taskA.task.priority - taskB.task.priority });
-      })
-  }
-
-
-  function getExperiences() {
-    FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
-      .then((res) => {
-        experiences.value = res.data.Experiences.sort((experienceA, experienceB) => { return experienceA.Experience.priority - experienceB.Experience.priority });
-      })
-  }
-
-  const clickedExperience = ref({});
-
-  const totalTasks = 10;
-  const tasksCompleted = ref(0);
-  const progressValue = ref(0);
-  const clickedTask = ref(Array(totalTasks).fill(false));
-
-  const user = Utils.getStore("user");
-  let userId = user ? user.id : null;
-
-
-  const handleTaskClick = (task) => {
-    showTask.value = true;
-    currentTask.value = task
-  };
-
-
-  const handleExperienceClick = (experience) => {
-    showExperience.value = true;
-    currentExperience.value = experience
-  };
-
-  const goToShop = () => {
-    router.push('/shop');
-  };
-
-  const goToBadges = () => {
-    router.push('/badges');
-  };
-
-  const goToCalendar = () => {
-    router.push('/calendar');
-  };
-
-  const goToLeaderboard = () => {
-    router.push('/leaderboard');
-  };
-
-  const getButtonClass = (index) => {
-    if (index === 0) {
-      return 'accent';
-    } else if (index === 1) {
-      return 'accent opacity-50';
-    } else if (index === 2) {
-      return 'accent opacity-25';
-    } else if (index === 3) {
-      return 'white';
     } else {
-      return '';
+      latestBadge.value = null;
     }
-  };
-
-  const dropdownOpen = ref(false);
-  const selectedYear = ref(2025);
-  const selectedSeason = ref('Spring');
-  const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
-
-  const selectSeason = (season, year) => {
-    selectedSeason.value = season;
-    selectedYear.value = year;
-    dropdownOpen.value = true;
-  };
-
-  function getLatestBadge() {
-    const userId = JSON.parse(localStorage.getItem("user")).id;
-    BadgeServices.getAllBadges(userId)
-      .then(response => {
-        if (response && response.data && response.data.length > 0) {
-          // Sort badges by date earned (newest first)
-          const sortedBadges = response.data.sort((a, b) =>
-            new Date(b.earnedDate || b.createdAt) - new Date(a.earnedDate || a.createdAt)
-          );
-          latestBadge.value = sortedBadges[0];
-        }
-      })
-      .catch(error => {
-        console.error("Error fetching user badges:", error);
-      });
+  } catch (error) {
+    console.error("Error loading latest badge:", error);
   }
-
-  onMounted(() => {
-
-  });
+}
 </script>
+
 
   <style scoped>
   .bg-gold {

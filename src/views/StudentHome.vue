@@ -197,7 +197,7 @@ import FlightPlan from "../services/flightPlanServices"
 import BadgeServices from "../services/badgeServices";
 import userBadgesServices from "../services/userBadgesServices.js";
 import iconServices from "../services/iconServices.js";
-import noBadgeImage from '../assets/no_Image_Found.png';
+import noBadgeImage from '../assets/No_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';

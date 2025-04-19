@@ -7,8 +7,7 @@
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
 
-          <v-card class="secondary mb-5" elevation="0" max-width="400" 
-          v-for="e in upcomingEvents" :key="e">
+          <v-card class="secondary mb-5" elevation="0" max-width="400" v-for="e in upcomingEvents" :key="e">
             <v-row align="center" no-gutters>
               <v-col cols="4" class="text-center">
                 <div v-if="e.startDateTime != null" class="text-subtitle-1">{{ parseDate(e) }}</div>
@@ -30,7 +29,6 @@
           </v-card-actions>
         </v-card>
       </v-col>
-
 
       <!-- Main Section -->
       <v-col cols="6">
@@ -65,64 +63,59 @@
         <!-- Tasks Section-->
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
-            <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="t in tasks" :key="t"              
-                  :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
-                  @click="handleTaskClick(t)">
-                  <v-card-text class="text-h6 pa-0 pl-4">
-                    <v-row class="pa-0 ma-0" height="60">
-                      <v-col class="ml-4 mt-1">
-                        <v-row>{{ t.task.name }}</v-row>
-                        <v-row v-if="t.flightPlanTask.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{t.flightPlanTask.subtext}}</v-row>
-                      </v-col>
-                      <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
-                      <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-list>
+          <v-list class="overflow-y-auto w-100" max-height="250">
+            <v-card v-for="t in tasks" :key="t"
+              :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
+              class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped @click="handleTaskClick(t)">
+              <v-card-text class="text-h6 pa-0 pl-4">
+                <v-row class="pa-0 ma-0" height="60">
+                  <v-col class="ml-4 mt-1">
+                    <v-row>{{ t.task.name }}</v-row>
+                    <v-row v-if="t.flightPlanTask.subtext"
+                      class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical
+                        class="mx-3 secondary"></v-divider>{{ t.flightPlanTask.subtext }}</v-row>
+                  </v-col>
+                  <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
+                  <v-col align="end" class="text-end">{{ t.task.points }} pts</v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-list>
         </v-row>
 
         <!-- Experiences Section -->
         <v-row align="center">
-          <!-- Left spacer -->
           <v-col cols="4"></v-col>
-
-          <!-- Centered title -->
           <v-col cols="4" class="d-flex justify-center">
             <h2 class="my-3">Experiences</h2>
           </v-col>
-
-          <!-- Right button -->
-          <v-col cols="4" class="d-flex justify-end" >
+          <v-col cols="4" class="d-flex justify-end">
             <v-btn class="font-italic" variant="text" to="RequestExperience">Request Experiences</v-btn>
           </v-col>
         </v-row>
-        
-        
+
         <v-row no-gutters>
-            <v-list class="overflow-y-auto w-100" max-height="250">
-                <v-card v-for="ex in experiences" :key="ex"              
-                  :class="{ 'secondary': !ex.flightPlanExperience.completed, 'accent': ex.flightPlanExperience.completed }"
-                  class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped
-                  @click="handleExperienceClick(ex)">
-                  <v-card-text class="text-h6 pa-0 pl-4">
-                    <v-row class="pa-0 ma-0" height="60">
-                      <v-col class="ml-4 mt-1">
-                        <v-row>{{ ex.Experience.name }}</v-row>
-                        <v-row v-if="ex.flightPlanExperience.subtext" class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical class="mx-3 secondary"></v-divider>{{ex.flightPlanExperience.subtext}}</v-row>
-                      </v-col>
-                      <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">Completed</v-col>
-                      <v-col align="end" class="text-end">{{ ex.Experience.points }}</v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-list>
+          <v-list class="overflow-y-auto w-100" max-height="250">
+            <v-card v-for="ex in experiences" :key="ex"
+              :class="{ 'secondary': !ex.flightPlanExperience.completed, 'accent': ex.flightPlanExperience.completed }"
+              class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped @click="handleExperienceClick(ex)">
+              <v-card-text class="text-h6 pa-0 pl-4">
+                <v-row class="pa-0 ma-0" height="60">
+                  <v-col class="ml-4 mt-1">
+                    <v-row>{{ ex.Experience.name }}</v-row>
+                    <v-row v-if="ex.flightPlanExperience.subtext"
+                      class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical
+                        class="mx-3 secondary"></v-divider>{{ ex.flightPlanExperience.subtext }}</v-row>
+                  </v-col>
+                  <v-col align="center" v-if="ex.flightPlanExperience.completed"
+                    class="font-weight-bold">Completed</v-col>
+                  <v-col align="end" class="text-end">{{ ex.Experience.points }} pts</v-col>
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </v-list>
         </v-row>
       </v-col>
-
-
 
       <v-col cols="3" align="center" class="pa-0">
         <v-row>
@@ -140,29 +133,17 @@
         <!-- Leaderboard Section -->
         <v-row align="center" class="pa-12">
           <v-card class="d-flex flex-column text-center primary w-100" height="300px" @click="goToLeaderboard">
-            <v-card-title 
-              class="text-h4">Leaderboard</v-card-title>            
+            <v-card-title class="text-h4">Leaderboard</v-card-title>
             <v-divider></v-divider>
             <v-card-text>
-              <v-row
-                v-for="(student, index) in students.slice(0, 3)" 
-                :key="student.id"
-                align="center"
-                class="py-1"
-              >
-                <!-- Medal Image -->
+              <v-row v-for="(student, index) in students.slice(0, 3)" :key="student.id" align="center" class="py-1">
                 <v-col cols="3" class="d-flex justify-center align-center">
                   <v-avatar size="40">
                     <v-img :src="getMedal(index)" alt="Medal"></v-img>
                   </v-avatar>
                 </v-col>
-
-                <!-- Student Info -->
                 <v-col cols="9">
-                  <v-card
-                    :class="getRankClass(index)"
-                    class="text-h6 font-weight-bold py-1 px-2 "
-                  >
+                  <v-card :class="getRankClass(index)" class="text-h6 font-weight-bold py-1 px-2 ">
                     <div class="d-flex justify-space-between align-center name-container">
                       <span class="name-text">{{ student.fname }} {{ student.lname.charAt(0) }}.</span>
                       <span class="text-body-2">{{ student.earnedPoints }} points</span>
@@ -175,58 +156,52 @@
         </v-row>
 
         <!-- Latest Badge (Bottom) -->
-        <v-row>
+         <v-row>
           <v-col align="center">
-            <h4>Latest Badge:</h4>
-            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
-              @click="goToBadges"></v-img>
+            <h4 class="text-h5 font-weight-bold">Latest Badge:</h4>
+            <div v-if="latestBadge">
+              <div class="text-h6 font-weight-bold mb-2">
+                {{ latestBadge.name }}
+              </div>
+              <v-img height="180px" width="180px" :src="latestBadge.imageUrl"
+                :alt="latestBadge.name" class="clickable-image hover-effect" @click="goToBadges" />
+            </div>
+            <div v-else class="text-center">
+              <div class="text-subtitle-1 font-italic mb-2">
+                You have no badges earned at this time!
+              </div>
+              <div class="text-body-2 font-weight-medium">
+                Start your Flight Plan!
+              </div>
+            </div>
           </v-col>
         </v-row>
       </v-col>
-
-
-
-
-
     </v-row>
-    <TaskDialog 
-      :dialog="showTask"
-      :item="currentTask"
-      :refresh="refresh"
-      @update:dialog="showTask = $event"
-      @update:task="changeTask($event)"
-      @update:refresh="getTasks()"/>
-
-    <ExperienceDialog 
-      :dialog="showExperience"
-      :item="currentExperience"
-      :refresh="refresh"
-      @update:dialog="showExperience = $event"
-      @update:experience="changeExperience()"/>
   </v-container>
 </template>
+
 
 <script setup>
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
 import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
 import FlightPlanExperience from "../services/flightPlanExperienceServices";
 import ExperienceDialog from "../components/ExperienceDialog.vue";
-import studentInfoServices from "../services/studentInfoServices.js";   
+import studentInfoServices from "../services/studentInfoServices.js";
 import Utils from "../config/utils.js";
 import UserServices from "../services/userServices";
 import FlightPlan from "../services/flightPlanServices"
-
+import BadgeServices from "../services/badgeServices";
+import userBadgesServices from "../services/userBadgesServices.js";
+import iconServices from "../services/iconServices.js";
+import noBadgeImage from '../assets/no_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
-
-// leaderboard variables
-const students = ref([]);
 
 const router = useRouter();
 const upcomingEvents = ref([]);
@@ -237,19 +212,23 @@ const experiences = ref([]);
 const showExperience = ref(false)
 const currentExperience = ref(null)
 const refresh = ref(null)
-const selectedStudentPoints = ref(0); 
+const selectedStudentPoints = ref(0);
+const latestBadge = ref(null);
+const students = ref([]);
 
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 
-onMounted( async () => {
+onMounted(async () => {
   await FlightPlan.createFlightPlan()
   getUpcomingEvents()
   getTasks()
   getExperiences()
   getLeaderboardinfo();
-})
+  getLatestBadge();
+});
 
-
-function getLeaderboardinfo(){
+function getLeaderboardinfo() {
   leaderboardService.getSortedStudentsByClass(userId).then((response) => {
     if (response) {
       students.value = response.data;
@@ -260,16 +239,17 @@ function getLeaderboardinfo(){
       console.log("No students found");
     }
   }).catch(error => {
-    console.log("Error fetching leaderboard:", error); 
+    console.log("Error fetching leaderboard:", error);
   });
 }
 
 function getRankClass(index) {
-  if (index === 0) return 'bg-gold';  
-  if (index === 1) return 'bg-silver'; 
-  if (index === 2) return 'bg-bronze'; 
-  return ''; 
+  if (index === 0) return 'bg-gold';
+  if (index === 1) return 'bg-silver';
+  if (index === 2) return 'bg-bronze';
+  return '';
 }
+
 function getMedal(index) {
   if (index === 0) return medal1;
   if (index === 1) return medal2;
@@ -283,46 +263,40 @@ function changeTask(task) {
   showTask.value = true;
 }
 
-
 function changeExperience() {
   getExperiences()
 }
 
 function getUpcomingEvents() {
   EventServices.getAllEvents()
-  .then((res) => {
-    if (res) {
-      let currDate = Date.now()
-      let filteredData = res.data.map((event) => {
-        if (Date.parse(event.startDateTime) >= currDate - 86400000) {
-          return event
-        }
-      })
-      let sortedData = filteredData.sort((a, b) => {return Date.parse(a.startDateTime) - Date.parse(b.startDateTime)}).slice(0, 6)
-      upcomingEvents.value = sortedData.filter((item) => {return item !== undefined});
-    } else {
-      console.log("No events found")
-    }
-  })
+    .then((res) => {
+      if (res) {
+        let currDate = Date.now()
+        let filteredData = res.data.map((event) => {
+          if (Date.parse(event.startDateTime) >= currDate - 86400000) {
+            return event
+          }
+        })
+        let sortedData = filteredData.sort((a, b) => { return Date.parse(a.startDateTime) - Date.parse(b.startDateTime) }).slice(0, 6)
+        upcomingEvents.value = sortedData.filter((item) => { return item !== undefined });
+      } else {
+        console.log("No events found")
+      }
+    })
 }
 
 function parseTime(date) {
   let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
-
-    let hours = parseInt(time[1], 10);
-    let minutes = time[2];
-    let period = hours >= 12 ? "PM" : "AM";
-
-    // Convert to 12-hour format
-    hours = hours % 12 || 12;
-
-    return `${hours}:${minutes} ${period}`;
+  let hours = parseInt(time[1], 10);
+  let minutes = time[2];
+  let period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  return `${hours}:${minutes} ${period}`;
 }
-
 
 function parseDate(date) {
   let parsedDate = new Date(date.startDateTime).toDateString();
-  if ( date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
+  if (date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
     let weekday = parsedDate.match(/^(\S+)/)
     let month = parsedDate.match(/^(?:\S+\s+)(\S+)/)
     let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
@@ -333,36 +307,23 @@ function parseDate(date) {
 }
 
 function getTasks() {
-  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-  .then((res) => {
-    tasks.value = res.data.tasks.sort((taskA, taskB) => {return taskA.task.priority - taskB.task.priority});
-  })
+  FlightPlanTask.getFlightPlanTaskByUserId(userId)
+    .then((res) => {
+      tasks.value = res.data.tasks.sort((taskA, taskB) => { return taskA.task.priority - taskB.task.priority });
+    })
 }
-
 
 function getExperiences() {
-  FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
-  .then((res) => {
-    experiences.value = res.data.Experiences.sort((experienceA, experienceB) => {return experienceA.Experience.priority - experienceB.Experience.priority});
-  })
+  FlightPlanExperience.getFlightPlanExperienceByUserId(userId)
+    .then((res) => {
+      experiences.value = res.data.Experiences.sort((a, b) => { return a.Experience.priority - b.Experience.priority });
+    })
 }
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
 
 const handleTaskClick = (task) => {
   showTask.value = true;
   currentTask.value = task
 };
-
 
 const handleExperienceClick = (experience) => {
   showExperience.value = true;
@@ -386,17 +347,11 @@ const goToLeaderboard = () => {
 };
 
 const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return '';
-  }
+  if (index === 0) return 'accent';
+  if (index === 1) return 'accent opacity-50';
+  if (index === 2) return 'accent opacity-25';
+  if (index === 3) return 'white';
+  return '';
 };
 
 const dropdownOpen = ref(false);
@@ -410,66 +365,116 @@ const selectSeason = (season, year) => {
   dropdownOpen.value = true;
 };
 
-onMounted(() => {
+async function getLatestBadge() {
+  try {
+    const allBadges = await BadgeServices.getAllBadges(userId);
+    const earnedRes = await userBadgesServices.getByStudentId(userId);
+    const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
 
-});
+    const badges = allBadges.data
+      .filter(badge => earnedBadges.includes(badge.id))
+      .map(badge => ({
+        ...badge,
+        earned: true,
+        earnedDate: new Date(badge.earnedDate || badge.createdAt),
+        image: badge.image || null
+      }));
+
+    if (badges.length > 0) {
+      const today = new Date();
+
+      const closestBadge = badges.reduce((prev, curr) =>
+        Math.abs(curr.earnedDate - today) < Math.abs(prev.earnedDate - today) ? curr : prev
+      );
+
+      if (closestBadge.image) {
+        try {
+          const icon = await iconServices.getIconByFile(closestBadge.image);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: `data:image/*;base64,${icon.data}`,
+          };
+        } catch (error) {
+          console.error("Error fetching badge image:", error.message);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: noBadgeImage,
+          };
+        }
+      } else {
+        latestBadge.value = {
+          ...closestBadge,
+          imageUrl: noBadgeImage,
+        };
+      }
+    } else {
+      latestBadge.value = null;
+    }
+  } catch (error) {
+    console.error("Error loading latest badge:", error);
+  }
+}
 </script>
 
-<style scoped>
-.bg-gold {
-  background-color: #ffd700; 
-}
-.bg-silver {
-  background-color: #c0c0c0; 
-}
-.bg-bronze {
-  background-color: #cd7f32; 
-}
 
-.name-container {
-  max-width: 100%; 
-  overflow: hidden; 
-}
-.name-text {
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
+  <style scoped>
+  .bg-gold {
+    background-color: #ffd700;
+  }
 
-.clickable-image {
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
-}
+  .bg-silver {
+    background-color: #c0c0c0;
+  }
 
-.clickable-image:hover {
-  transform: scale(1.1);
-}
+  .bg-bronze {
+    background-color: #cd7f32;
+  }
 
-.white {
-  background-color: white !important;
-  color: black;
-}
+  .name-container {
+    max-width: 100%;
+    overflow: hidden;
+  }
 
-.opacity-25 {
-  opacity: 0.25;
-}
+  .name-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-.opacity-50 {
-  opacity: 0.5;
-}
+  .clickable-image {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
 
-body,
-html {
-  margin: 0 !important;
-  padding: 0 !important;
-  height: 100% !important;
-}
+  .clickable-image:hover {
+    transform: scale(1.1);
+  }
 
-.v-application {
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-}
+  .white {
+    background-color: white !important;
+    color: black;
+  }
+
+  .opacity-25 {
+    opacity: 0.25;
+  }
+
+  .opacity-50 {
+    opacity: 0.5;
+  }
+
+  body,
+  html {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+  }
+
+  .v-application {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 </style>

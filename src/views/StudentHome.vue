@@ -197,7 +197,7 @@ import FlightPlan from "../services/flightPlanServices"
 import BadgeServices from "../services/badgeServices";
 import userBadgesServices from "../services/userBadgesServices.js";
 import iconServices from "../services/iconServices.js";
-import noBadgeImage from '../assets/no_Image_Found.png';
+import noBadgeImage from '../assets/No_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
@@ -309,15 +309,24 @@ function parseDate(date) {
 function getTasks() {
   FlightPlanTask.getFlightPlanTaskByUserId(userId)
     .then((res) => {
-      tasks.value = res.data.tasks.sort((taskA, taskB) => { return taskA.task.priority - taskB.task.priority });
+      res.data.tasks.forEach(t => {
+        if(t.flightPlanTask.completed) t.task.priority = 4;
+      });
+      tasks.value = res.data.tasks.sort((taskA, taskB) => { 
+        return taskA.task.priority - taskB.task.priority });
     })
+    .catch(()=> []);
 }
 
 function getExperiences() {
   FlightPlanExperience.getFlightPlanExperienceByUserId(userId)
     .then((res) => {
+      res.data.Experiences.forEach(e => {
+        if(e.flightPlanExperience.completed) e.Experience.priority = 4;
+      })
       experiences.value = res.data.Experiences.sort((a, b) => { return a.Experience.priority - b.Experience.priority });
     })
+    .catch(()=> []);
 }
 
 const handleTaskClick = (task) => {

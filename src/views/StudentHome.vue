@@ -113,7 +113,7 @@
         <v-row v-if="showTaskFilter" class="px-4">
           <v-select
             v-model="priorityFilter"
-            :items="[1, 2, 3]"
+            :items="[1, 2, 3, 4]"
             label="Filter by: Priority"
             variant="outlined"
             hide-details

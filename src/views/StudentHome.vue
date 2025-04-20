@@ -309,14 +309,18 @@ function parseDate(date) {
 function getTasks() {
   FlightPlanTask.getFlightPlanTaskByUserId(userId)
     .then((res) => {
-      res.data.tasks.forEach(t => {
-        if(t.flightPlanTask.completed) t.task.priority = 4;
+      tasks.value = res.data.tasks.sort((taskA, taskB) => {
+        const aCompleted = taskA.flightPlanTask.completed ? 1 : 0;
+        const bCompleted = taskB.flightPlanTask.completed ? 1 : 0;
+        if (aCompleted !== bCompleted) {
+          return aCompleted - bCompleted;
+        }
+        return (taskA.task.priority || 0) - (taskB.task.priority || 0);
       });
-      tasks.value = res.data.tasks.sort((taskA, taskB) => { 
-        return taskA.task.priority - taskB.task.priority });
     })
-    .catch(()=> []);
+    .catch(() => []);
 }
+
 
 function getExperiences() {
   FlightPlanExperience.getFlightPlanExperienceByUserId(userId)

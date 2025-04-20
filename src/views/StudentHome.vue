@@ -16,17 +16,25 @@
               <v-divider vertical class="mx-2"></v-divider>
               <v-col>
                 <v-row align="center" class="align-center">
-                  <v-icon v-if="relatedEventIds.includes(e.id)" class="mr-2 ml-2" color="green"
-                    size="10">mdi-checkbox-blank-circle</v-icon>
-                  <v-icon v-else class="mr-2 ml-2" color="black" size="10">mdi-checkbox-blank-circle</v-icon>
+                  <v-icon class="mr-2 ml-2" :color="relatedEventIds.includes(e.id) ? 'green' : 'black'"
+                    :size="relatedEventIds.includes(e.id) ? 14 : 10">
+                    mdi-checkbox-blank-circle
+                  </v-icon>
 
-                  <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                  <div class="text-h6 font-weight-bold">
+                    {{ e.name }}
+                  </div>
                 </v-row>
 
-                <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
+                <div class="text-body-2 font-italic text-grey-darken-1 mt-1">
+                  {{ e.location }}
+                </div>
               </v-col>
             </v-row>
           </v-card>
+
+
+
           <v-spacer></v-spacer>
           <v-card-actions class="justify-center secondary">
             <v-btn variant="plain" class="font-weight-light text-subtitle-1" @click="goToCalendar">
@@ -528,5 +536,11 @@ html {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.related-event-highlight {
+  background-color: #e9f5ec !important;
+  border-left: 4px solid #43a047;
+  transition: background-color 0.3s ease;
 }
 </style>

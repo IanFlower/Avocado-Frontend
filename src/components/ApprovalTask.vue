@@ -1,7 +1,6 @@
 <script setup>
-import { ref, onMounted,watch  } from "vue";
+import { ref, onMounted, watch } from "vue";
 import userServices from "../services/userServices";
-
 import flightPlanTaskService from "../services/flightPlanTaskServices";
 import studentInfoServices from "../services/studentInfoServices";
 import flightPlanServices from "../services/flightPlanServices";
@@ -14,20 +13,20 @@ import documentService from "../services/documentService";
 import PDF from "pdf-vue3";
 import logService from "../services/logServices";
 import Utils from "../config/utils";
-const user = Utils.getStore("user"); // Get the current user from local storage
 
-const search = ref(""); // Search query input
-const snackbar = ref(false); // Controls snackbar visibility
-const snackbarMessage = ref(""); // Message displayed in snackbar
-const snackbarColor = ref(""); // Snackbar color (success/error)
-const dialog = ref(false); // Controls the confirmation dialog visibility
-const selectedTask = ref(null); // Stores the task to be approved
+const user = Utils.getStore("user");
+
+const search = ref("");
+const snackbar = ref(false);
+const snackbarMessage = ref("");
+const snackbarColor = ref("");
+const dialog = ref(false);
+const selectedTask = ref(null);
 const flightPlanTasks = ref([])
 const listItems = ref([])
 const comment = ref("")
-const file = ref(null); 
+const file = ref(null);
 const document = ref(false);
-
 
 const headers = ref([
   { title: "Task Name", key: "taskName" },
@@ -38,7 +37,7 @@ const headers = ref([
 ]);
 
 const showSnackbar = (message, color) => {
-  snackbarMessage.value = message; 
+  snackbarMessage.value = message;
   snackbarColor.value = color === "success" ? "green" : "red";
   snackbar.value = true;
   setTimeout(() => {
@@ -51,36 +50,33 @@ const approveTask = async (approval) => {
   let notificationComment = null
   if (comment.value) {
     notificationComment = ` Comment from approver: ${comment.value}`
-  } else {notificationComment = ""}
+  } else { notificationComment = "" }
 
   if (approval) {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
-    // Add notification
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, { completed: 1, pending: 0, subtext: "", comment: comment.value })
     notification = {
-      userId: selectedTask.value.userId, 
+      userId: selectedTask.value.userId,
       title: `${selectedTask.value.taskName} Approval`,
       desc: `Your ${selectedTask.value.taskName} task has been approved!${notificationComment}`,
       goodNews: 1
     }
     await notificationService.createNotification(notification)
-    // Update student points
     let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
     let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
-    const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
-    // Check if user earned badges
+    const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, { currentPoints: currPoints, earnedPoints: earnedPoints })).id
     userBadgesServices.checkUserBadges(studentId)
 
     await logService.createLog({
-    name: "Task Approved",
-    desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
-    date: new Date().toISOString(),
-    email: user.email, 
-    type: "Approval" 
-  }) 
+      name: "Task Approved",
+      desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
+      date: new Date().toISOString(),
+      email: user.email,
+      type: "Approval"
+    })
   } else {
-    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
+    await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, { completed: 0, pending: 0, subtext: "Denied", comment: comment.value })
     notification = {
-      userId: selectedTask.value.userId, 
+      userId: selectedTask.value.userId,
       title: `${selectedTask.value.taskName} Denial`,
       desc: `Your ${selectedTask.value.taskName} task has been denied.${notificationComment}`,
       goodNews: 0
@@ -93,43 +89,41 @@ const approveTask = async (approval) => {
 };
 
 const confirmApproval = (task) => {
-  selectedTask.value = task; 
-  dialog.value = true; 
+  selectedTask.value = task;
+  dialog.value = true;
 };
 
 async function fetchTasks() {
-  // Fetch pending tasks
   flightPlanTasks.value = await flightPlanTaskService.getAllPendingFlightPlanTasks();
-  // Wait for all mapped promises to resolve
   listItems.value = await Promise.all(
     flightPlanTasks.value.data.map(async (fpTask) => {
-      // Get task
       let task = await taskService.getById(fpTask.taskId);
       let majors = []
       let taskPoints = task.data.points;
-      // Get majors
       let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
-
       let fullMajorList = await majorService.getAllMajors()
+
       if (fullMajorList.data.length == taskMajors.data.length) {
         majors = ["All Majors"];
       } else {
-        majors = await Promise.all( 
-          taskMajors.data.map( async (tm) => {
-            let currMajor = fullMajorList.data.find((m) => {
-              return m.id == tm.id
+        majors = (
+          await Promise.all(
+            taskMajors.data.map(async (tm) => {
+              let currMajor = fullMajorList.data.find((m) => m.id == tm.id);
+              return currMajor?.name;
             })
-            return currMajor.name
-          })
-        )
+          )
+        ).filter(Boolean);
+
+        if (majors.length === 0) {
+          majors = ["General Studies"];
+        }
 
       }
 
       let allMajors = ""
-      majors.forEach((major) => {allMajors += `${major} `})
-      
-      
-      // Get student name
+      majors.forEach((major) => { allMajors += `${major} ` })
+
       let flightPlan = await flightPlanServices.getFlightPlanById(fpTask.flightPlanId);
       let studentInfo = await studentInfoServices.getStudentInfoById(flightPlan.data.studentInfoId);
       let userId = studentInfo.data[0].userId
@@ -138,7 +132,6 @@ async function fetchTasks() {
       let currPoints = studentInfo.data[0].currentPoints;
       let earnedPoints = studentInfo.data[0].earnedPoints;
 
-      // Construct list item
       return {
         taskName: task.data.name,
         semestersFromGraduation: task.data.semestersFromGraduation,
@@ -153,9 +146,9 @@ async function fetchTasks() {
     })
   );
 }
+
 function viewDocument() {
   const flightPlanId = selectedTask.value.fpTaskId;
-
   documentService.getDocumentByFlightPlanTaskId(flightPlanId)
     .then((res) => {
       file.value = `data:application/pdf;base64,${res.data}`;
@@ -164,8 +157,8 @@ function viewDocument() {
     .catch((error) => {
       console.error("Error fetching document:", error);
     });
-
 }
+
 watch(dialog, (val) => {
   if (val && selectedTask.value) {
     viewDocument();
@@ -174,27 +167,18 @@ watch(dialog, (val) => {
 
 onMounted(() => {
   fetchTasks();
-  
 });
 </script>
+
 
 <template>
   <div>
     <v-spacer></v-spacer>
     <div>
       <div class="pa-12">
-        <v-data-table
-          :headers="headers"
-          :items="listItems"
-          :search="search"
-        >
+        <v-data-table :headers="headers" :items="listItems" :search="search">
           <template v-slot:item.approve="{ item }">
-            <v-icon
-              color="#004761"
-              size="large"
-              class="pa-6"
-              @click="confirmApproval(item)"
-            >
+            <v-icon color="#004761" size="large" class="pa-6" @click="confirmApproval(item)">
               mdi-eye-outline
             </v-icon>
           </template>
@@ -205,15 +189,17 @@ onMounted(() => {
     <!-- Confirmation Dialog ------------------------------------------------------->
     <v-dialog v-model="dialog" max-width="900">
       <v-card>
-        <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
+        <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm
+              Approval</v-col><v-col align="end"><v-icon
+                @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>
           Are you sure you want to approve
-          <strong>{{ selectedTask?.taskName }}</strong> for 
+          <strong>{{ selectedTask?.taskName }}</strong> for
           <strong>{{ selectedTask?.studentName }}</strong>?
         </v-card-text>
         <v-card-text>
 
-            <PDF v-if="document" :src="file" style="height: 600px;" />
+          <PDF v-if="document" :src="file" style="height: 600px;" />
 
 
         </v-card-text>
@@ -239,15 +225,19 @@ onMounted(() => {
 .table-container {
   padding: 0 16px;
 }
+
 .headline {
   font-weight: bold;
 }
+
 .custom-checkbox {
   margin-bottom: 4px;
 }
+
 .full-height {
   height: 100%;
 }
+
 .v-divider.full-height {
   height: 100%;
 }

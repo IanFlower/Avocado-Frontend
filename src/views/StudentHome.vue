@@ -15,7 +15,14 @@
               </v-col>
               <v-divider vertical class="mx-2"></v-divider>
               <v-col>
-                <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                <v-row align="center" class="align-center">
+                  <v-icon v-if="relatedEventIds.includes(e.id)" class="mr-2 ml-2" color="green"
+                    size="10">mdi-checkbox-blank-circle</v-icon>
+                  <v-icon v-else class="mr-2 ml-2" color="black" size="10">mdi-checkbox-blank-circle</v-icon>
+
+                  <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                </v-row>
+
                 <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
               </v-col>
             </v-row>
@@ -66,18 +73,13 @@
           <v-col cols="11">
             <div class="d-flex justify-end mb-1">
               <span class="text-subtitle-2 font-weight-medium">
-                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount} Completed`}}
+                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount}
+                Completed`}}
               </span>
 
             </div>
-            <v-progress-linear 
-            :model-value="completionPercentage" 
-            :buffer-value="100"
-             height="24"
-              color="#F9C634"
-              rounded 
-              stream
-              ></v-progress-linear>
+            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="#F9C634"
+              rounded stream></v-progress-linear>
           </v-col>
         </v-row>
 
@@ -220,11 +222,8 @@ import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
 import FlightPlanExperience from "../services/flightPlanExperienceServices";
 import ExperienceDialog from "../components/ExperienceDialog.vue";
-import studentInfoServices from "../services/studentInfoServices.js";
 import Utils from "../config/utils.js";
-import UserServices from "../services/userServices";
 import FlightPlan from "../services/flightPlanServices"
-
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
@@ -243,6 +242,12 @@ const showExperience = ref(false)
 const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
+const relatedEventIds = ref([]);
+
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
 
 
 onMounted(async () => {
@@ -251,7 +256,25 @@ onMounted(async () => {
   getTasks()
   getExperiences()
   getLeaderboardinfo();
+  getRelatedExperienceEvents();
 })
+
+async function getRelatedExperienceEvents() {
+  try {
+    const res = await FlightPlanExperience.getFlightPlanExperienceByUserId(userId);
+    const allExperiences = res.data.Experiences || [];
+    const relatedIds = [];
+
+    for (const ex of allExperiences) {
+      const result = await FlightPlanExperience.getEventsByExperience(ex.Experience.id);
+      result.data.forEach(evt => relatedIds.push(evt.id));
+    }
+
+    relatedEventIds.value = relatedIds;
+  } catch (err) {
+    console.error("Error fetching related experience events:", err);
+  }
+}
 
 const completedCount = computed(() => {
   const taskCompleted = tasks.value.filter(t => t.flightPlanTask.completed).length;
@@ -388,17 +411,6 @@ function getExperiences() {
       experiences.value = res.data.Experiences.sort((experienceA, experienceB) => { return experienceA.Experience.priority - experienceB.Experience.priority });
     })
 }
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
 
 const handleTaskClick = (task) => {
   showTask.value = true;

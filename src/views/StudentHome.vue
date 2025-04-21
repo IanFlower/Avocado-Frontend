@@ -66,18 +66,13 @@
           <v-col cols="11">
             <div class="d-flex justify-end mb-1">
               <span class="text-subtitle-2 font-weight-medium">
-                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount} Completed`}}
+                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount}
+                Completed`}}
               </span>
 
             </div>
-            <v-progress-linear 
-            :model-value="completionPercentage" 
-            :buffer-value="100"
-             height="24"
-              color="#F9C634"
-              rounded 
-              stream
-              ></v-progress-linear>
+            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="#F9C634"
+              rounded stream></v-progress-linear>
           </v-col>
         </v-row>
 
@@ -244,14 +239,67 @@ const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
 
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+console.log("User ID:", userId);
+
 
 onMounted(async () => {
-  await FlightPlan.createFlightPlan()
-  getUpcomingEvents()
-  getTasks()
-  getExperiences()
+  await FlightPlan.createFlightPlan();
+  await checkSemesterTransition();
+  getUpcomingEvents();
+  getTasks();
+  getExperiences();
   getLeaderboardinfo();
-})
+});
+
+async function checkSemesterTransition() {
+  const today = new Date();
+  const month = today.getMonth(); 
+  const day = today.getDate();
+  const todayString = today.toISOString().split('T')[0];
+
+  try {
+    const response = await studentInfoServices.getStudentInfoById(userId);
+    if (!response || !response.data) return;
+
+    const studentInfo = response.data;
+    const graduationId = studentInfo[0].semestersTillGraduation;
+    const previousSemester = parseInt(localStorage.getItem('lastSemestersTillGraduation'));
+
+    
+    if (!isNaN(previousSemester) && graduationId < previousSemester) {
+      localStorage.setItem('lastSemestersTillGraduation', graduationId);
+      await refreshAll();
+      window.location.reload();
+      return;
+    }
+
+    
+    const isTransitionDate = (month === 4 && day === 1) || (month === 11 && day === 1);
+    if (!isTransitionDate) return;
+
+    
+    if (localStorage.getItem('semesterCheckDate') === todayString) return;
+
+    
+    const newValue = graduationId - 1;
+    await studentInfoServices.update(studentInfo.id, {
+      semestersTillGraduation: newValue
+    });
+
+    localStorage.setItem('lastSemestersTillGraduation', newValue);
+    localStorage.setItem('semesterCheckDate', todayString);
+
+    await refreshAll();
+    window.location.reload();
+  } catch (error) {
+    console.error('Error during semester check:', error);
+  }
+}
+
+
+
 
 const completedCount = computed(() => {
   const taskCompleted = tasks.value.filter(t => t.flightPlanTask.completed).length;
@@ -388,17 +436,6 @@ function getExperiences() {
       experiences.value = res.data.Experiences.sort((experienceA, experienceB) => { return experienceA.Experience.priority - experienceB.Experience.priority });
     })
 }
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
 
 const handleTaskClick = (task) => {
   showTask.value = true;

@@ -320,6 +320,7 @@ import medal3 from '../assets/number_3.svg';
 // leaderboard variables
 const students = ref([]);
 
+//other variables
 const router = useRouter();
 const upcomingEvents = ref([]);
 const showTask = ref(false)
@@ -338,8 +339,13 @@ const experiencePriorityFilter = ref(null);
 const taskDropdown = ref(false);
 const experienceDropdown = ref(false);
 
+//tasks and experiences variables
 const tasks = ref([]);
 const experiences = ref([]);
+
+//user variables
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 
 
 
@@ -542,18 +548,6 @@ function getExperiences() {
       });
     });
 }
-
-
-const clickedExperience = ref({});
-
-const totalTasks = 10;
-const tasksCompleted = ref(0);
-const progressValue = ref(0);
-const clickedTask = ref(Array(totalTasks).fill(false));
-
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
-
 
 const handleTaskClick = (task) => {
   showTask.value = true;

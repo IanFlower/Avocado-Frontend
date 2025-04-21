@@ -66,6 +66,9 @@ document.documentElement.setAttribute('data-theme', 'light');
   transition: background-color 0.3s ease, color 0.3s ease !important;
 }
 
+.tertiary-switch{
+    color: var(--tertiary) !important;
+}
 
 .alt-button {
     background-color: var(--alt) !important;
@@ -89,6 +92,9 @@ document.documentElement.setAttribute('data-theme', 'light');
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 .accent:focus{
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+.tertiary:focus{
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
 }
 /* tbody tr:nth-of-type(even) {

@@ -105,17 +105,25 @@ async function fetchTasks() {
     flightPlanTasks.value.data.map(async (fpTask) => {
       // Get task
       let task = await taskService.getById(fpTask.taskId);
-
+      let majors = []
       let taskPoints = task.data.points;
       // Get majors
       let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
 
-      let majors = await Promise.all( 
-        taskMajors.data.map( async (tm) => {
-          let currMajor = await majorService.getMajorById(tm.majorId)
-          return currMajor.data.name
-        })
-      )
+      let fullMajorList = await majorService.getAllMajors()
+      if (fullMajorList.data.length == taskMajors.data.length) {
+        majors = ["All Majors"];
+      } else {
+        majors = await Promise.all( 
+          taskMajors.data.map( async (tm) => {
+            let currMajor = fullMajorList.data.find((m) => {
+              return m.id == tm.id
+            })
+            return currMajor.name
+          })
+        )
+
+      }
 
       let allMajors = ""
       majors.forEach((major) => {allMajors += `${major} `})

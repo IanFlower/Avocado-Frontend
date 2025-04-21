@@ -8,9 +8,11 @@ import experienceService from "../services/experiencesServices";
 import experienceMajorService from "../services/experienceMajorServices";
 import majorService from "../services/majors.Services";
 import notificationService from "../services/notification.Services";
+import userBadgesServices from "../services/userBadgesServices";
 import logService from "../services/logServices";
 import Utils from "../config/utils";
 const user =Utils.getStore("user");
+
 const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
@@ -56,7 +58,9 @@ const approveExperience = async (approval) => {
     await notificationService.createNotification(notification)
     let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
     let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
-    await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+    const studentId = (await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
+    userBadgesServices.checkUserBadges(studentId)
+
     await logService.createLog({
     name: "Experience Approved",
     desc: user.email+ " approved the experience " + selectedExperience.value.experienceName + " for the user " + selectedExperience.value.studentName,
@@ -64,7 +68,7 @@ const approveExperience = async (approval) => {
     email: user.email, 
     type: "Approval" 
   })
-
+  
   } else {
     await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
     notification = {
@@ -94,18 +98,27 @@ async function fetchExperiences() {
     flightPlanExperiences.value.data.map(async (fpExperience) => {
       // Get experience
       let experience = await experienceService.getById(fpExperience.experienceId);
+      let majors = []
 
       let experiencePoints = experience.data.points;
       // Get majors
       let experienceMajors = await experienceMajorService.getAllForExperienceId(experience.data.id);
 
-      let majors = await Promise.all( 
-        experienceMajors.data.map( async (tm) => {
-          let currMajor = await majorService.getMajorById(tm.majorId)
-          return currMajor.data.name
-        })
-      )
+      
+      let fullMajorList = await majorService.getAllMajors()
+      if (fullMajorList.data.length == experienceMajors.data.length) {
+        majors = ["All Majors"];
+      } else {
 
+        majors = await Promise.all( 
+          experienceMajors.data.map( async (tm) => {
+            let currMajor = fullMajorList.data.find((m) => {
+                return m.id == tm.id
+            })
+            return currMajor.data.name
+          })
+        )
+      }
       let allMajors = ""
       majors.forEach((major) => {allMajors += `${major} `})
       

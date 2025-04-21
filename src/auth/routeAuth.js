@@ -35,8 +35,9 @@ async function authorizeRoute(permission) {
         return true
     } catch (error) {
         console.error("An error occurred authorizing route access");
-        return false
+        return false;
     }
+    return false;
 }
 // Enum for permissions
 const ENUM = Object.freeze({

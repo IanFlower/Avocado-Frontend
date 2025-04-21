@@ -329,9 +329,10 @@ const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
 
+//related event variables
 const relatedEventIds = ref([]);
 
-
+//priority for tasks and experiences
 const priorityFilter = ref(null);
 const experiencePriorityFilter = ref(null);
 const taskDropdown = ref(false);
@@ -339,6 +340,8 @@ const experienceDropdown = ref(false);
 
 const tasks = ref([]);
 const experiences = ref([]);
+
+
 
 const filteredTasks = computed(() => {
   if (!priorityFilter.value) return tasks.value;

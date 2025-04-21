@@ -192,7 +192,7 @@ async function fetchTasks() {
         earnedPoints: studentInfo.data[0].earnedPoints,
         fName: name,
         email: user.data.email,
-        type: "tasks",
+        type: "Task",
       };
     })
   );
@@ -230,7 +230,7 @@ const confirmApproval = (user) => {
     experienceDialog.value = true;
   } else if (user.type === "Admin") {
     adminDialog.value = true;
-  } else if (user.type === "tasks") {
+  } else if (user.type === "Task") {
     selectedTask.value = listItems.value.find((task) => task.fpTaskId === user.fpTaskId);
     taskDialog.value = true;
   } else {
@@ -249,8 +249,8 @@ const approveAdmin = async (approved) => {
         roleUserServices
             .updateUserRole(selectedUser.value.id, roleId)
             .then((response) => {
-            fetchUsers();
             showSnackbar("User approved successfully", "success");
+            refreshUserList();
             })
             .catch((error) => {
             showSnackbar("Error approving user", "error");
@@ -268,22 +268,33 @@ const approveAdmin = async (approved) => {
             selectedUser.value = null; 
             dialog.value = false;  
         })
+         
+
     }
     else {
         roleUserServices
             .updateUserRole(selectedUser.value.id, 1)
             .then((response) => {   
-            fetchUsers();
-            showSnackbar("User denied successfully", "success");
+                showSnackbar("User denied successfully", "success");
             })
-            fetchUsers();
+        await logService.createLog({
+            name: "Admin Denial",
+            desc: user.email+ " denied the user " + selectedUser.value.email + " to be an admin",
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Denial"
+        })
+        .then((response) => {
+            console.log("Log created successfully:", response.data);
+            selectedUser.value = null; 
+            dialog.value = false;  
+        })
+        await refreshUserList();
 
         
     }
 
-    await fetchWantToBeAdmins();
 
-    users.value = users.value.filter((u) => u.id !== selectedRequest.value.id);
   } catch (error) {
     console.error("Error approving request:", error);
     showSnackbar("Failed to approve request", "error");
@@ -423,6 +434,16 @@ const approveRequest = async (approved) => {
     users.value = users.value.filter((u) => u.id !== selectedRequest.value.id);
 
 };
+
+const refreshUserList = async () => { 
+  users.value = [];
+  listItems.value = [];
+  await fetchExperiences();
+  await fetchRequestsUsers();
+  await fetchTasks();
+  await fetchWantToBeAdmins();
+};
+
 
 
 

@@ -17,7 +17,7 @@
               <v-col>
                 <v-row align="center" class="align-center">
                   <v-icon class="mr-2 ml-2" :color="relatedEventIds.includes(e.id) ? 'green' : 'black'"
-                    :size="relatedEventIds.includes(e.id) ? 14 : 10">
+                    :size="relatedEventIds.includes(e.id) ? 10 : 10">
                     mdi-checkbox-blank-circle
                   </v-icon>
 
@@ -328,6 +328,8 @@ const showExperience = ref(false)
 const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
+
+const relatedEventIds = ref([]);
 
 
 const priorityFilter = ref(null);

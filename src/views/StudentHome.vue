@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="mt-10 fill-height">
+ <v-container fluid class="mt-10 fill-height">
     <v-row>
       <!-- Upcoming Events -->
       <v-col cols="3">
@@ -45,7 +45,6 @@
         </v-card>
       </v-col>
 
-
       <!-- Main Section -->
       <v-col cols="6">
         <!-- Semester Selection -->
@@ -76,37 +75,91 @@
           </v-card>
         </v-row>
 
-        <!-- Progress Bar-->
+        <!-- Progress Bar -->
         <v-row class="mt-4 d-flex justify-center">
           <v-col cols="11">
             <div class="d-flex justify-end mb-1">
               <span class="text-subtitle-2 font-weight-medium">
-                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount}
-                Completed`}}
+                {{ completedCount === totalCount ? 'Semester Completed' : `${completedCount} / ${totalCount} Completed` }}
               </span>
-
             </div>
-            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="#F9C634"
-              rounded stream></v-progress-linear>
+            <v-progress-linear
+              :model-value="completionPercentage"
+              :buffer-value="100"
+              height="24"
+              color="#F9C634"
+              rounded
+              stream
+            ></v-progress-linear>
           </v-col>
         </v-row>
 
-        <!-- Tasks Section-->
-        <h2 class="text-center my-3">Tasks</h2>
+        <!-- Tasks Header with Dropdown -->
+        <v-row class="d-flex justify-center">
+          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
+            <h2 class="text-h5 font-weight-bold d-flex align-center">
+              Tasks
+              <v-menu offset-y transition="scale-transition" v-model="taskDropdown">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="20" style="cursor: pointer;">
+                    mdi-chevron-down
+                  </v-icon>
+                </template>
+                <v-card elevation="6">
+                  <v-list>
+                    <v-list-item>
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectTaskPriority(null)">
+                        Show All
+                      </v-btn>
+                    </v-list-item>
+                    <v-list-item v-for="level in [1,2,3]" :key="level">
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectTaskPriority(level)">
+                        Priority {{ level }}
+                      </v-btn>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-menu>
+            </h2>
+          </v-card>
+        </v-row>
+
+        <!-- Task Priority Dropdown -->
+        <v-row v-if="showTaskFilter" class="px-4">
+          <v-select
+            v-model="priorityFilter"
+            :items="[1, 2, 3, 4]"
+            label="Filter by: Priority"
+            variant="outlined"
+            hide-details
+            dense
+          ></v-select>
+        </v-row>
+
+        <!-- Filtered Tasks -->
         <v-row no-gutters>
           <v-list class="overflow-y-auto w-100" max-height="250">
-            <v-card v-for="t in tasks" :key="t"
+            <v-card
+              v-for="t in filteredTasks"
+              :key="t"
               :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
-              class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped @click="handleTaskClick(t)">
+              class="w-97 pa-0 mb-5 mr-2"
+              elevation="2"
+              shaped
+              @click="handleTaskClick(t)"
+            >
               <v-card-text class="text-h6 pa-0 pl-4">
                 <v-row class="pa-0 ma-0" height="60">
                   <v-col class="ml-4 mt-1">
                     <v-row>{{ t.task.name }}</v-row>
-                    <v-row v-if="t.flightPlanTask.subtext"
-                      class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical
-                        class="mx-3 secondary"></v-divider>{{ t.flightPlanTask.subtext }}</v-row>
+                    <v-row v-if="t.flightPlanTask.subtext" class="text-subtitle-2 font-italic font-weight-thin">
+                      <v-divider vertical class="mx-3 secondary" />
+                      {{ t.flightPlanTask.subtext }}
+                    </v-row>
                   </v-col>
-                  <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">Completed</v-col>
+                  <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">
+                    Completed
+                  </v-col>
                   <v-col align="end" class="text-end">{{ t.task.points }}</v-col>
                 </v-row>
               </v-card-text>
@@ -114,38 +167,72 @@
           </v-list>
         </v-row>
 
-        <!-- Experiences Section -->
-        <v-row align="center">
-          <!-- Left spacer -->
-          <v-col cols="4"></v-col>
-
-          <!-- Centered title -->
-          <v-col cols="4" class="d-flex justify-center">
-            <h2 class="my-3">Experiences</h2>
-          </v-col>
-
-          <!-- Right button -->
-          <v-col cols="4" class="d-flex justify-end">
-            <v-btn class="font-italic" variant="text" to="RequestExperience">Request Experiences</v-btn>
-          </v-col>
+              <!-- Experiences Header with Dropdown -->
+              <v-row class="d-flex justify-center">
+          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
+            <h2 class="text-h5 font-weight-bold d-flex align-center">
+              Experiences
+              <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="20" style="cursor: pointer;">
+                    mdi-chevron-down
+                  </v-icon>
+                </template>
+                <v-card elevation="6">
+                  <v-list>
+                    <v-list-item>
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(null)">
+                        Show All
+                      </v-btn>
+                    </v-list-item>
+                    <v-list-item v-for="level in [1,2,3]" :key="level">
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(level)">
+                        Priority {{ level }}
+                      </v-btn>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-menu>
+            </h2>
+          </v-card>
         </v-row>
 
+        <!-- Experience Priority Dropdown -->
+        <v-row v-if="showExperienceFilter" class="px-4">
+          <v-select
+            v-model="experiencePriorityFilter"
+            :items="[1, 2, 3]"
+            label="Filter by: Priority"
+            variant="outlined"
+            hide-details
+            dense
+          ></v-select>
+        </v-row>
 
+        <!-- Filtered Experiences -->
         <v-row no-gutters>
           <v-list class="overflow-y-auto w-100" max-height="250">
-            <v-card v-for="ex in experiences" :key="ex"
+            <v-card
+              v-for="ex in filteredExperiences"
+              :key="ex"
               :class="{ 'secondary': !ex.flightPlanExperience.completed, 'accent': ex.flightPlanExperience.completed }"
-              class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped @click="handleExperienceClick(ex)">
+              class="w-97 pa-0 mb-5 mr-2"
+              elevation="2"
+              shaped
+              @click="handleExperienceClick(ex)"
+            >
               <v-card-text class="text-h6 pa-0 pl-4">
                 <v-row class="pa-0 ma-0" height="60">
                   <v-col class="ml-4 mt-1">
                     <v-row>{{ ex.Experience.name }}</v-row>
-                    <v-row v-if="ex.flightPlanExperience.subtext"
-                      class=" text-subtitle-2 font-italic font-weight-thin"><v-divider vertical
-                        class="mx-3 secondary"></v-divider>{{ ex.flightPlanExperience.subtext }}</v-row>
+                    <v-row v-if="ex.flightPlanExperience.subtext" class="text-subtitle-2 font-italic font-weight-thin">
+                      <v-divider vertical class="mx-3 secondary" />
+                      {{ ex.flightPlanExperience.subtext }}
+                    </v-row>
                   </v-col>
-                  <v-col align="center" v-if="ex.flightPlanExperience.completed"
-                    class="font-weight-bold">Completed</v-col>
+                  <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">
+                    Completed
+                  </v-col>
                   <v-col align="end" class="text-end">{{ ex.Experience.points }}</v-col>
                 </v-row>
               </v-card-text>
@@ -155,7 +242,7 @@
       </v-col>
 
 
-      <!-- Points and Student Shop Action-->
+      <!-- Points and Student Shop Action -->
       <v-col cols="3" align="center" class="pa-0">
         <v-row>
           <v-col align="center">
@@ -176,16 +263,13 @@
             <v-divider></v-divider>
             <v-card-text>
               <v-row v-for="(student, index) in students.slice(0, 3)" :key="student.id" align="center" class="py-1">
-                <!-- Medal Image -->
                 <v-col cols="3" class="d-flex justify-center align-center">
                   <v-avatar size="40">
                     <v-img :src="getMedal(index)" alt="Medal"></v-img>
                   </v-avatar>
                 </v-col>
-
-                <!-- Student Info -->
                 <v-col cols="9">
-                  <v-card :class="getRankClass(index)" class="text-h6 font-weight-bold py-1 px-2 ">
+                  <v-card :class="getRankClass(index)" class="text-h6 font-weight-bold py-1 px-2">
                     <div class="d-flex justify-space-between align-center name-container">
                       <span class="name-text">{{ student.fname }} {{ student.lname.charAt(0) }}.</span>
                       <span class="text-body-2">{{ student.earnedPoints }} points</span>
@@ -197,7 +281,7 @@
           </v-card>
         </v-row>
 
-        <!-- Latest Badge (Bottom) -->
+        <!-- Latest Badge -->
         <v-row>
           <v-col align="center">
             <h4>Latest Badge:</h4>
@@ -206,20 +290,16 @@
           </v-col>
         </v-row>
       </v-col>
-
-
-
-
-
     </v-row>
 
     <TaskDialog :dialog="showTask" :item="currentTask" :refresh="refresh" @update:dialog="showTask = $event"
       @update:task="changeTask($event)" @update:refresh="refreshAll()" />
-
     <ExperienceDialog :dialog="showExperience" :item="currentExperience" :refresh="refresh"
       @update:dialog="showExperience = $event" @update:experience="changeExperience()" @update:refresh="refreshAll()" />
   </v-container>
 </template>
+
+
 
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue';
@@ -242,21 +322,41 @@ const students = ref([]);
 
 const router = useRouter();
 const upcomingEvents = ref([]);
-const tasks = ref([]);
 const showTask = ref(false)
 const currentTask = ref(null)
-const experiences = ref([]);
 const showExperience = ref(false)
 const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
-const relatedEventIds = ref([]);
 
 
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
+const priorityFilter = ref(null);
+const experiencePriorityFilter = ref(null);
+const taskDropdown = ref(false);
+const experienceDropdown = ref(false);
 
+const tasks = ref([]);
+const experiences = ref([]);
 
+const filteredTasks = computed(() => {
+  if (!priorityFilter.value) return tasks.value;
+  return tasks.value.filter(t => (t.task.priority || 0) === priorityFilter.value);
+});
+
+const filteredExperiences = computed(() => {
+  if (!experiencePriorityFilter.value) return experiences.value;
+  return experiences.value.filter(ex => (ex.Experience.priority || 0) === experiencePriorityFilter.value);
+});
+
+const selectTaskPriority = (level) => {
+  priorityFilter.value = level;
+  taskDropdown.value = false;
+};
+
+const selectExperiencePriority = (level) => {
+  experiencePriorityFilter.value = level;
+  experienceDropdown.value = false;
+};
 
 onMounted(async () => {
   await FlightPlan.createFlightPlan()
@@ -337,7 +437,7 @@ function changeTask(task) {
   const index = tasks.value.findIndex(t => t.task.id === updatedTask.task.id);
   if (index !== -1) {
     tasks.value[index] = updatedTask;
-    tasks.value = [...tasks.value]; // force reactivity
+    tasks.value = [...tasks.value]; 
   }
   currentTask.value = updatedTask;
   showTask.value = true;
@@ -408,17 +508,47 @@ function parseDate(date) {
 function getTasks() {
   FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
     .then((res) => {
-      tasks.value = res.data.tasks.sort((taskA, taskB) => { return taskA.task.priority - taskB.task.priority });
-    })
+      tasks.value = res.data.tasks.sort((a, b) => {
+        const aCompleted = a.flightPlanTask.completed ? 1 : 0;
+        const bCompleted = b.flightPlanTask.completed ? 1 : 0;
+
+        if (aCompleted !== bCompleted) {
+          return aCompleted - bCompleted;
+        }
+
+        return (a.task.priority || 0) - (b.task.priority || 0); 
+      });
+    });
 }
 
 
 function getExperiences() {
   FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
     .then((res) => {
-      experiences.value = res.data.Experiences.sort((experienceA, experienceB) => { return experienceA.Experience.priority - experienceB.Experience.priority });
-    })
+      experiences.value = res.data.Experiences.sort((a, b) => {
+        const aCompleted = a.flightPlanExperience.completed ? 1 : 0;
+        const bCompleted = b.flightPlanExperience.completed ? 1 : 0;
+
+        if (aCompleted !== bCompleted) {
+          return aCompleted - bCompleted; 
+        }
+
+        return (a.Experience.priority || 0) - (b.Experience.priority || 0); 
+      });
+    });
 }
+
+
+const clickedExperience = ref({});
+
+const totalTasks = 10;
+const tasksCompleted = ref(0);
+const progressValue = ref(0);
+const clickedTask = ref(Array(totalTasks).fill(false));
+
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
+
 
 const handleTaskClick = (task) => {
   showTask.value = true;

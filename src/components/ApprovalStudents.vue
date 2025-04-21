@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted,watch } from "vue";
+import { ref, onMounted, watch } from "vue";
+
+// Services
 import userServices from "../services/userServices";
 import roleUserServices from "../services/roleUserServices";
 import logService from "../services/logServices";
 import Utils from "../config/utils";
 import experienceService from "../services/experiencesServices";
-import roleUser from "../services/roleUserServices";
 import flightPlanTaskService from "../services/flightPlanTaskServices";
 import flightPlanExperienceService from "../services/flightPlanExperienceServices";
 import flightPlanServices from "../services/flightPlanServices";
@@ -14,16 +15,20 @@ import taskMajorService from "../services/taskMajorServices";
 import majorService from "../services/majors.Services";
 import experienceMajorService from "../services/experienceMajorServices";
 import notificationService from "../services/notification.Services";
-import taskService from "../services/tasksServices"; 
-import documentService from "../services/documentService";
+import taskService from "../services/tasksServices";
+import documentService from "../services/documentService"; 
+import userBadgesServices from "../services/userBadgesServices";
+
+
 import PDF from "pdf-vue3";
 
+// State variables
 const search = ref("");
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 const snackbarColor = ref("");
-
-const users = ref([]); 
+const users = ref([]);
+const listItems = ref([]);
 
 const taskDialog = ref(false);
 const selectedTask = ref(null);
@@ -38,12 +43,10 @@ const requestDialog = ref(false);
 const selectedRequest = ref(null);
 const adminDialog = ref(false);
 
-
 const flightPlanExperiences = ref([]);
-const listItems = ref([]);
-const comment = ref("");
 const flightPlanTasks = ref([]);
 const experienceDialog = ref(false);
+const comment = ref("");
 const reflection = ref("");
 
 const user = Utils.getStore("user");
@@ -51,7 +54,7 @@ const user = Utils.getStore("user");
 const headers = ref([
   { title: "First Name", key: "fName" },
   { title: "Email", key: "email", sortable: false },
-  { title: "Approval Type", key: "type"},
+  { title: "Approval Type", key: "type" },
   { title: "Approve", key: "approve", sortable: false },
 ]);
 
@@ -59,9 +62,7 @@ const showSnackbar = (message, color) => {
   snackbarMessage.value = message;
   snackbarColor.value = color === "success" ? "green" : "red";
   snackbar.value = true;
-  setTimeout(() => {
-    snackbar.value = false;
-  }, 3000);
+  setTimeout(() => (snackbar.value = false), 3000);
 };
 
 async function fetchExperiences() {
@@ -71,49 +72,44 @@ async function fetchExperiences() {
     flightPlanExperiences.value.data.map(async (fpExperience) => {
       let experience = await experienceService.getById(fpExperience.experienceId);
       let experiencePoints = experience.data.points;
-      let experienceMajors = await experienceMajorService.getAllForExperienceId(experience.data.id);
+
       let majors = await Promise.all(
-        experienceMajors.data.map(async (tm) => {
+        (
+          await experienceMajorService.getAllForExperienceId(experience.data.id)
+        ).data.map(async (tm) => {
           let currMajor = await majorService.getMajorById(tm.majorId);
           return currMajor.data.name;
         })
       );
 
-      let allMajors = majors.join(" ");
       let flightPlan = await flightPlanServices.getFlightPlanById(fpExperience.flightPlanId);
       let studentInfo = await studentInfoServices.getStudentInfoById(flightPlan.data.studentInfoId);
       let userId = studentInfo.data[0].userId;
       let user = await userServices.getUserById(userId);
       let name = `${user.data.fName} ${user.data.lName}`;
-      let currPoints = studentInfo.data[0].currentPoints;
-      let earnedPoints = studentInfo.data[0].earnedPoints;
 
       return {
         experienceName: experience.data.name,
         semestersFromGraduation: experience.data.semestersFromGraduation,
-        major: allMajors,
+        major: majors.join(" "),
         studentName: name,
         fname: user.data.fName,
         email: user.data.email,
         fpExperienceId: fpExperience.id,
         userId: userId,
         experiencePoints: experiencePoints,
-        currPoints: currPoints,
-        earnedPoints: earnedPoints,
+        currPoints: studentInfo.data[0].currentPoints,
+        earnedPoints: studentInfo.data[0].earnedPoints,
         reflection: fpExperience.reflection,
         fName: name,
         type: "Experience",
-
       };
     })
   );
 
-  listItems.value.push(...items); 
+  listItems.value.push(...items);
   users.value.push(...items);
 }
-
-
-
 
 const fetchWantToBeAdmins = async () => {
   try {
@@ -121,13 +117,12 @@ const fetchWantToBeAdmins = async () => {
     if (Array.isArray(response.data)) {
       const mapped = response.data.map((request) => ({
         id: request.id,
-        fullName: `${request.fName || "N/A"} ${request.lName || "N/A"}`, 
+        fullName: `${request.fName || "N/A"} ${request.lName || "N/A"}`,
         email: request.email || "N/A",
         fName: request.fName,
         type: "Admin",
-
       }));
-      users.value.push(...mapped); 
+      users.value.push(...mapped);
     } else {
       showSnackbar("Unexpected response format from server", "error");
     }
@@ -152,7 +147,6 @@ const fetchRequestsUsers = async () => {
         points: request.points || 0,
         fName: request.user?.fName || "N/A",
         type: "Request Experiences",
-
       }));
       users.value.push(...mapped);
     } else {
@@ -170,47 +164,45 @@ async function fetchTasks() {
     flightPlanTasks.value.data.map(async (fpTask) => {
       let task = await taskService.getById(fpTask.taskId);
       let taskPoints = task.data.points;
-      let taskMajors = await taskMajorService.getAllForTaskId(task.data.id);
+
       let majors = await Promise.all(
-        taskMajors.data.map(async (tm) => {
+        (
+          await taskMajorService.getAllForTaskId(task.data.id)
+        ).data.map(async (tm) => {
           let currMajor = await majorService.getMajorById(tm.majorId);
           return currMajor.data.name;
         })
       );
 
-      let allMajors = majors.join(" ");
       let flightPlan = await flightPlanServices.getFlightPlanById(fpTask.flightPlanId);
       let studentInfo = await studentInfoServices.getStudentInfoById(flightPlan.data.studentInfoId);
       let userId = studentInfo.data[0].userId;
       let user = await userServices.getUserById(userId);
       let name = `${user.data.fName} ${user.data.lName}`;
-      let currPoints = studentInfo.data[0].currentPoints;
-      let earnedPoints = studentInfo.data[0].earnedPoints;
 
       return {
         taskName: task.data.name,
         semestersFromGraduation: task.data.semestersFromGraduation,
         studentName: name,
-        major: allMajors,
+        major: majors.join(" "),
         fpTaskId: fpTask.id,
         userId: userId,
         taskPoints: taskPoints,
-        currPoints: currPoints,
-        earnedPoints: earnedPoints,
+        currPoints: studentInfo.data[0].currentPoints,
+        earnedPoints: studentInfo.data[0].earnedPoints,
         fName: name,
         email: user.data.email,
         type: "tasks",
-
       };
     })
   );
 
-  listItems.value.push(...items); 
+  listItems.value.push(...items);
   users.value.push(...items);
 }
+
 function viewDocument() {
   const flightPlanId = selectedTask.value.fpTaskId;
-
   documentService.getDocumentByFlightPlanTaskId(flightPlanId)
     .then((res) => {
       file.value = `data:application/pdf;base64,${res.data}`;
@@ -219,8 +211,8 @@ function viewDocument() {
     .catch((error) => {
       console.error("Error fetching document:", error);
     });
-
 }
+
 watch(taskDialog, (val) => {
   if (val && selectedTask.value) {
     console.log("Selected Task:", selectedTask.value);
@@ -228,257 +220,229 @@ watch(taskDialog, (val) => {
   }
 });
 
-
-
 const confirmApproval = (user) => {
   selectedUser.value = user;
-
-  if(user.type === "Request Experiences") {
-    requestDialog.value = true;
+  if (user.type === "Request Experiences") {
     selectedRequest.value = user;
-
-  } else if(user.type === "Experience") {
-    selectedExperience.value = user
+    requestDialog.value = true;
+  } else if (user.type === "Experience") {
+    selectedExperience.value = user;
     experienceDialog.value = true;
-  } else if(user.type === "Admin") {
-    selectedUser.value = user;
+  } else if (user.type === "Admin") {
     adminDialog.value = true;
-  } else if(user.type === "tasks") {
-    selectedTask.value =listItems.value.find((task) => task.fpTaskId === user.fpTaskId);
+  } else if (user.type === "tasks") {
+    selectedTask.value = listItems.value.find((task) => task.fpTaskId === user.fpTaskId);
     taskDialog.value = true;
   } else {
     adminDialog.value = true;
   }
-
-
-
-
 };
 
-
-
 const approveAdmin = async (approved) => {
-    if (approved){
-            try {
-            adminDialog.value = false;
+  try {
+    adminDialog.value = false;
 
-            await experienceService.update(selectedRequest.value.id, {
-                approved: true,
-                requestedByStudent: false,
-                subtext: "approved",
-                points: selectedRequest.value.points,
-                userId: selectedRequest.value.userId,
-                pastRequested: true,
-            });
-
-            notificationService.createNotification({
-                userId: selectedRequest.value.userId,
-                title: "Request Approved", 
-                desc: `Your request for ${selectedRequest.value.name} has been approved.`,
-                goodNews: true,
-
-            });
-
+    if (approved) {
+        const roleId = 3;
+        if (!selectedUser.value) return;
+        
+        roleUserServices
+            .updateUserRole(selectedUser.value.id, roleId)
+            .then((response) => {
             fetchUsers();
-            users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
+            showSnackbar("User approved successfully", "success");
+            })
+            .catch((error) => {
+            showSnackbar("Error approving user", "error");
+            })
 
-            await logService.createLog({
-                name: "Requested Experience Approved",
-                desc: `${user.email} approved the requested experience ${selectedRequest.value.name} for the user ${selectedRequest.value.fullName}`,
-                date: new Date().toISOString(), 
-                email: user.email, 
-                type: "Approval" 
-            }) 
+        await logService.createLog({
+            name: "Admin Approval",
+            desc: user.email+ " approved the user " + selectedUser.value.email + " to be an admin",
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Approval"
+        })
+        .then((response) => {
+            console.log("Log created successfully:", response.data);
+            selectedUser.value = null; 
+            dialog.value = false;  
+        })
+    }
+    else {
+        roleUserServices
+            .updateUserRole(selectedUser.value.id, 1)
+            .then((response) => {   
+            fetchUsers();
+            showSnackbar("User denied successfully", "success");
+            })
+            fetchUsers();
 
-            showSnackbar("Request approved successfully", "success");
-            } catch (error) {
-            console.error("Error approving request:", error);
-            showSnackbar("Failed to approve request", "error");
-            }
-    } else{
-        try {
-            adminDialog.value = false;
-
-            await experienceService.update(selectedRequest.value.id, {
-            denied: true,
-            requestedByStudent: false,
-            subtext: "denied", 
-            });
-
-            notificationService.createNotification({
-            userId: selectedRequest.value.userId,
-            title: "Request Denied", 
-            desc: `Your request for ${selectedRequest.value.name} has been Denied.`,
-            goodNews: false,
-            pastRequested: true,
-            });
-
-            fetchUsers(); 
-            users.value = users.value.filter((user) => user.id !== selectedRequest.value.id);
-
-            showSnackbar("Request denied successfully", "success");
-        } catch (error) {
-            console.error("Error denying request:", error);
-            showSnackbar("Failed to deny request", "error");
-        }
-
+        
     }
 
+    await fetchWantToBeAdmins();
+
+    users.value = users.value.filter((u) => u.id !== selectedRequest.value.id);
+  } catch (error) {
+    console.error("Error approving request:", error);
+    showSnackbar("Failed to approve request", "error");
+  }
 };
 
 const approveExperience = async (approved) => {
-    if(approved){
-        try {
-            experienceDialog.value = false;
+    experienceDialog.value = false;
 
-            await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
-            // Add notification
-            let notification = {
-                userId: selectedExperience.value.userId, 
-                title: `${selectedExperience.value.experienceName} Approval`,
-                desc: `Your ${selectedExperience.value.experienceName} experience has been approved!`,
+    if (approved) {
+        let notification = null
+        let notificationComment = null
+        if (comment.value) {
+            notificationComment = ` Comment from approver: ${comment.value}`
+        } else {notificationComment = ""}
+
+        if (approved) {
+            await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
+            notification = {
+            userId: selectedExperience.value.userId, 
+            title: `${selectedExperience.value.experienceName} Approval`,
+            desc: `Your ${selectedExperience.value.experienceName} experience has been approved!${notificationComment}`,
+            goodNews: 1
+            }
+            await notificationService.createNotification(notification)
+            let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
+            let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
+            await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})
+            await logService.createLog({
+            name: "Experience Approved",
+            desc: user.email+ " approved the experience " + selectedExperience.value.experienceName + " for the user " + selectedExperience.value.studentName,
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Approval" 
+        })
+
+  } else {
+    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
+    notification = {
+      userId: selectedExperience.value.userId, 
+      title: `${selectedExperience.value.experienceName} Denial`,
+      desc: `Your ${selectedExperience.value.experienceName} experience has been denied.${notificationComment}`,
+      goodNews: 0
+    }
+    await notificationService.createNotification(notification)
+  }}
+    await fetchExperiences();
+
+    users.value = users.value.filter((u) => u.id !== selectedExperience.value.id);
+
+};
+const approveTask = async (approved) => {
+    taskDialog.value = false;
+
+    if(approved) {
+        let notification = null
+        let notificationComment = null
+        if (comment.value) {
+            notificationComment = ` Comment from approver: ${comment.value}`
+        } else {notificationComment = ""}
+
+        if (approved) {
+            await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 1, pending: 0, subtext: "", comment: comment.value})
+            notification = {
+                userId: selectedTask.value.userId, 
+                title: `${selectedTask.value.taskName} Approval`,
+                desc: `Your ${selectedTask.value.taskName} task has been approved!${notificationComment}`,
                 goodNews: 1
             }
             await notificationService.createNotification(notification)
-            // Update student points
-            let currPoints = selectedExperience.value.currPoints + selectedExperience.value.experiencePoints
-            let earnedPoints = selectedExperience.value.earnedPoints + selectedExperience.value.experiencePoints
-            const studentId = (await studentInfoServices.updateStudentInfo(selectedExperience.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
-            // Check if user earned badges
+            let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints
+            let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints
+            const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, {currentPoints: currPoints, earnedPoints: earnedPoints})).id
             userBadgesServices.checkUserBadges(studentId)
-
             await logService.createLog({
                 name: "Task Approved",
-                desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
+                desc: user.email+ " approved the task " + selectedTask.value.taskName + " for the user " + selectedTask.value.studentName,
                 date: new Date().toISOString(),
                 email: user.email, 
                 type: "Approval" 
-            }) 
-
-        } catch (error) {
-            console.error("Error approving request:", error);
-        }
-    } else{
-        try {
-            experienceDialog.value = false;
-
-            await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
-            
-            let notification = {
-                userId: selectedExperience.value.userId, 
-                title: `${selectedExperience.value.experienceName} Denial`,
-                desc: `Your ${selectedExperience.value.experienceName} experience has been denied.`,
+            })
+        } else {
+            await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, {completed: 0, pending: 0, subtext: "Denied", comment: comment.value})
+            notification = {
+                userId: selectedTask.value.userId, 
+                title: `${selectedTask.value.taskName} Denial`,
+                desc: `Your ${selectedTask.value.taskName} task has been denied.${notificationComment}`,
                 goodNews: 0
             }
             await notificationService.createNotification(notification)
-        } catch (error) {
-            console.error("Error denying request:", error);
         }
     }
-    experienceDialog.value = false;
-    fetchExperiences()
-    comment.value = null;
-};
 
-const approveTask = async (approved) => {
-  if (approved) {
-    try {
-      taskDialog.value = false;
 
-      await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, { completed: 1, pending: 0, subtext: "", comment: comment.value });
-      // Add notification
-      let notification = {
-        userId: selectedTask.value.userId,
-        title: `${selectedTask.value.taskName} Approval`,
-        desc: `Your ${selectedTask.value.taskName} task has been approved!`,
-        goodNews: 1
-      };
-      await notificationService.createNotification(notification);
-      // Update student points
-      let currPoints = selectedTask.value.currPoints + selectedTask.value.taskPoints;
-      let earnedPoints = selectedTask.value.earnedPoints + selectedTask.value.taskPoints;
-      const studentId = (await studentInfoServices.updateStudentInfo(selectedTask.value.userId, { currentPoints: currPoints, earnedPoints: earnedPoints })).id;
-      // Check if user earned badges
-      userBadgesServices.checkUserBadges(studentId);
 
-      await logService.createLog({
-        name: "Task Approved",
-        desc: `${user.email} approved the task ${selectedTask.value.taskName} for the user`,
-        date: new Date().toISOString(),
-        email: user.email,
-        type: "Approval"
-      });
+ 
 
-    } catch (error) {
-      console.error("Error approving request:", error);
-    }
-  } else {
-    try {
-      taskDialog.value = false;
+    
+    
+    await fetchTasks();
 
-      await flightPlanTaskService.updateFlightPlanTask(selectedTask.value.fpTaskId, { completed: 0, pending: 0, subtext: "Denied", comment: comment.value });
-
-      let notification = {
-        userId: selectedTask.value.userId,
-        title: `${selectedTask.value.taskName} Denial`,
-        desc: `Your ${selectedTask.value.taskName} task has been denied.`,
-        goodNews: 0
-      };
-      await notificationService.createNotification(notification);
-    } catch (error) {
-      console.error("Error denying request:", error);
-    }
-  }
-  taskDialog.value = false;
-  fetchTasks()
-  comment.value = null; 
-};
-
-const approveTask = async (approved) => {
 
 };
 const approveRequest = async (approved) => {
+    requestDialog.value = false;
+
+    if (approved) {
+      await experienceService.update(selectedRequest.value.id, {
+        approved: true,
+        requestedByStudent: false,
+        subtext: "approved",
+        points: selectedRequest.value.points,
+        userId: selectedRequest.value.userId,
+        pastRequested: true,
+      });
+
+      await notificationService.createNotification({
+        userId: selectedRequest.value.userId,
+        title: "Request Approved",
+        desc: `Your request for ${selectedRequest.value.name} has been approved.`,
+        goodNews: true,
+      });
+
+      await logService.createLog({
+        name: "Requested Experience Approved",
+        desc: `${user.email} approved the requested experience ${selectedRequest.value.name} for the user ${selectedRequest.value.fullName}`,
+        date: new Date().toISOString(),
+        email: user.email,
+        type: "Approval",
+      });
+
+      showSnackbar("Request approved successfully", "success");
+    }
+
+    await fetchRequestsUsers();
+
+    users.value = users.value.filter((u) => u.id !== selectedRequest.value.id);
 
 };
 
 
 
-
-
-
-
-const props = defineProps({
-  selectedUser: Object,
-  search: String
-});
-
-
-
-const closeDialog = () => {
-  experienceDialog.value = false;
+const closeDialog = async () => {
   taskDialog.value = false;
+  experienceDialog.value = false;
   requestDialog.value = false;
   adminDialog.value = false;
-  dialog.value = false;
+  document.value = false;
 
-    selectedExperience.value = null;
-    selectedTask.value = null;
-    selectedRequest.value = null;
-    selectedUser.value = null;
-    comment.value = null;
 };
 
-
-
-
-
-onMounted(() => {
-  fetchExperiences();
-  fetchTasks();
-  fetchRequestsUsers();
-  fetchWantToBeAdmins();
+onMounted(async () => {
+  await fetchExperiences();
+  await fetchTasks();
+  await fetchRequestsUsers();
+  await fetchWantToBeAdmins();
 });
 </script>
+
 
 <template>
   <div class="pa-10">
@@ -489,7 +453,7 @@ onMounted(() => {
       <v-data-table
         :headers="headers"
         :items="users"
-        :search="props.search"
+        :search="search"
         item-value="fName"
       >
         <template v-slot:item.approve="{ item }">
@@ -507,7 +471,8 @@ onMounted(() => {
 
     <v-dialog v-model="experienceDialog" max-width="600">
       <v-card>
-        <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col><v-col align="end"><v-icon @click="dialog = false">mdi-close</v-icon></v-col></v-row></v-card-title>
+        <v-card-title class="headline"><v-row class="ma-0 pa-0 w-100"><v-col align="start">Confirm Approval</v-col>
+        <v-col align="end"><v-icon @click="closeDialog() ">mdi-close</v-icon></v-col></v-row></v-card-title>
         <v-card-text>
           Are you sure you want to approve
           <strong>{{ selectedExperience?.experienceName }}</strong> for 

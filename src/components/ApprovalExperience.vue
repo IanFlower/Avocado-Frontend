@@ -110,14 +110,18 @@ async function fetchExperiences() {
         majors = ["All Majors"];
       } else {
 
-        majors = await Promise.all( 
-          experienceMajors.data.map( async (tm) => {
-            let currMajor = fullMajorList.data.find((m) => {
-                return m.id == tm.id
+        majors = (
+          await Promise.all(
+            experienceMajors.data.map(async (tm) => {
+              let currMajor = fullMajorList.data.find((m) => m.id == tm.id);
+              return currMajor?.name;
             })
-            return currMajor.data.name
-          })
-        )
+          )
+        ).filter(Boolean);
+
+        if (majors.length === 0) {
+          majors = ["General Studies"];
+        }
       }
       let allMajors = ""
       majors.forEach((major) => {allMajors += `${major} `})

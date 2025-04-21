@@ -22,7 +22,10 @@ const userService = {
   // Get a specific user by ID
   getUserById(userId) {
     return apiClient.get(`/user/${userId}`);
-  } 
+  } ,
+  getApprovalUsers() {
+    return apiClient.get('/user/get/approval/space/getAllApprovals');  
+  },
 };
 
 export default userService;

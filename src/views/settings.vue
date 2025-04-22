@@ -6,12 +6,11 @@ import iconServices from '../services/iconServices.js';
 import cliftonStrengthService from '../services/cliftonStrengthServices';
 import majorService from '../services/majors.Services';
 import studentInfoServices from '../services/studentInfoServices';
+import studentInfoMajorService from '../services/studentInfoMajorServices';
 
-// LocalStorage user
 const storedUser = JSON.parse(localStorage.getItem("user"));
 const userId = storedUser?.id;
 
-// User and Student Info
 const user = ref({
   fName: '',
   lName: '',
@@ -20,7 +19,6 @@ const user = ref({
 });
 const studentInfo = ref(null);
 
-// Classification Computed
 const classification = computed(() => {
   const sem = user.value.semestersTillGraduation;
   if (sem >= 7) return 'Freshman';
@@ -30,25 +28,20 @@ const classification = computed(() => {
   return '';
 });
 
-// Strengths and Majors
 const cliftonStrengths = ref([]);
 const selectedStrengths = ref([]);
 const showStrengthDialog = ref(false);
 const userTopStrengths = ref([]);
 
-
 const majors = ref([]);
-const selectedMajor = ref(null);
+const selectedMajors = ref([]);
 const showMajorDialog = ref(false);
 
 const showSemesterDialog = ref(false);
 const newSemester = ref(null);
 
-
-// Mounted: Fetch all data
 onMounted(async () => {
   try {
-    // Get user
     const userRes = await userService.getUserById(userId);
     if (userRes.data) {
       user.value = userRes.data;
@@ -64,13 +57,11 @@ onMounted(async () => {
       }
     }
 
-    // Get student info
     const studentRes = await studentInfoServices.getStudentInfoById(userId);
     if (studentRes.data) {
       studentInfo.value = studentRes.data;
     }
 
-    // Get strengths
     try {
       const result = await cliftonStrengthService.getAllCliftonStrengths();
       cliftonStrengths.value = result.data;
@@ -78,7 +69,6 @@ onMounted(async () => {
       console.error("Failed to fetch strengths", e);
     }
 
-    // Get majors
     try {
       const res = await majorService.getAllMajors();
       majors.value = res.data;
@@ -93,23 +83,48 @@ onMounted(async () => {
 
 function submitStrengths() {
   if (selectedStrengths.value.length > 5) return;
-
-  // Simulate saving by mapping selected IDs to full strength objects
   userTopStrengths.value = cliftonStrengths.value.filter(str =>
     selectedStrengths.value.includes(str.id)
   );
-
   showStrengthDialog.value = false;
-
   console.log('User Top Strengths:', userTopStrengths.value.map(s => s.name));
 }
 
+async function submitMajor() {
+  try {
+    if (!studentInfo.value) {
+      const res = await studentInfoServices.getStudentInfoById(userId);
+      studentInfo.value = res.data;
+    }
 
-function submitMajor() {
-  if (selectedMajor.value) {
-    console.log("Selected major:", selectedMajor.value);
-    // Save to backend if needed
+    const studentInfoId = studentInfo.value.id;
+
+    const currentMajorsRes = await studentInfoMajorService.getAllByStudentInfoId(studentInfoId);
+    const currentMajorLinks = currentMajorsRes.data;
+
+    const currentMajorIds = currentMajorLinks.map(link => link.majorId);
+    const selectedMajorIds = selectedMajors.value.map(m => m.id);
+
+    const newMajorIds = selectedMajorIds.filter(id => !currentMajorIds.includes(id));
+
+    const updateRequests = currentMajorLinks
+      .filter(link => selectedMajorIds.includes(link.majorId))
+      .map(link => {
+        return studentInfoMajorService.update(link.id, {
+          studentInfoId,
+          majorId: link.majorId,
+        });
+      });
+
+    const createRequests = newMajorIds.map(majorId =>
+      studentInfoMajorService.create({ studentInfoId, majorId })
+    );
+
+    await Promise.all([...updateRequests, ...createRequests]);
+  } catch (err) {
+    console.error("Error updating majors:", err);
   }
+
   showMajorDialog.value = false;
 }
 
@@ -129,12 +144,7 @@ async function submitSemester() {
     }
   }
 }
-
 </script>
-
-
-
-
 
 <template>
   <v-container fluid class="mt-10">
@@ -146,7 +156,6 @@ async function submitSemester() {
               <v-img :src="user.profilePicture || NoImageAvailable" alt="Profile Picture" cover class="elevation-1"
                 lazy-src="https://via.placeholder.com/300" />
             </v-avatar>
-
           </v-col>
 
           <v-col cols="12" sm="8" class="d-flex flex-column justify-center align-center">
@@ -163,14 +172,15 @@ async function submitSemester() {
       </v-col>
     </v-row>
 
-
     <v-row justify="center" class="mt-6">
       <v-col cols="12" sm="4">
-        <v-card class="pa-4 text-center d-flex flex-column justify-space-between" outlined style="height: 360px;">
+        <v-card class="pa-4 text-center d-flex flex-column justify-space-between"
+        outlined
+        style="height: 360px; border: 2px solid rgba(0, 0, 0, 0.5);">
+
           <div>
             <v-card-title class="text-h6 font-weight-medium">Clifton Strengths</v-card-title>
             <v-divider class="my-2" />
-
             <div v-if="userTopStrengths.length > 0" class="mt-3 text-left px-4">
               <div class="text-subtitle-2 font-weight-bold mb-2">Your Top 5 Clifton Strengths:</div>
               <ul class="text-left pl-4">
@@ -178,7 +188,6 @@ async function submitSemester() {
               </ul>
             </div>
           </div>
-
           <v-card-actions class="justify-center">
             <v-btn class="tertiary-button" height="60" width="250" size="large" variant="outlined"
               @click="showStrengthDialog = true" style="font-size: 18px;">
@@ -188,14 +197,19 @@ async function submitSemester() {
         </v-card>
       </v-col>
 
-
       <v-col cols="12" sm="4">
-        <v-card class="pa-4 text-center d-flex flex-column justify-space-between" outlined style="height: 360px;">
+        <v-card class="pa-4 text-center d-flex flex-column justify-space-between"
+        outlined
+        style="height: 360px; border: 2px solid rgba(0, 0, 0, 0.5);">
+
           <div>
             <v-card-title class="text-h6 font-weight-medium">Majors</v-card-title>
             <v-divider class="my-2" />
-            <v-card-subtitle v-if="selectedMajor" class="text-h6 font-weight-medium text-center mt-2">
-              Your Current Major is : {{ selectedMajor.name }}
+            <v-card-subtitle v-if="selectedMajors.length > 0" class="text-h6 font-weight-medium text-center mt-2">
+              <div>Your Current Majors:</div>
+              <ul class="mt-2 pl-4 text-left">
+                <li v-for="major in selectedMajors" :key="major.id">{{ major.name }}</li>
+              </ul>
             </v-card-subtitle>
           </div>
           <v-card-actions class="justify-center">
@@ -208,7 +222,10 @@ async function submitSemester() {
       </v-col>
 
       <v-col cols="12" sm="4">
-        <v-card class="pa-4 text-center d-flex flex-column justify-space-between" outlined style="height: 360px;">
+        <v-card class="pa-4 text-center d-flex flex-column justify-space-between"
+        outlined
+        style="height: 360px; border: 2px solid rgba(0, 0, 0, 0.5);">
+
           <div>
             <v-card-title class="text-h6 font-weight-medium justify-center d-flex text-center">
               Edit Graduation Semester
@@ -228,7 +245,6 @@ async function submitSemester() {
         </v-card>
       </v-col>
     </v-row>
-
 
 
     <!-- V- DIALOGS FOR THE ABOVE -->
@@ -251,10 +267,11 @@ async function submitSemester() {
 
     <v-dialog v-model="showMajorDialog" max-width="500">
       <v-card>
-        <v-card-title class="text-h5">Select Your Major</v-card-title>
+        <v-card-title class="text-h5">Select Your Majors</v-card-title>
         <v-card-text>
-          <v-select v-model="selectedMajor" :items="majors" item-title="name" item-value="id" label="Choose a Major"
-            clearable return-object />
+          <v-select v-model="selectedMajors" :items="majors" item-title="name" item-value="id" label="Choose Majors"
+            multiple return-object chips clearable />
+
         </v-card-text>
         <v-card-actions>
           <v-btn variant="text" @click="showMajorDialog = false">Cancel</v-btn>
@@ -278,7 +295,5 @@ async function submitSemester() {
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-
   </v-container>
 </template>

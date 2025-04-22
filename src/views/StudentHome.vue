@@ -84,7 +84,7 @@
                 }}
               </span>
             </div>
-            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="#F9C634"
+            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="accent"
               rounded stream></v-progress-linear>
           </v-col>
         </v-row>

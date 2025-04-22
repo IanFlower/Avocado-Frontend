@@ -32,9 +32,9 @@ const myCustomDarkTheme = {
   colors: {
     background: "#292929",
     text: "#ffffff",
-    primary: "#80162B",
+    primary: "#1A1A1A",
     secondary: "#3A3A3A",
-    accent: "#F9C634",
+    accent: "#f9c434ad",
     success: "#47121D",
     error: "#EE5044",
     tertiary: "#004761",

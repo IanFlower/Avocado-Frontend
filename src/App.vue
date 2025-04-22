@@ -18,7 +18,13 @@ import MenuBar from "./components/MenuBar.vue";
 import Utils from './config/utils';
 const route = useRoute();
 const isLoginPage = computed(() => route.name === 'Login');
-let user = Utils.getStore("user");
-const isDark = ref(user.darkMode);
+const isDark = ref(false);
+try{
+  let user = Utils.getStore("user");
+  isDark.value = user.darkMode;
+}
+catch{
+  isDark.value = false;
+}
 provide('isDark', isDark);
 </script>

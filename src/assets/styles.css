@@ -11,10 +11,10 @@
 [data-theme="dark"] {
     --text-color: #FFFFFE;
     --background-color: #292929;
-    --primary: #811420;
-    --secondary: #292929;
+    --primary: #1A1A1A;
+    --secondary: #3A3A3A;
     --tertiary: #004761;
-    --accent: #F9C634;
+    --accent: #f9c434ad;
     --alt: #004761;
     --t-head: #004761;
 }

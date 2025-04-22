@@ -301,9 +301,11 @@ import studentInfoServices from "../services/studentInfoServices.js";
 import iconServices from "../services/iconServices.js";
 import noBadgeImage from '../assets/No_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
+import BadgeServices from '../services/badgeServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
+import userBadgesServices from '../services/userBadgesServices.js';
 
 //router variable and User
 const router = useRouter();
@@ -368,6 +370,9 @@ onMounted(async () => {
   getExperiences();
 
   getLeaderboardinfo();
+
+  await loadLatestBadge();
+
 });
 
 
@@ -702,10 +707,20 @@ const getButtonClass = (index) => {
 // LATEST BADGE FUNCTION 
 //--------------------------
 
-async function getLatestBadge() {
+async function loadLatestBadge() {
   try {
     const allBadges = await BadgeServices.getAllBadges(userId);
-    const earnedRes = await userBadgesServices.getByStudentId(userId);
+
+    // Get studentInfo first
+    const studentInfoRes = await studentInfoServices.getStudentInfoById(userId);
+    const studentInfoId = studentInfoRes?.data?.[0]?.id;
+    if (!studentInfoId) {
+      console.error("No studentInfoId found");
+      latestBadge.value = null;
+      return;
+    }
+
+    const earnedRes = await userBadgesServices.getByStudentId(studentInfoId);
     const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
 
     const badges = allBadges.data

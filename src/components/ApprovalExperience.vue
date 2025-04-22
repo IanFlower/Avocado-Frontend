@@ -110,14 +110,18 @@ async function fetchExperiences() {
         majors = ["All Majors"];
       } else {
 
-        majors = await Promise.all( 
-          experienceMajors.data.map( async (tm) => {
-            let currMajor = fullMajorList.data.find((m) => {
-                return m.id == tm.id
+        majors = (
+          await Promise.all(
+            experienceMajors.data.map(async (tm) => {
+              let currMajor = fullMajorList.data.find((m) => m.id == tm.id);
+              return currMajor?.name;
             })
-            return currMajor.data.name
-          })
-        )
+          )
+        ).filter(Boolean);
+
+        if (majors.length === 0) {
+          majors = ["General Studies"];
+        }
       }
       let allMajors = ""
       majors.forEach((major) => {allMajors += `${major} `})
@@ -193,7 +197,7 @@ onMounted(() => {
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-row class="pa-0 ma-0 w-100">
-            <v-col align="start"><v-btn color="red darken-1" text @click="approveExperience(false)">Deny</v-btn></v-col>
+            <v-col align="start"><v-btn color="red darken-1" text @click="approveExperience(false)">Deny</v-btn></v-col> 
             <v-col align="end"><v-btn color="blue darken-1" text @click="approveExperience(true)">Approve</v-btn></v-col>
           </v-row>
         </v-card-actions>

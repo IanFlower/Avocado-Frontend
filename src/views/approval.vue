@@ -6,6 +6,7 @@ import ApprovalTask from "../components/ApprovalTask.vue"
 import ApprovalEvent from "../components/ApprovalEvent.vue"
 
 import ApprovalRequestExperience from "../components/ApprovalRequestExperience.vue";
+import ApprovalStudents from "../components/ApprovalStudents.vue";
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(''); // Message displayed in snackbar
@@ -114,8 +115,8 @@ onMounted(() => {
 
     <!-- Conditional Rendering Section -->
       <div v-if="selectedButton === 1">
-        <p>Students Component</p>
-
+        
+        <ApprovalStudents :selected-user="selectedUser" />
       </div>
       <div v-else-if="selectedButton === 2">
         <ApprovalTask/> 

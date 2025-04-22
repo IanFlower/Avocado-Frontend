@@ -61,6 +61,10 @@ import { ref, onMounted, defineProps, computed } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
 import studentPurchaseService from "../services/studentPurchaseServices.js";
+import logService from '../services/logServices';
+import Utils from "../config/utils.js";
+
+const user = Utils.getStore("user"); 
 
 const props = defineProps({
   userId: String,
@@ -130,6 +134,13 @@ const purchaseReward = async () => {
     dialog.value = false; //close dialog
     fetchStudentInfo();
     fetchRewards();
+    await logService.createLog({
+            name: "Puchased Reward",
+            desc: user.email + " purchased the reward " + selectedReward.value.name,
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Points"
+        })
   } catch (error) {
     console.error("Error purchasing reward:", error); //error message
   }

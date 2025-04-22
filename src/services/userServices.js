@@ -23,10 +23,12 @@ const userService = {
   getUserById(userId) {
     return apiClient.get(`/user/${userId}`);
   },
-
   changeTheme(){
     return apiClient.post(`/user/changeTheme`);
-  }
+  } ,
+  getApprovalUsers() {
+    return apiClient.get('/user/get/approval/space/getAllApprovals');  
+  },
 };
 
 export default userService;

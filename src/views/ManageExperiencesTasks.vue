@@ -42,7 +42,13 @@ const types = ref([])
 // Data
 const experiencesTasksData = ref([]);
 
-const tableData = computed(() => experiencesTasksData.value.filter(item => item.data.semestersFromGraduation == tableOverLayRefs.value.selectedSemester  && (item.data.dataType == experienceTaskFilter.value || experienceTaskFilter.value == null)));
+const tableData = computed(() =>
+  experiencesTasksData.value
+  .filter(item =>
+    item.data.semestersFromGraduation === tableOverLayRefs.value.selectedSemester + 1 
+  )
+  .sort((a, b) => a.dataType.localeCompare(b.dataType))
+);
 
 const headers = [
     { title: 'Scheduling Type', align: 'left', key: 'dataType' },
@@ -156,14 +162,16 @@ async function editSaveItem() {
             console.log("An error occurred deleting task prerequisites");
         });
         // Create new task-prerequisite records
-        tableOverLayRefs.value.item.data.prerequisites.forEach((item) => {
-            prerequisiteService.create({
-                taskId: tableOverLayRefs.value.item.data.id,
-                prerequisiteId: item.id
-            }).catch((error) => {
-                console.log("An error occurred creating task prerequisite");
+        if (tableOverLayRefs.value.item.data.prerequisites != undefined) {
+            tableOverLayRefs.value.item.data.prerequisites.forEach((item) => {
+                prerequisiteService.create({
+                    taskId: tableOverLayRefs.value.item.data.id,
+                    prerequisiteId: item.id
+                }).catch((error) => {
+                    console.log("An error occurred creating task prerequisite");
+                });
             });
-        });
+        }
     }
 
     // Close dialog

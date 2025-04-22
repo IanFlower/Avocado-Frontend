@@ -23,6 +23,10 @@ const goToProfile = () => {
     router.push({ name: 'Profile', params: { userId: user.value.id } });
 };
 
+const goToSettings = () => {
+    router.push({name: 'Settings', params: {userId: user.value.id} });
+}
+
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
     const storedUser = Utils.getStore("user");
@@ -149,6 +153,10 @@ onMounted(() => {
                         <v-divider></v-divider>
                     </v-card-text>
 
+                    <v-icon @click="goToSettings" class="justify-center" block height="26">
+                        mdi-cog
+                    </v-icon>
+
 
                     <v-card-actions class="d-flex flex-column align-center pa-0">
                         <p class="ma-0">Dark mode</p>
@@ -188,8 +196,8 @@ onMounted(() => {
                     <v-list-item :to="{ name: 'Profile', params: { userId: user.id } }">
                         <v-btn variant="text">Profile</v-btn>
                     </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
+                    <v-list-item :to="{name : 'RequestExperience'}">
+                        <v-btn variant="text">Request Experience</v-btn>
                     </v-list-item>
                 </v-list>
             </div>

@@ -23,6 +23,7 @@ import ManageUsers from "./views/ManageUsers.vue";
 import AdminBadges from "./views/AdminBadges.vue";
 import profilePage from "./views/ProfilePage.vue";
 import Logs from "./views/Logs.vue";
+import Settings from "./views/settings.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -162,6 +163,12 @@ const router = createRouter({
       name: "Logs",
       component: Logs,
     },
+    {
+      path: "/Settings",
+      alias: "/settings",
+      name: "Settings",
+      component: Settings,
+    }
   ],
 });
 

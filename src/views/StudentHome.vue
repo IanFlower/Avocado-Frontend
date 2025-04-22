@@ -692,22 +692,6 @@ const goToLeaderboard = () => {
   router.push('/leaderboard');
 };
 
-//------------------------------------
-//button Class?
-//-----------------------------------
-const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return '';
-  }
-};
 
 //--------------------------
 // LATEST BADGE FUNCTION 

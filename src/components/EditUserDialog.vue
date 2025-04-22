@@ -197,6 +197,7 @@ const saveDialog = () => {
                     console.error("Error creating user permissions:", createError);
                 });
         });
+
 };
 
 // Function to toggle full permissions

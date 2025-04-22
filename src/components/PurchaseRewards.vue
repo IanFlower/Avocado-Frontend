@@ -61,6 +61,10 @@ import { ref, onMounted, defineProps, computed } from "vue";
 import rewardServices from "../services/rewardServices.js";
 import studentInfoServices from "../services/studentInfoServices.js";
 import studentPurchaseService from "../services/studentPurchaseServices.js";
+import logService from '../services/logServices';
+import Utils from "../config/utils.js";
+
+const user = Utils.getStore("user"); 
 
 const props = defineProps({
   userId: String,

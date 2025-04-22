@@ -253,14 +253,28 @@
           </v-card>
         </v-row>
 
-        <!-- Latest Badge -->
+        <!-- Latest Badge (Bottom) -->
         <v-row>
           <v-col align="center">
-            <h4>Latest Badge:</h4>
-            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
-              @click="goToBadges"></v-img>
+            <h4 class="text-h5 font-weight-bold">Latest Badge:</h4>
+            <div v-if="latestBadge">
+              <div class="text-h6 font-weight-bold mb-2">
+                {{ latestBadge.name }}
+              </div>
+              <v-img height="180px" width="180px" :src="latestBadge.imageUrl"
+                :alt="latestBadge.name" class="clickable-image hover-effect" @click="goToBadges" />
+            </div>
+            <div v-else class="text-center">
+              <div class="text-subtitle-1 font-italic mb-2">
+                You have no badges earned at this time!
+              </div>
+              <div class="text-body-2 font-weight-medium">
+                Start your Flight Plan!
+              </div>
+            </div>
           </v-col>
         </v-row>
+
       </v-col>
     </v-row>
 
@@ -284,7 +298,8 @@ import ExperienceDialog from "../components/ExperienceDialog.vue";
 import Utils from "../config/utils.js";
 import FlightPlan from "../services/flightPlanServices";
 import studentInfoServices from "../services/studentInfoServices.js";
-
+import iconServices from "../services/iconServices.js";
+import noBadgeImage from '../assets/No_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
@@ -322,10 +337,9 @@ const experiences = ref([]);
 //Dropdown for Selecting a Semester
 const dropdownOpen = ref(false);
 const selectedSeason = ref('');
-const selectedYear = ref('');
 const semestersTillGraduation = ref(null);
 const selectedSemesterValue = ref(null);
-
+const latestBadge = ref(null);
 
 const semesterLabels = [
   'Freshman Fall',
@@ -548,7 +562,9 @@ function getMedal(index) {
 }
 
 
-
+//-----------------------------------------
+//CHANGE TASKS AND EXPERIENCES FUNCTIONS
+//------------------------------------------
 
 function changeTask(task) {
   currentTask.value = task;
@@ -579,6 +595,10 @@ function changeExperience() {
 
 }
 
+//---------------------------------
+//UPCOMING EVENTS 
+//---------------------------------
+
 function getUpcomingEvents() {
   EventServices.getAllEvents()
     .then((res) => {
@@ -597,6 +617,9 @@ function getUpcomingEvents() {
     })
 }
 
+//-------------------------
+//PARSING FUNCTIONS
+//-------------------------
 function parseTime(date) {
   let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
 
@@ -624,6 +647,9 @@ function parseDate(date) {
   return parsedDate;
 }
 
+//------------------------------------------
+//DIALOG CLICKING FOR TASK AND EXPERIENCES
+//-------------------------------------------
 
 const handleTaskClick = (task) => {
   showTask.value = true;
@@ -636,6 +662,9 @@ const handleExperienceClick = (experience) => {
   currentExperience.value = experience
 };
 
+//-----------------
+//ROUTING
+//-----------------
 const goToShop = () => {
   router.push('/shop');
 };
@@ -652,6 +681,9 @@ const goToLeaderboard = () => {
   router.push('/leaderboard');
 };
 
+//------------------------------------
+//button Class?
+//-----------------------------------
 const getButtonClass = (index) => {
   if (index === 0) {
     return 'accent';
@@ -665,6 +697,61 @@ const getButtonClass = (index) => {
     return '';
   }
 };
+
+//--------------------------
+// LATEST BADGE FUNCTION 
+//--------------------------
+
+async function getLatestBadge() {
+  try {
+    const allBadges = await BadgeServices.getAllBadges(userId);
+    const earnedRes = await userBadgesServices.getByStudentId(userId);
+    const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
+
+    const badges = allBadges.data
+      .filter(badge => earnedBadges.includes(badge.id))
+      .map(badge => ({
+        ...badge,
+        earned: true,
+        earnedDate: new Date(badge.earnedDate || badge.createdAt),
+        image: badge.image || null
+      }));
+
+    if (badges.length > 0) {
+      const today = new Date();
+
+      const closestBadge = badges.reduce((prev, curr) =>
+        Math.abs(curr.earnedDate - today) < Math.abs(prev.earnedDate - today) ? curr : prev
+      );
+
+      if (closestBadge.image) {
+        try {
+          const icon = await iconServices.getIconByFile(closestBadge.image);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: `data:image/*;base64,${icon.data}`,
+          };
+        } catch (error) {
+          console.error("Error fetching badge image:", error.message);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: noBadgeImage,
+          };
+        }
+      } else {
+        latestBadge.value = {
+          ...closestBadge,
+          imageUrl: noBadgeImage,
+        };
+      }
+    } else {
+      latestBadge.value = null;
+    }
+  } catch (error) {
+    console.error("Error loading latest badge:", error);
+  }
+}
+
 </script>
 
 <style scoped>

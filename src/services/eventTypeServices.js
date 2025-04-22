@@ -21,6 +21,11 @@ const eventTypeServices = {
   getEventsByTypeId(typeId) { 
     return apiClient.get(`/eventType/type/${typeId}/events`);
   },
+  
+  // Get all events with a specific type ID
+  getEventTypeByEventId(eventId) { 
+    return apiClient.get(`/eventType/event/${eventId}/`);
+  },
 
   // Update event type
   updateEventType(eventId, typeId) {

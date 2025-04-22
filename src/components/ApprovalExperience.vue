@@ -13,7 +13,10 @@ import logService from "../services/logServices";
 import Utils from "../config/utils";
 const user =Utils.getStore("user");
 
-const search = ref(""); // Search query input
+// Define props for the component
+const props = defineProps({
+  search: Object
+});
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
@@ -48,7 +51,7 @@ const approveExperience = async (approval) => {
   } else {notificationComment = ""}
 
   if (approval) {
-    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
+    await flightPlanExperienceService.approveFlightPlanExperience(selectedExperience.value.fpExperienceId)
     notification = {
       userId: selectedExperience.value.userId, 
       title: `${selectedExperience.value.experienceName} Approval`,

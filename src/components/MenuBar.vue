@@ -231,8 +231,8 @@ onMounted(() => {
                     <v-list-item :to="{ name: 'AdminShop' }">
                         <v-btn variant="text">Purchase Rewards</v-btn>
                     </v-list-item>
-                    <v-list-item to="logs">
-                        <v-btn variant="text">Logs</v-btn>
+                    <v-list-item :to="{ name: 'Logs' }">
+                        <v-btn variant="text">Logs</v-btn> 
                     </v-list-item>
                 </v-list>
             </div>

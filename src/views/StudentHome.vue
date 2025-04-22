@@ -180,14 +180,13 @@
                 </div>
               </v-col>
 
-              <!-- Right-Aligned Button -->
-              <v-col class="d-flex justify-end" cols="4">
-                <v-btn variant="text" class="font-italic" to="/RequestExperience">
-                  <v-icon left>mdi-plus</v-icon>
-                  Request Experience</v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+          <!-- Right-Aligned Button -->
+          <v-col cols="4" class="d-flex justify-end">
+            <v-btn class="font-italic" variant="text" to="/RequestExperience">
+              <v-icon left>mdi-plus</v-icon>
+              Request Experience
+            </v-btn>
+          </v-col>
         </v-row>
 
         <!-- Experience Priority Dropdown -->

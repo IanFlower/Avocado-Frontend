@@ -23,7 +23,11 @@ import userBadgesServices from "../services/userBadgesServices";
 import PDF from "pdf-vue3";
 
 // State variables
-const search = ref("");
+
+// Define props for the component
+const props = defineProps({
+  search: Object
+});
 const snackbar = ref(false);
 const snackbarMessage = ref("");
 const snackbarColor = ref("");

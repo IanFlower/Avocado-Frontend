@@ -94,7 +94,7 @@ function parseDate(date) {
 async function save() {
     let subtext = ""
     if (item.value.flightPlanExperience.attended) {subtext = "Pending Approval"}
-    else {subtext = "Pending Event Attendance"} 
+    else {subtext = "Pending"} 
     await flightPlanExperienceService.updateFlightPlanExperience(item.value.flightPlanExperience.id, {reflection: reflection.value, pending: 1, subtext: subtext})
     reflection.value = null
     emit("update:experience", true);  

@@ -4,6 +4,7 @@ import roleUser from '../services/roleUserServices';
 import Utils from '../config/utils';
 import EditUserDialog from '../components/EditUserDialog.vue';
 import roleServices from '../services/roleServices';  
+import logService from '../services/logServices';
 
 const search = ref(''); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
@@ -21,6 +22,8 @@ const headers = ref([
 const users = ref([]); // List of users  
 const selectedUser = ref(null); // Currently selected user
 const editDialog = ref(false); // Controls edit dialog visibility
+const user = Utils.getStore('user'); // Get the current user from local storage
+
 const roles = ref([
   { id: 1, name: 'Student' },
   { id: 2, name: 'Student Worker' },
@@ -118,9 +121,17 @@ const closeNewDialog = () => {
   newEditDialog.value = false;
 };
 
-const saveDialog = (updatedPermission) => {
+const saveDialog =async (updatedPermission) => {
   saveUser(selectedUser.value);
   closeDialog();
+  await logService.createLog({
+        name: "Added Permissions",
+        desc: user.email+ " added permissions for " + selectedUser.value.fullName,
+        date: new Date().toISOString(),
+        email: user.email, 
+        type: "Security"
+ })
+
 };
 
 const saveNewDialog = async () => {
@@ -132,7 +143,16 @@ const saveNewDialog = async () => {
       closeNewDialog();
     } else {
       showSnackbar('Invalid role selected', 'error');
+
     }
+    await logService.createLog({
+            name: "Role Change",
+            desc: user.email+ " changed the role of " + newSelectedUser.value.fullName + " to " + newSelectedUser.value.role,
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Security"
+        }) 
+
   
 };
 

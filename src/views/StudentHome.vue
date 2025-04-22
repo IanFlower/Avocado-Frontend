@@ -35,7 +35,7 @@
       <v-col cols="6">
         <!-- Semester Selection -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0">
+          <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0" color="background">
             <h1 class="text-h3 font-weight-medium d-flex align-center">
               {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
               <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
@@ -85,7 +85,7 @@
         <h2 class="text-center my-3">Tasks</h2>
         <v-row no-gutters>
           <v-list class="overflow-y-auto w-100" max-height="250">
-            <v-card v-for="t in tasks" :key="t"
+            <v-card v-for="t in tasks" :key="t" 
               :class="{ 'secondary': !t.flightPlanTask.completed, 'accent': t.flightPlanTask.completed }"
               class="w-97 pa-0 mb-5 mr-2" elevation="2" shaped @click="handleTaskClick(t)">
               <v-card-text class="text-h6 pa-0 pl-4">
@@ -460,14 +460,17 @@ onMounted(() => {
 <style scoped>
 .bg-gold {
   background-color: #ffd700;
+  color: black !important;
 }
 
 .bg-silver {
   background-color: #c0c0c0;
+  color: black !important;
 }
 
 .bg-bronze {
   background-color: #cd7f32;
+  color: black !important;
 }
 
 .name-container {

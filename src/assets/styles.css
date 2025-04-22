@@ -5,8 +5,16 @@
     --tertiary: #004761;
     --accent: #F9C634;
     --alt: #004761;
+    --text-color: #000000;
+    --t-head: #D5DFE7;
 }
 [data-theme="dark"] {
+    --text-color: #FFFFFE;
     --background-color: #292929;
+    --primary: #811420;
+    --secondary: #292929;
+    --tertiary: #004761;
+    --accent: #F9C634;
+    --alt: #004761;
+    --t-head: #004761;
 }
-

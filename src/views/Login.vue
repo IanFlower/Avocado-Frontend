@@ -6,8 +6,8 @@ import SocialLogin from '../components/SocialLogin.vue'
 <template>
   <v-container fluid class="pa-0" style="height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center;">
     <v-row no-gutters style="width: 100%; height: 100%;">
-      <v-col cols="12" md="4" class="d-flex align-center justify-center">
-        <v-sheet outlined height="100%" width="100%" class="d-flex align-center justify-center pa-4">
+      <v-col cols="12" md="4" class="d-flex align-center justify-center" color="white"> 
+        <v-sheet outlined height="100%" width="100%" class="d-flex align-center justify-center pa-4" style="color: white !important; background-color: white !important;">
           <v-img height="250px" width="250px" :src="logo" alt="OC and Career Service Logo"></v-img>
         </v-sheet>
       </v-col>

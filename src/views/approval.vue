@@ -116,22 +116,22 @@ onMounted(() => {
     <!-- Conditional Rendering Section -->
       <div v-if="selectedButton === 1">
         
-        <ApprovalStudents :selected-user="selectedUser" />
+        <ApprovalStudents :selected-user="selectedUser"  :search="search"/>
       </div>
       <div v-else-if="selectedButton === 2">
-        <ApprovalTask/> 
+        <ApprovalTask :search="search"/> 
       </div>
       <div v-else-if="selectedButton === 3">
-        <ApprovalExperience/>
+        <ApprovalExperience :search="search"/>
       </div>
       <div v-else-if="selectedButton === 4">
-        <ApprovalAdmin/> 
+        <ApprovalAdmin :search="search"/> 
       </div>
       <div v-else-if="selectedButton === 5">
-        <ApprovalRequestExperience/>
+        <ApprovalRequestExperience :search="search"/>
       </div>
       <div v-else-if="selectedButton === 6">
-        <ApprovalEvent/>
+        <ApprovalEvent :search="search"/>
       </div>
   </div>
 </template>

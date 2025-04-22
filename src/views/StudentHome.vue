@@ -330,14 +330,11 @@ import userBadgesServices from '../services/userBadgesServices.js';
 
 //router variable and User
 const router = useRouter();
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
 
 // leaderboard variables
 const students = ref([]);
 
 //other variables
-const router = useRouter();
 const upcomingEvents = ref([]);
 
 //other Variables

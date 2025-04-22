@@ -152,39 +152,51 @@
 
         <!-- Experiences Header with Dropdown -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
-            <h2 class="text-h5 font-weight-bold d-flex align-center">
-              Experiences
-              <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
-                <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="20" style="cursor: pointer;">
-                    mdi-chevron-down
-                  </v-icon>
-                </template>
-                <v-card elevation="6">
-                  <v-list>
-                    <v-list-item>
-                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(null)">
-                        Show All
-                      </v-btn>
-                    </v-list-item>
-                    <v-list-item v-for="level in [1, 2, 3]" :key="level">
-                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(level)">
-                        Priority {{ level }}
-                      </v-btn>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-menu>
-            </h2>
+          <v-card class="text-center h-auto py-2 w-90" elevation="0">
+            <v-row align="center" class="w-100 px-4">
+              <!-- Centered Title and Dropdown -->
+              <v-col class="d-flex justify-center" cols="19">
+                <div class="d-flex align-center">
+                  <h2 class="text-h5 font-weight-bold mb-0 mr-1">Experiences</h2>
+                  <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
+                    <template v-slot:activator="{ props }">
+                      <v-icon v-bind="props" size="20" style="cursor: pointer;">mdi-chevron-down</v-icon>
+                    </template>
+                    <v-card elevation="6">
+                      <v-list>
+                        <v-list-item>
+                          <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(null)">
+                            Show All
+                          </v-btn>
+                        </v-list-item>
+                        <v-list-item v-for="level in [1, 2, 3]" :key="level">
+                          <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(level)">
+                            Priority {{ level }}
+                          </v-btn>
+                        </v-list-item>
+                      </v-list>
+                    </v-card>
+                  </v-menu>
+                </div>
+              </v-col>
+
+              <!-- Right-Aligned Button -->
+              <v-col class="d-flex justify-end" cols="4">
+                <v-btn variant="text" class="font-italic" to="/RequestExperience">
+                  <v-icon left>mdi-plus</v-icon>
+                  Request Experience</v-btn>
+              </v-col>
+            </v-row>
           </v-card>
         </v-row>
 
         <!-- Experience Priority Dropdown -->
         <v-row v-if="showExperienceFilter" class="px-4">
+          <v-col>
           <v-select v-model="experiencePriorityFilter" :items="[1, 2, 3]" label="Filter by: Priority" variant="outlined"
             hide-details dense></v-select>
-        </v-row>
+        </v-col>
+      </v-row>
 
         <!-- Filtered Experiences -->
         <v-row no-gutters>
@@ -211,7 +223,6 @@
           </v-list>
         </v-row>
       </v-col>
-
 
       <!-- Points and Student Shop Action -->
       <v-col cols="3" align="center" class="pa-0">
@@ -270,8 +281,6 @@
   </v-container>
 </template>
 
-
-
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -317,8 +326,6 @@ const experiences = ref([]);
 //user variables
 const user = Utils.getStore("user");
 let userId = user ? user.id : null;
-
-
 
 const filteredTasks = computed(() => {
   if (!priorityFilter.value) return tasks.value;
@@ -423,10 +430,7 @@ function changeTask(task) {
   }
   currentTask.value = updatedTask;
   showTask.value = true;
-
-
 }
-
 
 function changeExperience() {
   getExperiences()
@@ -439,7 +443,6 @@ function changeExperience() {
   }
   currentExperience.value = updatedExperience;
   showExperience.value = true;
-
 }
 
 function getUpcomingEvents() {
@@ -473,7 +476,6 @@ function parseTime(date) {
   return `${hours}:${minutes} ${period}`;
 }
 
-
 function parseDate(date) {
   let parsedDate = new Date(date.startDateTime).toDateString();
   if (date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
@@ -482,7 +484,6 @@ function parseDate(date) {
     let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
     let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
     parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`;
-
   }
   return parsedDate;
 }
@@ -502,7 +503,6 @@ function getTasks() {
       });
     });
 }
-
 
 function getExperiences() {
   FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
@@ -525,7 +525,6 @@ const handleTaskClick = (task) => {
   showTask.value = true;
   currentTask.value = task
 };
-
 
 const handleExperienceClick = (experience) => {
   showExperience.value = true;
@@ -596,9 +595,6 @@ onMounted(() => {
 .blinking-icon {
   animation: blink 1s infinite;
 }
-
-
-
 
 .bg-gold {
   background-color: #ffd700;

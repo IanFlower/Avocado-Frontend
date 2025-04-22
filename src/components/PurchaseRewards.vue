@@ -130,6 +130,13 @@ const purchaseReward = async () => {
     dialog.value = false; //close dialog
     fetchStudentInfo();
     fetchRewards();
+    await logService.createLog({
+            name: "Puchased Reward",
+            desc: user.email + " purchased the reward " + selectedReward.value.name,
+            date: new Date().toISOString(),
+            email: user.email, 
+            type: "Points"
+        })
   } catch (error) {
     console.error("Error purchasing reward:", error); //error message
   }

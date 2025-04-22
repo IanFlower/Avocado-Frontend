@@ -49,7 +49,7 @@
       <v-col cols="6">
         <!-- Semester Selection -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0">
+          <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0" color="background">
             <h1 class="text-h3 font-weight-medium d-flex align-center">
               {{ selectedSeason || 'Select a Semester' }}
               <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
@@ -82,14 +82,14 @@
                 }}
               </span>
             </div>
-            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="#F9C634"
+            <v-progress-linear :model-value="completionPercentage" :buffer-value="100" height="24" color="accent"
               rounded stream></v-progress-linear>
           </v-col>
         </v-row>
 
         <!-- Tasks Header with Dropdown -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
+          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0" color="background">
             <h2 class="text-h5 font-weight-bold d-flex align-center">
               Tasks
               <v-menu offset-y transition="scale-transition" v-model="taskDropdown">
@@ -162,7 +162,6 @@
         <v-row align="center">
           <!-- Left spacer -->
           <v-col cols="4"></v-col>
-
           <!-- Centered Title and Dropdown -->
           <v-col cols="4" class="d-flex justify-center">
             <div class="d-flex align-center">
@@ -692,14 +691,17 @@ async function loadLatestBadge() {
 
 .bg-gold {
   background-color: #ffd700;
+  color: black !important;
 }
 
 .bg-silver {
   background-color: #c0c0c0;
+  color: black !important;
 }
 
 .bg-bronze {
   background-color: #cd7f32;
+  color: black !important;
 }
 
 .name-container {

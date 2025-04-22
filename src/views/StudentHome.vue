@@ -494,6 +494,14 @@ function getTasks(selectedSemVal) {
         if (aCompleted !== bCompleted) return aCompleted - bCompleted;
         return (a.task.priority || 0) - (b.task.priority || 0);
       });
+
+      tasks.value  = tasks.value.map((task) => {
+        if ((task.task.semestersFromGraduation != semester) && (task.flightPlanTask.completed)) {
+          
+        } else {
+          return task
+        }
+      })
     })
     .catch((err) => {
       console.error("Error fetching tasks:", err);
@@ -514,6 +522,18 @@ function getExperiences(selectedSemVal) {
         if (aCompleted !== bCompleted) return aCompleted - bCompleted;
         return (a.Experience.priority || 0) - (b.Experience.priority || 0);
       });
+
+      
+
+      experiences.value = experiences.value.map((experience) => {
+  if ((experience.Experience.semestersFromGraduation != semester) && (experience.flightPlanExperience.completed)) {
+    // Exclude experience if condition is true (return nothing)
+    return null;
+  } else {
+    return experience;
+  }
+}).filter(e => e !== null);
+
     })
     .catch((err) => {
       console.error("Error fetching experiences:", err);

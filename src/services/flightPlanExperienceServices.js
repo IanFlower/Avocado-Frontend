@@ -37,6 +37,11 @@ const flightPlanExperienceService = {
     return apiClient.post('/flightPlanExperience', flightPlanExperienceData);
   },
 
+  // Create a new flightPlanExperience
+  approveFlightPlanExperience(id) {
+    return apiClient.post(`/flightPlanExperience/approve/${id}`);
+  },
+
   // Update a specific flightPlanExperience
   updateFlightPlanExperience(id, flightPlanExperienceData) {
     return apiClient.put(`/flightPlanExperience/${id}`, flightPlanExperienceData);

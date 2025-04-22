@@ -25,7 +25,8 @@ const userService = {
   },
   changeTheme(){
     return apiClient.post(`/user/changeTheme`);
-  } ,
+  },
+  
   getApprovalUsers() {
     return apiClient.get('/user/get/approval/space/getAllApprovals');  
   },

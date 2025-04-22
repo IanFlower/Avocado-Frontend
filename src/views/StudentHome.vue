@@ -91,7 +91,7 @@
 
         <!-- Tasks Header with Dropdown -->
         <v-row class="d-flex justify-center">
-          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
+          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0" color="background">
             <h2 class="text-h5 font-weight-bold d-flex align-center">
               Tasks
               <v-menu offset-y transition="scale-transition" v-model="taskDropdown">
@@ -152,7 +152,7 @@
 
         <!-- Experiences Header with Dropdown -->
         <v-row class="d-flex justify-center">
-          <v-card class="text-center h-auto py-2 w-90" elevation="0">
+          <v-card class="text-center h-auto py-2 w-90" elevation="0" color="background">
             <v-row align="center" class="w-100 px-4">
               <!-- Centered Title and Dropdown -->
               <v-col class="d-flex justify-center" cols="19">

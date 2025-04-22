@@ -151,43 +151,43 @@
         </v-row>
 
         <!-- Experiences Header with Dropdown -->
-        <v-row class="d-flex justify-center">
-          <v-card class="text-center h-auto py-2 w-90" elevation="0">
-            <v-row align="center" class="w-100 px-4">
-              <!-- Centered Title and Dropdown -->
-              <v-col class="d-flex justify-center" cols="19">
-                <div class="d-flex align-center">
-                  <h2 class="text-h5 font-weight-bold mb-0 mr-1">Experiences</h2>
-                  <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
-                    <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" size="20" style="cursor: pointer;">mdi-chevron-down</v-icon>
-                    </template>
-                    <v-card elevation="6">
-                      <v-list>
-                        <v-list-item>
-                          <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(null)">
-                            Show All
-                          </v-btn>
-                        </v-list-item>
-                        <v-list-item v-for="level in [1, 2, 3]" :key="level">
-                          <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(level)">
-                            Priority {{ level }}
-                          </v-btn>
-                        </v-list-item>
-                      </v-list>
-                    </v-card>
-                  </v-menu>
-                </div>
-              </v-col>
+        <v-row align="center">
+          <!-- Left spacer -->
+          <v-col cols="4"></v-col>
 
-              <!-- Right-Aligned Button -->
-              <v-col class="d-flex justify-end" cols="4">
-                <v-btn variant="text" class="font-italic" to="/RequestExperience">
-                  <v-icon left>mdi-plus</v-icon>
-                  Request Experience</v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
+          <!-- Centered Title and Dropdown -->
+          <v-col cols="4" class="d-flex justify-center">
+            <div class="d-flex align-center">
+              <h2 class="text-h5 font-weight-bold mb-0 mr-1">Experiences</h2>
+              <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
+                <template v-slot:activator="{ props }">
+                  <v-icon v-bind="props" size="20" style="cursor: pointer;">mdi-chevron-down</v-icon>
+                </template>
+                <v-card elevation="6">
+                  <v-list>
+                    <v-list-item>
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(null)">
+                        Show All
+                      </v-btn>
+                    </v-list-item>
+                    <v-list-item v-for="level in [1, 2, 3]" :key="level">
+                      <v-btn block variant="text" class="text-subtitle-1" @click="selectExperiencePriority(level)">
+                        Priority {{ level }}
+                      </v-btn>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-menu>
+            </div>
+          </v-col>
+
+          <!-- Right-Aligned Button -->
+          <v-col cols="4" class="d-flex justify-end">
+            <v-btn class="font-italic" variant="text" to="/RequestExperience">
+              <v-icon left>mdi-plus</v-icon>
+              Request Experience
+            </v-btn>
+          </v-col>
         </v-row>
 
         <!-- Experience Priority Dropdown -->

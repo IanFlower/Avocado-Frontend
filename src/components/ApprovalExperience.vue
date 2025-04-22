@@ -13,7 +13,10 @@ import logService from "../services/logServices";
 import Utils from "../config/utils";
 const user =Utils.getStore("user");
 
-const search = ref(""); // Search query input
+// Define props for the component
+const props = defineProps({
+  search: Object
+});
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)

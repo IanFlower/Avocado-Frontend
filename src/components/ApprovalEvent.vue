@@ -6,7 +6,6 @@ import eventService from "../services/eventServices";
 import studentInfoEventService from "../services/studentInfoEventServices"
 import papa from "papaparse"
 
-const search = ref(""); // Search query input
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
 const snackbarColor = ref(""); // Snackbar color (success/error)
@@ -17,6 +16,11 @@ const listItems = ref([])
 const comment = ref("")
 const csvFile = ref(null)
 const csvData = ref(null)
+
+// Define props for the component
+const props = defineProps({
+  search: Object
+});
 
 const headers = ref([
   { title: "Event Name", key: "eventName" },

@@ -123,13 +123,13 @@
                       'font-weight-thin': !isLate(t.flightPlanTask)
                     }">
                       <v-divider vertical class="mx-3 secondary" />
-                      <template v-if="isLate(t.flightPlanTask)">
+                      <div v-if="isLate(t.flightPlanTask)">
                         LATE
                         <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
-                      </template>
-                      <template v-else>
+                      </div>
+                      <div v-else>
                         {{ t.flightPlanTask.subtext }}
-                      </template>
+                      </div>
                     </v-row>
                   </v-col>
                   <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">
@@ -193,13 +193,13 @@
                       'text-error': isLate(ex.flightPlanExperience)
                     }">
                       <v-divider vertical class="mx-3 secondary" />
-                      <template v-if="isLate(ex.flightPlanExperience)">
+                      <div v-if="isLate(ex.flightPlanExperience)">
                         LATE
                         <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
-                      </template>
-                      <template v-else>
+                      </div>
+                      <div v-else>
                         {{ ex.flightPlanExperience.subtext }}
-                      </template>
+                      </div>
                     </v-row>
                   </v-col>
                   <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">
@@ -343,6 +343,8 @@ const semestersTillGraduation = ref(null);
 const selectedSemesterValue = ref(null);
 const latestBadge = ref(null);
 
+const flightPlans = ref([]);
+
 const semesterLabels = [
   'Freshman Fall',
   'Freshman Spring',
@@ -372,6 +374,8 @@ onMounted(async () => {
   getLeaderboardinfo();
 
   await loadLatestBadge();
+
+  flightPlans.value = (await FlightPlan.getAllFlightPlans()).data;
 
 });
 
@@ -455,21 +459,23 @@ function selectSemester(label, value) {
 //Check to see if Tasks/experiences are late or not
 //-------------------------------------------------
 
-function isLate(flightPlanItem) {
-  const createdAt = new Date(flightPlanItem.createdAt);
-  const year = createdAt.getFullYear();
-  const month = createdAt.getMonth();
+ function isLate(flightPlanItem) {
+  try {
+    flightPlans.value.sort((a, b) => b.id - a.id);
 
-  //Setting when Spring is and when the deadline 
-  // for a task or experience to be considered LATE
-  const isSpring = month < 6;
-  const deadlineDate = new Date(`${year}-${isSpring ? '04-21' : '12-20'}`);
-
-  const today = new Date();
-  const completed = flightPlanItem.completed;
-
-  return !completed && today > deadlineDate;
+    if ( flightPlanItem.flightPlanId != flightPlans.value[0].id)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+  } catch (error) {
+    console.error("Error checking if flight plan item is late:", error);
+  }
 }
+
 
 //-------------------------------------------
 //GETTING TASKS AND EXPERIENCES FUNCTIONS

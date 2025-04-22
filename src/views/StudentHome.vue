@@ -123,10 +123,14 @@
                       'font-weight-thin': !isLate(t.flightPlanTask)
                     }">
                       <v-divider vertical class="mx-3 secondary" />
-                      {{ isLate(t.flightPlanTask) ? 'LATE' : t.flightPlanTask.subtext }}
+                      <template v-if="isLate(t.flightPlanTask)">
+                        LATE
+                        <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
+                      </template>
+                      <template v-else>
+                        {{ t.flightPlanTask.subtext }}
+                      </template>
                     </v-row>
-
-
                   </v-col>
                   <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">
                     Completed
@@ -137,6 +141,7 @@
             </v-card>
           </v-list>
         </v-row>
+
 
         <!-- Experiences Header with Dropdown -->
         <v-row class="d-flex justify-center">
@@ -188,9 +193,14 @@
                       'text-error': isLate(ex.flightPlanExperience)
                     }">
                       <v-divider vertical class="mx-3 secondary" />
-                      {{ isLate(ex.flightPlanExperience) ? 'LATE' : ex.flightPlanExperience.subtext }}
+                      <template v-if="isLate(ex.flightPlanExperience)">
+                        LATE
+                        <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
+                      </template>
+                      <template v-else>
+                        {{ ex.flightPlanExperience.subtext }}
+                      </template>
                     </v-row>
-
                   </v-col>
                   <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">
                     Completed
@@ -658,6 +668,8 @@ const getButtonClass = (index) => {
 </script>
 
 <style scoped>
+
+
 .bg-gold {
   background-color: #ffd700;
 }
@@ -701,6 +713,16 @@ const getButtonClass = (index) => {
 
 .opacity-50 {
   opacity: 0.5;
+}
+
+.blinking-icon {
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 body,

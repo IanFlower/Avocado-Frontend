@@ -61,7 +61,8 @@ onMounted(async () => {
   majors.value = majorsRes.data;
 
   // Populate selected majors
-  const studentMajorRes = await studentInfoMajorService.getStudentInfoMajorsByStudentId(userId);
+  const studentMajorRes = await studentInfoMajorService.getAllByStudentInfoId(userId);
+
   if (studentMajorRes.data && Array.isArray(studentMajorRes.data)) {
     selectedMajors.value = studentMajorRes.data.map((m) => m.majorId);
   }

@@ -24,7 +24,7 @@ const goToProfile = () => {
 };
 
 const goToSettings = () => {
-    router.push({ name: 'Settings', params: { userId: user.value.id } });
+    router.push({ name: 'Settings', query: { userId: user.value.id } });
 }
 
 // Function to retrieve user data from local storage and fetch additional user info
@@ -101,6 +101,9 @@ onMounted(() => {
             <v-toolbar-title class="title">Career Services</v-toolbar-title>
             <v-spacer></v-spacer>
 
+            <v-icon @click="goToSettings" size="30" class="ml-2" style="cursor: pointer;">
+                mdi-cog
+            </v-icon>
             <!-- Notifications -->
             <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
@@ -152,18 +155,13 @@ onMounted(() => {
                         <p class="text-caption mb-1">{{ user.email }}</p>
                         <v-divider></v-divider>
                     </v-card-text>
-
-                    <v-icon @click="goToSettings" size="20"
-                        style="position: absolute; top: 8px; right: 8px; cursor: pointer;">
-                        mdi-cog
-                    </v-icon>
-
-
-
-                    <v-card-actions class="d-flex flex-column align-center pa-0">
-                        <p class="ma-0">Dark mode</p>
-                        <v-switch :model-value="true" color="black"></v-switch>
+                    <v-card-actions class="d-flex align-center justify-space-between pa-0">
+                        <div class="d-flex align-center">
+                            <p class="ma-0 mr-2">Dark mode</p>
+                            <v-switch :model-value="true" color="black" hide-details></v-switch>
+                        </div>
                     </v-card-actions>
+
 
                     <v-card-text class="text-center pt-0">
                         <v-btn depressed rounded text class="secondary-button" @click="logout">Logout</v-btn>

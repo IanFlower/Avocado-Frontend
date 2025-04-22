@@ -51,7 +51,7 @@
         <v-row class="d-flex justify-center">
           <v-card class="d-flex justify-center text-center h-auto py-4 w-90" elevation="0">
             <h1 class="text-h3 font-weight-medium d-flex align-center">
-              {{ selectedYear && selectedSeason ? selectedSeason + ' ' + selectedYear : 'Select a Year and Semester' }}
+              {{ selectedSeason || 'Select a Semester' }}
               <v-menu offset-y transition="scale-transition" v-model="dropdownOpen">
                 <template v-slot:activator="{ props }">
                   <v-icon v-bind="props" size="24" style="cursor: pointer;">
@@ -60,12 +60,10 @@
                 </template>
                 <v-card elevation="6">
                   <v-list>
-                    <v-list-item v-for="year in availableYears" :key="year">
-                      <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Fall', year)">
-                        Fall {{ year }}
-                      </v-btn>
-                      <v-btn block variant="text" class="text-subtitle-1" @click="selectSeason('Spring', year)">
-                        Spring {{ year }}
+                    <v-list-item v-for="sem in availableSemesters" :key="sem.value">
+                      <v-btn block variant="text" class="text-subtitle-1" :disabled="sem.disabled"
+                        @click="!sem.disabled && selectSemester(sem.label, sem.value)">
+                        {{ sem.label }}
                       </v-btn>
                     </v-list-item>
                   </v-list>
@@ -135,9 +133,18 @@
                 <v-row class="pa-0 ma-0" height="60">
                   <v-col class="ml-4 mt-1">
                     <v-row>{{ t.task.name }}</v-row>
-                    <v-row v-if="t.flightPlanTask.subtext" class="text-subtitle-2 font-italic font-weight-thin">
+                    <v-row class="text-subtitle-2 font-italic" :class="{
+                      'text-error font-weight-bold': isLate(t.flightPlanTask),
+                      'font-weight-thin': !isLate(t.flightPlanTask)
+                    }">
                       <v-divider vertical class="mx-3 secondary" />
-                      {{ t.flightPlanTask.subtext }}
+                      <div v-if="isLate(t.flightPlanTask)">
+                        LATE
+                        <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
+                      </div>
+                      <div v-else>
+                        {{ t.flightPlanTask.subtext }}
+                      </div>
                     </v-row>
                   </v-col>
                   <v-col align="center" v-if="t.flightPlanTask.completed" class="font-weight-bold">
@@ -149,6 +156,7 @@
             </v-card>
           </v-list>
         </v-row>
+
 
         <!-- Experiences Header with Dropdown -->
         <v-row align="center">
@@ -208,9 +216,17 @@
                 <v-row class="pa-0 ma-0" height="60">
                   <v-col class="ml-4 mt-1">
                     <v-row>{{ ex.Experience.name }}</v-row>
-                    <v-row v-if="ex.flightPlanExperience.subtext" class="text-subtitle-2 font-italic font-weight-thin">
+                    <v-row class="text-subtitle-2 font-italic font-weight-bold" :class="{
+                      'text-error': isLate(ex.flightPlanExperience)
+                    }">
                       <v-divider vertical class="mx-3 secondary" />
-                      {{ ex.flightPlanExperience.subtext }}
+                      <div v-if="isLate(ex.flightPlanExperience)">
+                        LATE
+                        <v-icon class="ml-2 blinking-icon" color="error" size="12">mdi-alert</v-icon>
+                      </div>
+                      <div v-else>
+                        {{ ex.flightPlanExperience.subtext }}
+                      </div>
                     </v-row>
                   </v-col>
                   <v-col align="center" v-if="ex.flightPlanExperience.completed" class="font-weight-bold">
@@ -263,14 +279,28 @@
           </v-card>
         </v-row>
 
-        <!-- Latest Badge -->
+        <!-- Latest Badge (Bottom) -->
         <v-row>
           <v-col align="center">
-            <h4>Latest Badge:</h4>
-            <v-img height="110px" width="110px" :src="elite" alt="Elite" class="clickable-image hover-effect"
-              @click="goToBadges"></v-img>
+            <h4 class="text-h5 font-weight-bold">Latest Badge:</h4>
+            <div v-if="latestBadge">
+              <div class="text-h6 font-weight-bold mb-2">
+                {{ latestBadge.name }}
+              </div>
+              <v-img height="180px" width="180px" :src="latestBadge.imageUrl"
+                :alt="latestBadge.name" class="clickable-image hover-effect" @click="goToBadges" />
+            </div>
+            <div v-else class="text-center">
+              <div class="text-subtitle-1 font-italic mb-2">
+                You have no badges earned at this time!
+              </div>
+              <div class="text-body-2 font-weight-medium">
+                Start your Flight Plan!
+              </div>
+            </div>
           </v-col>
         </v-row>
+
       </v-col>
     </v-row>
 
@@ -284,7 +314,6 @@
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import elite from '../assets/elite.png';
 import EventServices from "../services/eventServices";
 import FlightPlanTask from "../services/flightPlanTaskServices";
 import TaskDialog from "../components/TaskDialog.vue";
@@ -293,9 +322,16 @@ import ExperienceDialog from "../components/ExperienceDialog.vue";
 import Utils from "../config/utils.js";
 import FlightPlan from "../services/flightPlanServices"
 import leaderboardService from '../services/leaderboardServices.js';
+import BadgeServices from '../services/badgeServices.js';
 import medal1 from '../assets/number_1.svg';
 import medal2 from '../assets/number_2.svg';
 import medal3 from '../assets/number_3.svg';
+import userBadgesServices from '../services/userBadgesServices.js';
+
+//router variable and User
+const router = useRouter();
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 
 // leaderboard variables
 const students = ref([]);
@@ -303,6 +339,8 @@ const students = ref([]);
 //other variables
 const router = useRouter();
 const upcomingEvents = ref([]);
+
+//other Variables
 const showTask = ref(false)
 const currentTask = ref(null)
 const showExperience = ref(false)
@@ -336,6 +374,11 @@ const filteredExperiences = computed(() => {
   if (!experiencePriorityFilter.value) return experiences.value;
   return experiences.value.filter(ex => (ex.Experience.priority || 0) === experiencePriorityFilter.value);
 });
+
+
+//-------------------------------------
+//PRIORITIES DROPDOWN FUNCTIONS
+//--------------------------------------
 
 const selectTaskPriority = (level) => {
   priorityFilter.value = level;
@@ -386,6 +429,12 @@ const completionPercentage = computed(() => {
   return parseFloat(((completedCount.value / totalCount.value) * 100).toFixed(2));
 });
 
+
+
+//-------------------------
+//Leaderboard Info
+//-------------------------
+
 function getLeaderboardinfo() {
   leaderboardService.getSortedStudentsByClass(userId).then((response) => {
     if (response) {
@@ -401,6 +450,7 @@ function getLeaderboardinfo() {
   });
 }
 
+
 function getRankClass(index) {
   if (index === 0) return 'bg-gold';
   if (index === 1) return 'bg-silver';
@@ -414,10 +464,10 @@ function getMedal(index) {
   return null;
 }
 
-function refreshAll() {
-  getTasks();
-  getExperiences();
-}
+
+//-----------------------------------------
+//CHANGE TASKS AND EXPERIENCES FUNCTIONS
+//------------------------------------------
 
 function changeTask(task) {
   currentTask.value = task;
@@ -445,6 +495,10 @@ function changeExperience() {
   showExperience.value = true;
 }
 
+//---------------------------------
+//UPCOMING EVENTS 
+//---------------------------------
+
 function getUpcomingEvents() {
   EventServices.getAllEvents()
     .then((res) => {
@@ -463,6 +517,9 @@ function getUpcomingEvents() {
     })
 }
 
+//-------------------------
+//PARSING FUNCTIONS
+//-------------------------
 function parseTime(date) {
   let time = date.startDateTime.match(/T(\d{2}):(\d{2}):\d{2}/);
 
@@ -531,6 +588,9 @@ const handleExperienceClick = (experience) => {
   currentExperience.value = experience
 };
 
+//-----------------
+//ROUTING
+//-----------------
 const goToShop = () => {
   router.push('/shop');
 };
@@ -547,34 +607,71 @@ const goToLeaderboard = () => {
   router.push('/leaderboard');
 };
 
-const getButtonClass = (index) => {
-  if (index === 0) {
-    return 'accent';
-  } else if (index === 1) {
-    return 'accent opacity-50';
-  } else if (index === 2) {
-    return 'accent opacity-25';
-  } else if (index === 3) {
-    return 'white';
-  } else {
-    return '';
+
+//--------------------------
+// LATEST BADGE FUNCTION 
+//--------------------------
+
+async function loadLatestBadge() {
+  try {
+    const allBadges = await BadgeServices.getAllBadges(userId);
+
+    // Get studentInfo first
+    const studentInfoRes = await studentInfoServices.getStudentInfoById(userId);
+    const studentInfoId = studentInfoRes?.data?.[0]?.id;
+    if (!studentInfoId) {
+      console.error("No studentInfoId found");
+      latestBadge.value = null;
+      return;
+    }
+
+    const earnedRes = await userBadgesServices.getByStudentId(studentInfoId);
+    const earnedBadges = earnedRes?.data?.map(b => b.badgeId) || [];
+
+    const badges = allBadges.data
+      .filter(badge => earnedBadges.includes(badge.id))
+      .map(badge => ({
+        ...badge,
+        earned: true,
+        earnedDate: new Date(badge.earnedDate || badge.createdAt),
+        image: badge.image || null
+      }));
+
+    if (badges.length > 0) {
+      const today = new Date();
+
+      const closestBadge = badges.reduce((prev, curr) =>
+        Math.abs(curr.earnedDate - today) < Math.abs(prev.earnedDate - today) ? curr : prev
+      );
+
+      if (closestBadge.image) {
+        try {
+          const icon = await iconServices.getIconByFile(closestBadge.image);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: `data:image/*;base64,${icon.data}`,
+          };
+        } catch (error) {
+          console.error("Error fetching badge image:", error.message);
+          latestBadge.value = {
+            ...closestBadge,
+            imageUrl: noBadgeImage,
+          };
+        }
+      } else {
+        latestBadge.value = {
+          ...closestBadge,
+          imageUrl: noBadgeImage,
+        };
+      }
+    } else {
+      latestBadge.value = null;
+    }
+  } catch (error) {
+    console.error("Error loading latest badge:", error);
   }
-};
+}
 
-const dropdownOpen = ref(false);
-const selectedYear = ref(2025);
-const selectedSeason = ref('Spring');
-const availableYears = ref([2022, 2023, 2024, 2025, 2026]);
-
-const selectSeason = (season, year) => {
-  selectedSeason.value = season;
-  selectedYear.value = year;
-  dropdownOpen.value = true;
-};
-
-onMounted(() => {
-
-});
 </script>
 
 <style scoped>
@@ -639,6 +736,16 @@ onMounted(() => {
 
 .opacity-50 {
   opacity: 0.5;
+}
+
+.blinking-icon {
+  animation: blink 1.2s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 body,

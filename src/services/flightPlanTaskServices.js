@@ -17,9 +17,14 @@ const flightPlanTaskService = {
     return apiClient.get(`/flightPlanTask/${id}`);
   },
 
-   // Get a specific flightPlanTask by userId
-   getFlightPlanTaskByUserId(id) {
+  // Get a specific flightPlanTask by userId
+  getFlightPlanTaskByUserId(id) {
     return apiClient.get(`/flightPlanTask/byUser/${id}`);
+  },
+
+  // Get all tasks from selected semester through current
+  getFlightPlanTaskByUserIdFromSemester(id, semester) {
+    return apiClient.get(`/flightPlanTask/byUser/${id}/fromSemester?semester=${semester}`);
   },
 
   // Create a new flightPlanTask

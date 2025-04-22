@@ -51,7 +51,7 @@ const approveExperience = async (approval) => {
   } else {notificationComment = ""}
 
   if (approval) {
-    await flightPlanExperienceService.updateFlightPlanExperience(selectedExperience.value.fpExperienceId, {completed: 0, pending: 0, subtext: "", comment: comment.value})
+    await flightPlanExperienceService.approveFlightPlanExperience(selectedExperience.value.fpExperienceId)
     notification = {
       userId: selectedExperience.value.userId, 
       title: `${selectedExperience.value.experienceName} Approval`,

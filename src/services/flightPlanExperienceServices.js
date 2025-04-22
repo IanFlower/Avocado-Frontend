@@ -22,14 +22,24 @@ const flightPlanExperienceService = {
     return apiClient.get(`/flightPlanExperience/pending/experiences`);
   },
   
-   // Get a specific flightPlanExperience by userId
+   // Get specific events by experience
    getEventsByExperience(id) {
     return apiClient.get(`/flightPlanExperience/events/byExperience/${id}`);
+  },
+
+  // Set attended in flightplanexperiences to true for this eventType
+  attendExperiencesByEvent(type) {
+    return apiClient.put(`/flightPlanExperience/byEventType/${type}}`);
   },
 
   // Create a new flightPlanExperience
   createFlightPlanExperience(flightPlanExperienceData) {
     return apiClient.post('/flightPlanExperience', flightPlanExperienceData);
+  },
+
+  // Create a new flightPlanExperience
+  approveFlightPlanExperience(id) {
+    return apiClient.post(`/flightPlanExperience/approve/${id}`);
   },
 
   // Update a specific flightPlanExperience

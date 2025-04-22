@@ -5,6 +5,9 @@ import notificationService from "../services/notification.Services";
 import eventService from "../services/eventServices";
 import studentInfoEventService from "../services/studentInfoEventServices"
 import papa from "papaparse"
+import userService from "../services/userServices";
+import flightPlanExperienceService from "../services/flightPlanExperienceServices";
+import eventTypeServices from "../services/eventTypeServices";
 
 const snackbar = ref(false); // Controls snackbar visibility
 const snackbarMessage = ref(""); // Message displayed in snackbar
@@ -16,6 +19,8 @@ const listItems = ref([])
 const comment = ref("")
 const csvFile = ref(null)
 const csvData = ref(null)
+const students = ref([])
+const selectedStudent = ref([])
 
 // Define props for the component
 const props = defineProps({
@@ -84,18 +89,38 @@ function closeDialog() {
 }
 
 async function save() {
-  await Promise.all(
-    csvData.value.map(async (entry) => {  
-      let studentInfo = await studentInfoServices.getStudentInfoBySID(entry.SID);
-      
-      if (studentInfo && studentInfo.data) {
-        await studentInfoEventService.create({
-          studentInfoId: studentInfo.data.id,
-          eventId: selectedEvent.value.eventId
-        });
-      }
-    })
-  );
+  if (selectedStudent) {
+    await Promise.all(
+      selectedStudent.value.map(async (entry) => {  
+        let studentInfo = await studentInfoServices.getStudentInfoById(entry);
+        
+        if (studentInfo && studentInfo.data) {
+          await studentInfoEventService.create({
+            studentInfoId: studentInfo.data[0].id,
+            eventId: selectedEvent.value.eventId
+          });
+
+          let eventType = (await eventTypeServices.getEventTypeByEventId(selectedEvent.value.eventId)).data
+          await flightPlanExperienceService.attendExperiencesByEvent(eventType[0].id)
+        }
+
+
+      })
+    );
+  } else if (csvData) {
+    await Promise.all(
+      csvData.value.map(async (entry) => {  
+        let studentInfo = await studentInfoServices.getStudentInfoBySID(entry.SID);
+        
+        if (studentInfo && studentInfo.data) {
+          await studentInfoEventService.create({
+            studentInfoId: studentInfo.data.id,
+            eventId: selectedEvent.value.eventId
+          });
+        }
+      })
+    );
+  }
 
   closeDialog();
   showSnackbar("Attendance successfully recorded", "success");
@@ -126,8 +151,13 @@ async function fetchEvents() {
 }
 
 
-onMounted(() => {
+onMounted( async () => {
   fetchEvents();
+
+  let users = (await userService.getAllUsers()).data;
+  students.value = users.map((user) => {
+    return {name: `${user.fName} ${user.lName}`, id: user.id}
+  })
 });
 </script>
 
@@ -167,6 +197,8 @@ onMounted(() => {
           @change="handleFileChange()"
           class="mx-4"
         ></v-file-input>
+        <v-card-text>Or enter one individual students by name:</v-card-text>
+        <v-select multiple v-model="selectedStudent" :items="students" item-title="name" item-value="id"></v-select>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-row class="pa-0 ma-0 w-100">

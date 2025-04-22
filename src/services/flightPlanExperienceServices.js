@@ -12,18 +12,23 @@ const flightPlanExperienceService = {
     return apiClient.get(`/flightPlanExperience/${id}`);
   },
 
-   // Get a specific flightPlanExperience by userId
-   getFlightPlanExperienceByUserId(id) {
+  // Get a specific flightPlanExperience by userId
+  getFlightPlanExperienceByUserId(id) {
     return apiClient.get(`/flightPlanExperience/byUser/${id}`);
   },
-  
+
+  // Get all experiences from selected semester through current
+  getFlightPlanExperienceByUserIdFromSemester(id, semester) {
+    return apiClient.get(`/flightPlanExperience/byUser/${id}/fromSemester?semester=${semester}`);
+  },
+
   // Get all flightPlanTasks for a specific user
   getAllPendingFlightPlanExperiences() {
     return apiClient.get(`/flightPlanExperience/pending/experiences`);
   },
-  
-   // Get a specific flightPlanExperience by userId
-   getEventsByExperience(id) {
+
+  // Get a specific flightPlanExperience by userId
+  getEventsByExperience(id) {
     return apiClient.get(`/flightPlanExperience/events/byExperience/${id}`);
   },
 

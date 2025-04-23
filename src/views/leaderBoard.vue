@@ -12,7 +12,7 @@
       <!-- Students List Section -->
       <v-row class="d-flex justify-center align-center" no-gutters>
         <v-col cols="12" md="6" v-for="(student, index) in students" :key="student.id">
-          <v-card :class="{'highlight-user': student.id === loggedInUserId.value}" outlined class="leaderboard-card">
+          <v-card color="tHead" outlined class="leaderboard-card">
             <v-row align="center" no-gutters>
               
               <!-- Rank Section with Colored Backgrounds -->

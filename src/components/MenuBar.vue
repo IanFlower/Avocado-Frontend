@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { useRouter } from "vue-router";
 import ocLogo from "../assets/OC-really-good-logo.png";
 import Utils from "../config/utils";
@@ -23,6 +23,9 @@ const goToProfile = () => {
     router.push({ name: 'Profile', params: { userId: user.value.id } });
 };
 
+
+const isDark = inject('isDark')
+
 // Function to retrieve user data from local storage and fetch additional user info
 const resetMenu = () => {
     const storedUser = Utils.getStore("user");
@@ -30,6 +33,7 @@ const resetMenu = () => {
         user.value = storedUser;
         initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
         name.value = storedUser.fName + " " + storedUser.lName; // Concatenate full name
+        isDark.value = storedUser.darkMode;
     }
     if (user.value) {
         roleUserServices.getRoleByUserId(user.value.id) // Fetch user role
@@ -45,6 +49,25 @@ const resetMenu = () => {
     }
 
 };
+const storedUser = Utils.getStore("user");
+if (storedUser) {
+    user.value = storedUser;
+    initials.value = storedUser.fName[0] + storedUser.lName[0]; // Extract initials
+    name.value = storedUser.fName + " " + storedUser.lName; // Concatenate full name
+    isDark.value = storedUser.darkMode;
+}
+if (user.value) {
+    roleUserServices.getRoleByUserId(user.value.id) // Fetch user role
+        .then((res) => {
+            roleServices.getRoleById(res.data.roleId) // Fetch role details
+                .then((res) => {
+                    role.value = res.data.name;
+                });
+        })
+        .catch((error) => {
+            console.error("Error fetching user roles:", error);
+        });
+}
 
 function logout() {
     authServices.logoutUser(user.value.token)
@@ -94,7 +117,7 @@ onMounted(() => {
                 </router-link>
             </div>
 
-            <v-toolbar-title class="title">Career Services</v-toolbar-title>
+            <v-toolbar-title class="title">Career Services </v-toolbar-title>
             <v-spacer></v-spacer>
 
             <!-- Notifications -->
@@ -129,7 +152,7 @@ onMounted(() => {
             </v-menu>
 
             <!-- User Dropdown Menu -->
-            <v-menu bottom min-width="200px" rounded offset-y v-if="user">
+            <v-menu bottom min-width="200px" rounded offset-y v-if="user" :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" icon x-large>
                         <v-avatar v-if="user" color="white">
@@ -151,8 +174,8 @@ onMounted(() => {
 
 
                     <v-card-actions class="d-flex flex-column align-center pa-0">
-                        <p class="ma-0">Dark mode</p>
-                        <v-switch :model-value="true" color="black"></v-switch>
+                        <v-switch v-model="isDark" color="tHead" :false-value="false" :true-value="true"
+                            @change="user.darkMode = isDark; Utils.setStore('user', user), userService.changeTheme(user.id)"></v-switch>
                     </v-card-actions>
 
                     <v-card-text class="text-center pt-0">

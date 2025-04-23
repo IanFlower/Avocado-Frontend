@@ -7,35 +7,20 @@
           <v-card-title class="text-subtitle-1 text-center">Upcoming Events</v-card-title>
           <v-divider></v-divider>
 
-          <v-card class="secondary mb-2 w-100" elevation="0" v-for="e in upcomingEvents" :key="e">
-            <v-row align="center" no-gutters class="pa-0 ma-0">
+          <v-card class="secondary mb-5" elevation="0" max-width="400" v-for="e in upcomingEvents" :key="e">
+            <v-row align="center" no-gutters>
               <v-col cols="4" class="text-center">
                 <div v-if="e.startDateTime != null" class="text-subtitle-1">{{ parseDate(e) }}</div>
                 <div v-if="e.startDateTime != null" class="text-caption text-grey-darken-1">{{ parseTime(e) }}</div>
               </v-col>
-              <v-divider vertical class="mx-6"></v-divider>
+              <v-divider vertical class="mx-2"></v-divider>
               <v-col>
-                <v-row align="center" class="align-center">
-                  <v-col>
-                  <div class="text-h6 font-weight-bold" align="center">
-                    {{ e.name }}
-                  </div>
-                </v-col>
-                </v-row>
-                <div class="text-body-2 font-italic text-grey-darken-1 mt-1">
-                  {{ e.location }}
-                </div>
-              </v-col>
-              <v-col cols="1">
-                <v-icon v-if="relatedEventIds.includes(e.id)" class="mr-2 ml-2 blinking-icon" color="green" size="10">
-                    mdi-checkbox-blank-circle
-                  </v-icon>
+                <div class="text-h6 font-weight-bold">{{ e.name }}</div>
+                <div class="text-body-2 text-grey-darken-1">{{ e.location }}</div>
               </v-col>
             </v-row>
           </v-card>
-
           <v-spacer></v-spacer>
-
           <v-card-actions class="justify-center secondary">
             <v-btn variant="plain" class="font-weight-light text-subtitle-1" @click="goToCalendar">
               View Calendar
@@ -159,17 +144,15 @@
 
 
         <!-- Experiences Header with Dropdown -->
-        <v-row align="center">
-          <!-- Left spacer -->
-          <v-col cols="4"></v-col>
-
-          <!-- Centered Title and Dropdown -->
-          <v-col cols="4" class="d-flex justify-center">
-            <div class="d-flex align-center">
-              <h2 class="text-h5 font-weight-bold mb-0 mr-1">Experiences</h2>
+        <v-row class="d-flex justify-center">
+          <v-card class="d-flex justify-center text-center h-auto py-2 w-90" elevation="0">
+            <h2 class="text-h5 font-weight-bold d-flex align-center">
+              Experiences
               <v-menu offset-y transition="scale-transition" v-model="experienceDropdown">
                 <template v-slot:activator="{ props }">
-                  <v-icon v-bind="props" size="20" style="cursor: pointer;">mdi-chevron-down</v-icon>
+                  <v-icon v-bind="props" size="20" style="cursor: pointer;">
+                    mdi-chevron-down
+                  </v-icon>
                 </template>
                 <v-card elevation="6">
                   <v-list>
@@ -186,25 +169,15 @@
                   </v-list>
                 </v-card>
               </v-menu>
-            </div>
-          </v-col>
-
-          <!-- Right-Aligned Button -->
-          <v-col cols="4" class="d-flex justify-end">
-            <v-btn class="font-italic" variant="text" to="/RequestExperience">
-              <v-icon left>mdi-plus</v-icon>
-              Request Experience
-            </v-btn>
-          </v-col>
+            </h2>
+          </v-card>
         </v-row>
 
         <!-- Experience Priority Dropdown -->
         <v-row v-if="showExperienceFilter" class="px-4">
-          <v-col>
           <v-select v-model="experiencePriorityFilter" :items="[1, 2, 3]" label="Filter by: Priority" variant="outlined"
             hide-details dense></v-select>
-        </v-col>
-      </v-row>
+        </v-row>
 
         <!-- Filtered Experiences -->
         <v-row no-gutters>
@@ -239,6 +212,7 @@
           </v-list>
         </v-row>
       </v-col>
+
 
       <!-- Points and Student Shop Action -->
       <v-col cols="3" align="center" class="pa-0">
@@ -311,6 +285,8 @@
   </v-container>
 </template>
 
+
+
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -320,7 +296,10 @@ import TaskDialog from "../components/TaskDialog.vue";
 import FlightPlanExperience from "../services/flightPlanExperienceServices";
 import ExperienceDialog from "../components/ExperienceDialog.vue";
 import Utils from "../config/utils.js";
-import FlightPlan from "../services/flightPlanServices"
+import FlightPlan from "../services/flightPlanServices";
+import studentInfoServices from "../services/studentInfoServices.js";
+import iconServices from "../services/iconServices.js";
+import noBadgeImage from '../assets/No_Image_Found.png';
 import leaderboardService from '../services/leaderboardServices.js';
 import BadgeServices from '../services/badgeServices.js';
 import medal1 from '../assets/number_1.svg';
@@ -330,11 +309,13 @@ import userBadgesServices from '../services/userBadgesServices.js';
 
 //router variable and User
 const router = useRouter();
+const user = Utils.getStore("user");
+let userId = user ? user.id : null;
 
 // leaderboard variables
 const students = ref([]);
 
-//other variables
+//Events Variables
 const upcomingEvents = ref([]);
 
 //other Variables
@@ -345,22 +326,84 @@ const currentExperience = ref(null)
 const refresh = ref(null)
 const selectedStudentPoints = ref(0);
 
-//related event variables
-const relatedEventIds = ref([]);
-
-//priority for tasks and experiences
+//Priority Filters and dropdowns
 const priorityFilter = ref(null);
 const experiencePriorityFilter = ref(null);
 const taskDropdown = ref(false);
 const experienceDropdown = ref(false);
 
-//tasks and experiences variables
+//Task and Experience Variables
 const tasks = ref([]);
 const experiences = ref([]);
 
-//user variables
-const user = Utils.getStore("user");
-let userId = user ? user.id : null;
+//Dropdown for Selecting a Semester
+const dropdownOpen = ref(false);
+const selectedSeason = ref('');
+const semestersTillGraduation = ref(null);
+const selectedSemesterValue = ref(null);
+const latestBadge = ref(null);
+
+const flightPlans = ref([]);
+
+const semesterLabels = [
+  'Freshman Fall',
+  'Freshman Spring',
+  'Sophomore Fall',
+  'Sophomore Spring',
+  'Junior Fall',
+  'Junior Spring',
+  'Senior Fall',
+  'Senior Spring '
+];
+
+//-------------------------------
+//OnMounted, Watch and Refresh Functions
+//-------------------------------
+
+onMounted(async () => {
+  await FlightPlan.createFlightPlan();
+  getUpcomingEvents();
+
+  const response = await studentInfoServices.getStudentInfoById(userId);
+  semestersTillGraduation.value = response?.data?.[0]?.semestersTillGraduation ?? 8;
+
+  updateSelectedSemester();
+  getTasks();
+  getExperiences();
+
+  getLeaderboardinfo();
+
+  await loadLatestBadge();
+
+  flightPlans.value = (await FlightPlan.getAllFlightPlans()).data;
+
+});
+
+
+watch(semestersTillGraduation, () => {
+  updateSelectedSemester();
+});
+
+//REFRESH ALL FUNCTION
+
+function refreshAll() {
+  getTasks();
+  getExperiences();
+}
+
+//-------------------
+//UPDATE THE SELECTED SEMESTER
+//------------------
+
+function updateSelectedSemester() {
+  const labelIndex = 8 - semestersTillGraduation.value;
+  selectedSeason.value = semesterLabels[labelIndex] || 'Unknown Semester';
+}
+
+//--------------------
+//Filtering Functions
+//--------------------
+
 
 const filteredTasks = computed(() => {
   if (!priorityFilter.value) return tasks.value;
@@ -387,32 +430,120 @@ const selectExperiencePriority = (level) => {
   experienceDropdown.value = false;
 };
 
-onMounted(async () => {
-  await FlightPlan.createFlightPlan()
-  getUpcomingEvents()
-  getTasks()
-  getExperiences()
-  getLeaderboardinfo();
-  getRelatedExperienceEvents();
-})
+//--------------------------------------------------
+//checks to see which one the user is allowed to see 
+//--------------------------------------------------
+const availableSemesters = computed(() => {
+  return semesterLabels.map((label, index) => {
+    const value = 8 - index;
+    return {
+      label,
+      value,
+      disabled: value < semestersTillGraduation.value
+    };
+  });
+});
 
-async function getRelatedExperienceEvents() {
+//Selecting the semester in the dropdown and 
+// then refreshing the tasks and Experiences
+function selectSemester(label, value) {
+  selectedSeason.value = label;
+  selectedSemesterValue.value = value;
+  dropdownOpen.value = false;
+
+  getTasks(value);
+  getExperiences(value);
+}
+
+//-------------------------------------------------
+//Check to see if Tasks/experiences are late or not
+//-------------------------------------------------
+
+ function isLate(flightPlanItem) {
   try {
-    const res = await FlightPlanExperience.getFlightPlanExperienceByUserId(userId);
-    const allExperiences = res.data.Experiences || [];
-    const relatedIds = [];
+    flightPlans.value.sort((a, b) => b.id - a.id);
 
-    for (const ex of allExperiences) {
-      const result = await FlightPlanExperience.getEventsByExperience(ex.Experience.id);
-      result.data.forEach(evt => relatedIds.push(evt.id));
-    }
-
-    relatedEventIds.value = relatedIds;
-  } catch (err) {
-    console.error("Error fetching related experience events:", err);
+    if ( flightPlanItem.flightPlanId != flightPlans.value[0].id)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+  } catch (error) {
+    console.error("Error checking if flight plan item is late:", error);
   }
 }
 
+
+//-------------------------------------------
+//GETTING TASKS AND EXPERIENCES FUNCTIONS
+//------------------------------------------
+
+function getTasks(selectedSemVal) {
+  const semester = selectedSemVal ?? semestersTillGraduation.value;
+  if (!semester) return; // still null? skip request
+
+  FlightPlanTask.getFlightPlanTaskByUserIdFromSemester(userId, semester)
+    .then((res) => {
+      tasks.value = res.data.tasks.sort((a, b) => {
+        const aCompleted = a.flightPlanTask.completed ? 1 : 0;
+        const bCompleted = b.flightPlanTask.completed ? 1 : 0;
+
+        if (aCompleted !== bCompleted) return aCompleted - bCompleted;
+        return (a.task.priority || 0) - (b.task.priority || 0);
+      });
+
+      tasks.value  = tasks.value.map((task) => {
+        if ((task.task.semestersFromGraduation != semester) && (task.flightPlanTask.completed)) {
+          
+        } else {
+          return task
+        }
+      })
+    })
+    .catch((err) => {
+      console.error("Error fetching tasks:", err);
+      tasks.value = [];
+    });
+}
+
+function getExperiences(selectedSemVal) {
+  const semester = selectedSemVal ?? semestersTillGraduation.value;
+  if (!semester) return;
+
+  FlightPlanExperience.getFlightPlanExperienceByUserIdFromSemester(userId, semester)
+    .then((res) => {
+      experiences.value = res.data.Experiences.sort((a, b) => {
+        const aCompleted = a.flightPlanExperience.completed ? 1 : 0;
+        const bCompleted = b.flightPlanExperience.completed ? 1 : 0;
+
+        if (aCompleted !== bCompleted) return aCompleted - bCompleted;
+        return (a.Experience.priority || 0) - (b.Experience.priority || 0);
+      });
+
+      
+
+      experiences.value = experiences.value.map((experience) => {
+  if ((experience.Experience.semestersFromGraduation != semester) && (experience.flightPlanExperience.completed)) {
+    // Exclude experience if condition is true (return nothing)
+    return null;
+  } else {
+    return experience;
+  }
+}).filter(e => e !== null);
+
+    })
+    .catch((err) => {
+      console.error("Error fetching experiences:", err);
+      experiences.value = [];
+    });
+}
+
+//---------------------------------
+//Progress Bar Function 
+//---------------------------------
 const completedCount = computed(() => {
   const taskCompleted = tasks.value.filter(t => t.flightPlanTask.completed).length;
   const experienceCompleted = experiences.value.filter(ex => ex.flightPlanExperience.completed).length;
@@ -477,6 +608,8 @@ function changeTask(task) {
   }
   currentTask.value = updatedTask;
   showTask.value = true;
+
+
 }
 
 function changeExperience() {
@@ -490,6 +623,7 @@ function changeExperience() {
   }
   currentExperience.value = updatedExperience;
   showExperience.value = true;
+
 }
 
 //---------------------------------
@@ -530,6 +664,7 @@ function parseTime(date) {
   return `${hours}:${minutes} ${period}`;
 }
 
+
 function parseDate(date) {
   let parsedDate = new Date(date.startDateTime).toDateString();
   if (date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/) != parsedDate.match(/^(?:\S+\s+){2}(\S+)/)) {
@@ -538,47 +673,20 @@ function parseDate(date) {
     let day = date.startDateTime.match(/\d{4}-\d{2}-(\d{2})/)
     let year = parsedDate.match(/^(?:\S+\s+){3}(\S+)/)
     parsedDate = `${weekday[0]} ${month[1]} ${day[1]} ${year[1]}`;
+
   }
   return parsedDate;
 }
 
-function getTasks() {
-  FlightPlanTask.getFlightPlanTaskByUserId(JSON.parse(localStorage.getItem("user")).id)
-    .then((res) => {
-      tasks.value = res.data.tasks.sort((a, b) => {
-        const aCompleted = a.flightPlanTask.completed ? 1 : 0;
-        const bCompleted = b.flightPlanTask.completed ? 1 : 0;
-
-        if (aCompleted !== bCompleted) {
-          return aCompleted - bCompleted;
-        }
-
-        return (a.task.priority || 0) - (b.task.priority || 0);
-      });
-    });
-}
-
-function getExperiences() {
-  FlightPlanExperience.getFlightPlanExperienceByUserId(JSON.parse(localStorage.getItem("user")).id)
-    .then((res) => {
-      console.log("API Response:", res.data);
-      experiences.value = res.data.Experiences.sort((a, b) => {
-        const aCompleted = a.flightPlanExperience.completed ? 1 : 0;
-        const bCompleted = b.flightPlanExperience.completed ? 1 : 0;
-
-        if (aCompleted !== bCompleted) {
-          return aCompleted - bCompleted;
-        }
-
-        return (a.Experience.priority || 0) - (b.Experience.priority || 0);
-      });
-    });
-}
+//------------------------------------------
+//DIALOG CLICKING FOR TASK AND EXPERIENCES
+//-------------------------------------------
 
 const handleTaskClick = (task) => {
   showTask.value = true;
   currentTask.value = task
 };
+
 
 const handleExperienceClick = (experience) => {
   showExperience.value = true;
@@ -672,23 +780,7 @@ async function loadLatestBadge() {
 </script>
 
 <style scoped>
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
 
-  50% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-.blinking-icon {
-  animation: blink 1s infinite;
-}
 
 .bg-gold {
   background-color: #ffd700;
@@ -758,11 +850,5 @@ html {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-.related-event-highlight {
-  background-color: #e9f5ec !important;
-  border-left: 4px solid #43a047;
-  transition: background-color 0.3s ease;
 }
 </style>

@@ -23,7 +23,9 @@ const goToProfile = () => {
     router.push({ name: 'Profile', params: { userId: user.value.id } });
 };
 
-
+const goToSettings = () => {
+    router.push({ name: 'Settings', query: { userId: user.value.id } });
+}
 const isDark = inject('isDark')
 
 // Function to retrieve user data from local storage and fetch additional user info
@@ -120,6 +122,9 @@ onMounted(() => {
             <v-toolbar-title class="title">Career Services </v-toolbar-title>
             <v-spacer></v-spacer>
 
+            <v-icon @click="goToSettings" size="30" class="ml-2" style="cursor: pointer;">
+                mdi-cog
+            </v-icon>
             <!-- Notifications -->
             <v-menu bottom max-width="300px" rounded offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ props }">
@@ -171,12 +176,16 @@ onMounted(() => {
                         <p class="text-caption mb-1">{{ user.email }}</p>
                         <v-divider></v-divider>
                     </v-card-text>
-
-
+                    <v-card-actions class="d-flex align-center justify-space-between pa-0">
+                        <div class="d-flex align-center">
+                            <p class="ma-0 mr-2">Dark mode</p>
+                            <v-switch :model-value="true" color="black" hide-details></v-switch>
+                        </div>
                     <v-card-actions class="d-flex flex-column align-center pa-0">
                         <v-switch v-model="isDark" color="tHead" :false-value="false" :true-value="true"
                             @change="user.darkMode = isDark; Utils.setStore('user', user), userService.changeTheme(user.id)"></v-switch>
                     </v-card-actions>
+
 
                     <v-card-text class="text-center pt-0">
                         <v-btn depressed rounded text class="secondary-button" @click="logout">Logout</v-btn>
@@ -211,8 +220,8 @@ onMounted(() => {
                     <v-list-item :to="{ name: 'Profile', params: { userId: user.id } }">
                         <v-btn variant="text">Profile</v-btn>
                     </v-list-item>
-                    <v-list-item>
-                        <v-btn variant="text" to="/RequestExperience">Request Experience</v-btn>
+                    <v-list-item :to="{ name: 'RequestExperience' }">
+                        <v-btn variant="text">Request Experience</v-btn>
                     </v-list-item>
                 </v-list>
             </div>
